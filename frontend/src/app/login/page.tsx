@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { User, Lock, ArrowRight, Shield, AlertCircle, Sparkles } from 'lucide-react';
+import { User, Lock, ArrowRight, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 export default function LoginPage() {
@@ -12,6 +12,7 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -28,32 +29,13 @@ export default function LoginPage() {
         router.push('/');
       }
     } else {
-      setError(res.error || 'Login gagal.');
-    }
-    setIsSubmitting(false);
-  };
-
-  const handleQuickLogin = async (demoEmail: string) => {
-    setEmail(demoEmail);
-    setPassword('password123');
-    setIsSubmitting(true);
-    setError(null);
-
-    const res = await login(demoEmail, 'password123');
-    if (res.success) {
-      if (res.user?.role === 'admin') {
-        router.push('/admin');
-      } else {
-        router.push('/');
-      }
-    } else {
-      setError(res.error || 'Quick login gagal.');
+      setError(res.error || 'Email atau kata sandi tidak sesuai.');
     }
     setIsSubmitting(false);
   };
 
   return (
-    <div className="max-w-md mx-auto px-4 py-16 space-y-6">
+    <div className="max-w-md mx-auto px-4 py-12 sm:py-16 space-y-6">
       {/* Brand Header */}
       <div className="text-center space-y-2">
         <div className="w-16 h-16 mx-auto rounded-3xl overflow-hidden border-2 border-brand-yellow shadow-md bg-white">
@@ -62,41 +44,13 @@ export default function LoginPage() {
         <h1 className="font-heading font-black text-2xl text-brand-indigo">
           Masuk ke Akun Anda
         </h1>
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-gray-500 max-w-xs mx-auto">
           Nikmati kemudahan checkout cepat, simpan alamat, dan lacak pesanan kue Anda.
         </p>
       </div>
 
-      {/* Quick Demo Login Presets */}
-      <div className="bg-amber-50 p-4 rounded-3xl border border-brand-yellow/40 space-y-2.5">
-        <span className="text-[11px] font-black uppercase tracking-wider text-amber-900 flex items-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 text-brand-red" /> Demo 1-Click Login:
-        </span>
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={() => handleQuickLogin('pembeli@gmail.com')}
-            className="p-2.5 bg-white hover:bg-amber-100/60 border border-amber-200 rounded-xl text-left transition text-xs shadow-sm"
-          >
-            <span className="font-bold text-brand-indigo block">Sebagai Pembeli</span>
-            <span className="text-[10px] text-gray-500">pembeli@gmail.com</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleQuickLogin('admin@denishcookies.com')}
-            className="p-2.5 bg-white hover:bg-amber-100/60 border border-amber-200 rounded-xl text-left transition text-xs shadow-sm"
-          >
-            <span className="font-bold text-brand-indigo block flex items-center gap-1">
-              <Shield className="w-3 h-3 text-brand-red" /> Admin Bakery
-            </span>
-            <span className="text-[10px] text-gray-500">admin@denishcookies.com</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Form */}
-      <div className="bg-white p-6 rounded-3xl border border-amber-100 shadow-cookie space-y-4">
+      {/* Main Login Form */}
+      <div className="bg-white p-6 sm:p-7 rounded-3xl border border-amber-100 shadow-cookie space-y-4">
         {error && (
           <div className="p-3 bg-red-50 text-red-700 text-xs rounded-xl border border-red-200 flex items-center gap-2">
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
@@ -116,42 +70,52 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="nama@email.com"
-                className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow"
+                className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow"
               />
               <User className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-700 mb-1">
-              Kata Sandi (Password)
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-bold text-gray-700">
+                Kata Sandi (Password)
+              </label>
+            </div>
             <div className="relative">
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow"
+                placeholder="Masukkan kata sandi"
+                className="w-full pl-9 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow"
               />
               <Lock className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 focus:outline-none"
+                aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
           </div>
 
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full btn-yellow justify-center py-3 text-xs font-black disabled:opacity-60"
+            className="w-full btn-yellow justify-center py-3 text-xs sm:text-sm font-black disabled:opacity-60 min-h-[44px] shadow-md transition active:scale-[0.98]"
           >
             {isSubmitting ? 'Memeriksa Akun...' : 'Masuk Sekarang'}
           </button>
         </form>
 
-        <div className="text-center pt-2 border-t border-gray-100 text-xs text-gray-500">
+        <div className="text-center pt-3 border-t border-gray-100 text-xs text-gray-500">
           Belum punya akun?{' '}
           <Link href="/register" className="font-bold text-brand-red hover:underline">
-            Daftar Sekarang
+            Daftar Akun Baru
           </Link>
         </div>
       </div>
