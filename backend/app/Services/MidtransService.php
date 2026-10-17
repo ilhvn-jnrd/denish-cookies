@@ -79,6 +79,17 @@ class MidtransService
             ];
         }
 
+        // Add Biaya Layanan Pembayaran (QRIS 0.7%) as line item
+        $adminFee = (int) ceil(($order->subtotal + $order->shipping_cost) * 0.007);
+        if ($adminFee > 0) {
+            $itemDetails[] = [
+                'id' => 'ADMIN-FEE',
+                'price' => $adminFee,
+                'quantity' => 1,
+                'name' => 'Biaya Layanan Pembayaran (0.7%)',
+            ];
+        }
+
         $payload = [
             'transaction_details' => [
                 'order_id' => $order->order_number,

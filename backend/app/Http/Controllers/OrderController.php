@@ -125,7 +125,10 @@ class OrderController extends Controller
             $courierServiceName = $selectedOption['service_name'];
             $distanceKm = $selectedOption['distance_km'] ?? null;
             $boxBreakdown = $selectedOption['box_breakdown'] ?? null;
-            $grossAmount = $subtotal + $shippingCost;
+
+            // Biaya Layanan Pembayaran (QRIS 0.7%)
+            $adminFee = (int) ceil(($subtotal + $shippingCost) * 0.007);
+            $grossAmount = $subtotal + $shippingCost + $adminFee;
 
             // 3. Generate unique order number
             $today = Carbon::now()->format('Ymd');

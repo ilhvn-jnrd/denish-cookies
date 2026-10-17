@@ -18,6 +18,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAdmin: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string; user?: User }>;
+  loginWithGoogle: (credential: string) => Promise<{ success: boolean; error?: string; user?: User }>;
   register: (name: string, email: string, phone: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -85,6 +86,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { success: false, error: res.error || 'Login gagal' };
   };
 
+  const loginWithGoogle = async (credential: string) => {
+    const res = await fetchApi<{ token: string; user: User }>('/auth/google', {
+      method: 'POST',
+      body: JSON.stringify({ credential }),
+    });
+
+    if (res.data?.token && res.data?.user) {
+      localStorage.setItem('denish_token', res.data.token);
+      localStorage.setItem('denish_user', JSON.stringify(res.data.user));
+      setToken(res.data.token);
+      setUser(res.data.user);
+      return { success: true, user: res.data.user };
+    }
+
+    return { success: false, error: res.error || 'Autentikasi Google gagal' };
+  };
+
   const register = async (name: string, email: string, phone: string, password: string) => {
     const res = await fetchApi<{ token: string; user: User }>('/register', {
       method: 'POST',
@@ -124,6 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         isAdmin,
         login,
+        loginWithGoogle,
         register,
         logout,
         refreshUser,

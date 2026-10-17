@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -62,6 +64,80 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Login berhasil',
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'role' => $user->role,
+            ],
+            'token' => $token,
+        ]);
+    }
+
+    /**
+     * Google OAuth Login / Registration handler (Without extra Composer packages)
+     */
+    public function googleLogin(Request $request): JsonResponse
+    {
+        $request->validate([
+            'credential' => 'required|string',
+        ]);
+
+        $idToken = $request->credential;
+        $expectedClientId = config('services.google.client_id', '828855005140-m7rdk1pn0dq2dtvujklb3v33uq4oedq8.apps.googleusercontent.com');
+
+        // Verify token with Google TokenInfo API
+        $response = Http::get('https://oauth2.googleapis.com/tokeninfo', [
+            'id_token' => $idToken,
+        ]);
+
+        if (!$response->successful()) {
+            return response()->json([
+                'message' => 'Token Google tidak valid atau telah kadaluarsa.',
+            ], 401);
+        }
+
+        $payload = $response->json();
+
+        // Strict verification of audience (Client ID)
+        if (!isset($payload['aud']) || $payload['aud'] !== $expectedClientId) {
+            return response()->json([
+                'message' => 'Client ID Google tidak sesuai.',
+            ], 401);
+        }
+
+        // Verify email status
+        $isEmailVerified = isset($payload['email_verified']) &&
+            ($payload['email_verified'] === 'true' || $payload['email_verified'] === true);
+
+        if (!$isEmailVerified || empty($payload['email'])) {
+            return response()->json([
+                'message' => 'Email akun Google belum terverifikasi.',
+            ], 401);
+        }
+
+        $email = strtolower(trim($payload['email']));
+        $name = $payload['name'] ?? explode('@', $email)[0];
+
+        // Find or create customer
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            $user = new User([
+                'name' => $name,
+                'email' => $email,
+                'phone' => null,
+                'password' => Hash::make(Str::random(32)),
+            ]);
+            $user->role = 'customer';
+            $user->save();
+        }
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Login Google berhasil',
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,

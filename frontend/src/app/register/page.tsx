@@ -5,10 +5,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { User, Mail, Phone, Lock, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import GoogleSignInButton from '@/components/GoogleSignInButton';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { register } = useAuth();
+  const { register, loginWithGoogle } = useAuth();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -27,6 +28,22 @@ export default function RegisterPage() {
       router.push('/');
     } else {
       setError(res.error || 'Registrasi gagal.');
+    }
+    setIsSubmitting(false);
+  };
+
+  const handleGoogleSuccess = async (credential: string) => {
+    setError(null);
+    setIsSubmitting(true);
+    const res = await loginWithGoogle(credential);
+    if (res.success) {
+      if (res.user?.role === 'admin') {
+        router.push('/admin');
+      } else {
+        router.push('/');
+      }
+    } else {
+      setError(res.error || 'Daftar dengan Google gagal.');
     }
     setIsSubmitting(false);
   };
@@ -131,6 +148,21 @@ export default function RegisterPage() {
             {isSubmitting ? 'Mendaftarkan Akun...' : 'Daftar Sekarang'}
           </button>
         </form>
+
+        <div className="relative my-3">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-200"></div>
+          </div>
+          <div className="relative flex justify-center text-[11px] uppercase">
+            <span className="bg-white px-3 text-gray-400 font-semibold tracking-wider">Atau daftar dengan</span>
+          </div>
+        </div>
+
+        <GoogleSignInButton
+          text="signup_with"
+          onSuccess={handleGoogleSuccess}
+          onError={(err) => setError(err)}
+        />
 
         <div className="text-center pt-2 border-t border-gray-100 text-xs text-gray-500">
           Sudah punya akun?{' '}

@@ -113,12 +113,26 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom copyright */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-indigo-300">
-          <p className="flex items-center gap-1 text-center sm:text-left">
+        {/* Bottom copyright & Legal Policies */}
+        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-indigo-300">
+          <p className="flex items-center gap-1 text-center md:text-left">
             &copy; 2026 <strong className="text-white">De&apos;nish Cookies</strong>. Made with{' '}
             <Heart className="w-3.5 h-3.5 text-brand-red inline fill-brand-red" /> for Indonesian SME Bakery.
           </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[11px] sm:text-xs">
+            <Link href="/syarat-ketentuan" className="hover:text-brand-yellow transition underline decoration-indigo-400/40 underline-offset-4">
+              Syarat &amp; Ketentuan
+            </Link>
+            <span className="text-indigo-500">•</span>
+            <Link href="/kebijakan-privasi" className="hover:text-brand-yellow transition underline decoration-indigo-400/40 underline-offset-4">
+              Kebijakan Privasi
+            </Link>
+            <span className="text-indigo-500">•</span>
+            <Link href="/kebijakan-pengiriman" className="hover:text-brand-yellow transition underline decoration-indigo-400/40 underline-offset-4">
+              Kebijakan Pengiriman &amp; Pengembalian
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

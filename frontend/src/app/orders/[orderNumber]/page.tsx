@@ -251,6 +251,12 @@ export default function OrderDetailPage() {
               <span>Ongkos Kirim:</span>
               <span className="font-bold text-brand-indigo">{formatRupiah(order.shipping_cost)}</span>
             </div>
+            {order.admin_fee > 0 && (
+              <div className="flex justify-between text-brand-red font-medium">
+                <span>Biaya Layanan (QRIS 0.7%):</span>
+                <span className="font-bold">{formatRupiah(order.admin_fee)}</span>
+              </div>
+            )}
             <div className="flex justify-between pt-2 border-t border-gray-200 text-sm">
               <span className="font-bold text-brand-indigo uppercase">Total Pembayaran:</span>
               <span className="font-heading font-black text-brand-red">{formatRupiah(order.gross_amount)}</span>

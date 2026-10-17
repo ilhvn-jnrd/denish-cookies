@@ -8,7 +8,6 @@ import {
   Truck,
   ShieldCheck,
   Heart,
-  Star,
   Search,
   ChevronRight,
   Flame,
@@ -62,6 +61,8 @@ export default function HomePage() {
     <div className="space-y-16 pb-20">
       {/* HERO SECTION */}
       <section className="relative overflow-hidden bg-brand-yellow pt-12 pb-16 lg:py-20 border-b-4 border-brand-indigo/10">
+        {/* Seamless bakery pattern overlay */}
+        <div className="absolute inset-0 bg-bakery-pattern opacity-40 pointer-events-none" />
         {/* Subtle decorative circles */}
         <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/20 blur-2xl pointer-events-none" />
         <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-amber-400/30 blur-2xl pointer-events-none" />
@@ -337,6 +338,7 @@ export default function HomePage() {
       {/* SHIPPING INFO SECTION: GOJEK DALAM KOTA & PAXEL LUAR KOTA */}
       <section id="pengiriman" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-gradient-to-br from-brand-indigo via-brand-indigoDark to-brand-indigo text-white rounded-3xl p-8 sm:p-12 shadow-2xl relative overflow-hidden border border-brand-yellow/30">
+          <div className="absolute inset-0 bg-bakery-pattern opacity-15 pointer-events-none" />
           <div className="absolute top-0 right-0 w-80 h-80 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 space-y-8">
@@ -423,84 +425,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto space-y-2 mb-10">
-          <span className="text-xs font-black uppercase tracking-widest text-brand-red">
-            Kata Pelanggan Setia
-          </span>
-          <h2 className="font-heading font-black text-3xl sm:text-4xl text-brand-indigo">
-            Dipercaya 10,000+ Keluarga Indonesia
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-3xl border border-amber-100 shadow-cookie space-y-4">
-            <div className="flex items-center gap-1 text-amber-400">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-4 h-4 fill-amber-400" />
-              ))}
-            </div>
-            <p className="text-xs text-gray-700 italic leading-relaxed">
-              &quot;Nastar wisman terenak yang pernah saya beli! Selai nanasnya melimpah asam manis seimbang, butternya wangi banget dan lumer begitu digigit. Keluarga di Bandung sangat suka.&quot;
-            </p>
-            <div className="flex items-center gap-3 pt-2 border-t border-gray-100">
-              <div className="w-9 h-9 rounded-full bg-brand-yellow text-brand-indigo font-black flex items-center justify-center text-xs">
-                AN
-              </div>
-              <div>
-                <p className="font-heading font-bold text-xs text-brand-indigo">dr. Anita Nuraini</p>
-                <p className="text-[10px] text-gray-400">Bandung</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-3xl border border-amber-100 shadow-cookie space-y-4">
-            <div className="flex items-center gap-1 text-amber-400">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-4 h-4 fill-amber-400" />
-              ))}
-            </div>
-            <p className="text-xs text-gray-700 italic leading-relaxed">
-              &quot;Kirim hampers Royal Box isi 4 toples ke mertua di Surabaya via Paxel. Alhamdulillah kue sampai dalam kondisi utuh dan tidak ada yang retak sama sekali! Box-nya mewah sekali ada greeting cardnya.&quot;
-            </p>
-            <div className="flex items-center gap-3 pt-2 border-t border-gray-100">
-              <div className="w-9 h-9 rounded-full bg-brand-indigo text-white font-black flex items-center justify-center text-xs">
-                HS
-              </div>
-              <div>
-                <p className="font-heading font-bold text-xs text-brand-indigo">Hendra Setiawan</p>
-                <p className="text-[10px] text-gray-400">Surabaya</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-3xl border border-amber-100 shadow-cookie space-y-4">
-            <div className="flex items-center gap-1 text-amber-400">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-4 h-4 fill-amber-400" />
-              ))}
-            </div>
-            <p className="text-xs text-gray-700 italic leading-relaxed">
-              &quot;Kastengelnya benar-benar juara keju edam tua. Renyah dan tidak berminyak. Setiap Idul Fitri pasti wajib repeat order minimal 6 toples untuk hantaran kerabat kantor.&quot;
-            </p>
-            <div className="flex items-center gap-3 pt-2 border-t border-gray-100">
-              <div className="w-9 h-9 rounded-full bg-brand-red text-white font-black flex items-center justify-center text-xs">
-                MR
-              </div>
-              <div>
-                <p className="font-heading font-bold text-xs text-brand-indigo">Maya Rahardjo</p>
-                <p className="text-[10px] text-gray-400">Bekasi Barat</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ABOUT DE'NISH COOKIES */}
       <section id="tentang" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-amber-50 rounded-3xl p-8 sm:p-12 border border-brand-yellow/40 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-          <div className="space-y-4">
+        <div className="bg-amber-50 relative overflow-hidden rounded-3xl p-8 sm:p-12 border border-brand-yellow/40 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div className="absolute inset-0 bg-bakery-pattern opacity-40 pointer-events-none" />
+          <div className="space-y-4 relative z-10">
             <span className="text-xs font-black uppercase tracking-widest text-brand-red">
               Cerita Dapur Kami
             </span>

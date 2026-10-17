@@ -150,7 +150,16 @@ export default function CheckoutPage() {
 
   const activeShippingOption = shippingOptions.find((o) => o.courier_type === selectedCourier);
   const shippingCost = activeShippingOption?.cost || 0;
-  const grossAmount = subtotal + shippingCost;
+  const adminFee = Math.ceil((subtotal + shippingCost) * 0.007);
+  const grossAmount = subtotal + shippingCost + adminFee;
+
+  const isAddressComplete = Boolean(
+    recipientName.trim() &&
+    recipientPhone.trim() &&
+    fullAddress.trim() &&
+    cityName.trim()
+  );
+  const isCourierSelected = Boolean(activeShippingOption && activeShippingOption.is_available);
 
   // Handle Save New Address Modal
   const handleSaveNewAddress = async (e: React.FormEvent) => {
@@ -195,8 +204,16 @@ export default function CheckoutPage() {
       return;
     }
 
-    if (!recipientName.trim() || !recipientPhone.trim() || !fullAddress.trim() || !cityName.trim()) {
-      setCheckoutError('Harap lengkapi semua data nama, no telepon WhatsApp, dan alamat penerima.');
+    if (!isAddressComplete) {
+      setCheckoutError('Mohon isi dan pilih alamat pengiriman terlebih dahulu sebelum melanjutkan pembayaran');
+      if (user && savedAddresses.length > 0) {
+        setShowAddressModal(true);
+      } else {
+        const addressEl = document.getElementById('address-section');
+        if (addressEl) {
+          addressEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
       return;
     }
 
@@ -379,7 +396,7 @@ export default function CheckoutPage() {
           )}
 
           {/* Recipient Details & Interactive Map */}
-          <div className="bg-white p-6 rounded-3xl border border-amber-100 shadow-cookie space-y-5">
+          <div id="address-section" className="bg-white p-6 rounded-3xl border border-amber-100 shadow-cookie space-y-5">
             <h2 className="font-heading font-bold text-lg text-brand-indigo flex items-center gap-2">
               <MapPin className="w-5 h-5 text-brand-red" /> 1. Data Penerima &amp; Pin Titik Lokasi
             </h2>
@@ -635,6 +652,11 @@ export default function CheckoutPage() {
                 <span className="font-bold text-brand-indigo">{formatRupiah(shippingCost)}</span>
               </div>
 
+              <div className="flex items-center justify-between text-brand-red font-medium">
+                <span>Biaya Layanan Pembayaran (QRIS 0.7%)</span>
+                <span className="font-bold">{formatRupiah(adminFee)}</span>
+              </div>
+
               <div className="flex items-center justify-between pt-2 border-t border-gray-100">
                 <span className="font-bold text-sm text-brand-indigo uppercase">Total Pembayaran</span>
                 <span className="font-heading font-black text-xl text-brand-red">
@@ -643,11 +665,40 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Midtrans CTA */}
+            {/* Strict address warning if not filled */}
+            {!isAddressComplete && (
+              <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-[11px] text-amber-900 flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
+                <span>
+                  Mohon lengkapi <strong>Nama Penerima, No. WA, Alamat Lengkap &amp; Kota</strong> sebelum melanjutkan pembayaran.
+                </span>
+              </div>
+            )}
+
+            {/* Midtrans CTA with Strict Address & Courier Guard */}
             <button
               type="submit"
-              disabled={isSubmitting || !activeShippingOption?.is_available}
-              className="w-full btn-primary justify-center py-4 text-sm font-black disabled:opacity-60"
+              disabled={isSubmitting}
+              onClick={(e) => {
+                if (!isAddressComplete) {
+                  e.preventDefault();
+                  setCheckoutError('Mohon isi dan pilih alamat pengiriman terlebih dahulu sebelum melanjutkan pembayaran');
+                  if (user && savedAddresses.length > 0) {
+                    setShowAddressModal(true);
+                  } else {
+                    const addressEl = document.getElementById('address-section');
+                    if (addressEl) {
+                      addressEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }
+                } else if (!isCourierSelected) {
+                  e.preventDefault();
+                  setCheckoutError('Mohon pilih opsi kurir pengiriman yang tersedia terlebih dahulu.');
+                }
+              }}
+              className={`w-full btn-primary justify-center py-4 text-sm font-black transition ${
+                !isAddressComplete || !isCourierSelected ? 'opacity-80 hover:opacity-100 ring-2 ring-amber-300' : ''
+              } disabled:opacity-60`}
             >
               <CreditCard className="w-4 h-4" />
               {isSubmitting ? 'Memproses Pesanan...' : 'Bayar via Midtrans Snap'}

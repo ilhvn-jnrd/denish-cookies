@@ -14,11 +14,12 @@ use Illuminate\Support\Facades\Route;
 | Public Routes
 |--------------------------------------------------------------------------
 */
-// Authentication (Rate limited: 5 attempts per minute per IP)
+// Authentication (Rate limited)
 Route::middleware('throttle:5,1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
 });
+Route::post('/auth/google', [AuthController::class, 'googleLogin'])->middleware('throttle:10,1');
 
 // Catalog
 Route::get('/products', [ProductController::class, 'index']);

@@ -37,4 +37,8 @@ return [
         'is_production' => (bool) env('MIDTRANS_IS_PRODUCTION', false),
     ],
 
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID', '828855005140-m7rdk1pn0dq2dtvujklb3v33uq4oedq8.apps.googleusercontent.com'),
+    ],
+
 ];

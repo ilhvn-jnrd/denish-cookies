@@ -15,6 +15,8 @@ body {
   background-color: #FFFDF5;
   color: #2E1A7A;
   overflow-x: hidden;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='%23b45309' stroke='%23b45309' opacity='0.06'%3E%3Ccircle cx='30' cy='30' r='16' fill='none' stroke-width='2'/%3E%3Ccircle cx='30' cy='30' r='2.2'/%3E%3Cpath d='M27 30h6M30 27v6' stroke-width='1.8' stroke-linecap='round'/%3E%3Crect x='80' y='22' width='38' height='16' rx='4.5' fill='none' stroke-width='2'/%3E%3Cpath d='M86 28l5-1M95 31l6-1M105 27l6 1M89 33l7 1' stroke-width='1.6' stroke-linecap='round'/%3E%3Ccircle cx='30' cy='100' r='16' fill='none' stroke-width='2' stroke-dasharray='4 2.5'/%3E%3Ccircle cx='24' cy='94' r='2'/%3E%3Ccircle cx='35' cy='96' r='2'/%3E%3Ccircle cx='26' cy='106' r='2'/%3E%3Ccircle cx='34' cy='105' r='1.8'/%3E%3Cpath d='M84 110h32L100 86z' fill='none' stroke-width='2' stroke-linejoin='round'/%3E%3Ccircle cx='96' cy='103' r='2.6' fill='none' stroke-width='1.4'/%3E%3Ccircle cx='106' cy='104' r='1.8' fill='none' stroke-width='1.4'/%3E%3Ccircle cx='95' cy='95' r='1.5' fill='none' stroke-width='1.4'/%3E%3Cpath d='M65 61l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5z' stroke='none'/%3E%3Ccircle cx='12' cy='65' r='1.5' stroke='none'/%3E%3Ccircle cx='128' cy='65' r='1.5' stroke='none'/%3E%3Ccircle cx='65' cy='12' r='1.5' stroke='none'/%3E%3Ccircle cx='65' cy='128' r='1.5' stroke='none'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 140px 140px;
 }
 
 h1, h2, h3, h4, h5, h6, .font-heading {
@@ -37,13 +39,10 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   background: #E32636;
 }
 
-/* Subtle Cookie Pattern Background */
-.bg-cookie-pattern {
-  background-color: #FFD100;
-  background-image: radial-gradient(#2E1A7A 0.75px, transparent 0.75px), radial-gradient(#2E1A7A 0.75px, #FFD100 0.75px);
-  background-size: 30px 30px;
-  background-position: 0 0, 15px 15px;
-  background-opacity: 0.05;
+/* Custom Seamless Bakery Pattern Utility */
+.bg-bakery-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='%23b45309' stroke='%23b45309' opacity='0.065'%3E%3Ccircle cx='30' cy='30' r='16' fill='none' stroke-width='2'/%3E%3Ccircle cx='30' cy='30' r='2.2'/%3E%3Cpath d='M27 30h6M30 27v6' stroke-width='1.8' stroke-linecap='round'/%3E%3Crect x='80' y='22' width='38' height='16' rx='4.5' fill='none' stroke-width='2'/%3E%3Cpath d='M86 28l5-1M95 31l6-1M105 27l6 1M89 33l7 1' stroke-width='1.6' stroke-linecap='round'/%3E%3Ccircle cx='30' cy='100' r='16' fill='none' stroke-width='2' stroke-dasharray='4 2.5'/%3E%3Ccircle cx='24' cy='94' r='2'/%3E%3Ccircle cx='35' cy='96' r='2'/%3E%3Ccircle cx='26' cy='106' r='2'/%3E%3Ccircle cx='34' cy='105' r='1.8'/%3E%3Cpath d='M84 110h32L100 86z' fill='none' stroke-width='2' stroke-linejoin='round'/%3E%3Ccircle cx='96' cy='103' r='2.6' fill='none' stroke-width='1.4'/%3E%3Ccircle cx='106' cy='104' r='1.8' fill='none' stroke-width='1.4'/%3E%3Ccircle cx='95' cy='95' r='1.5' fill='none' stroke-width='1.4'/%3E%3Cpath d='M65 61l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5z' stroke='none'/%3E%3Ccircle cx='12' cy='65' r='1.5' stroke='none'/%3E%3Ccircle cx='128' cy='65' r='1.5' stroke='none'/%3E%3Ccircle cx='65' cy='12' r='1.5' stroke='none'/%3E%3Ccircle cx='65' cy='128' r='1.5' stroke='none'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 140px 140px;
 }
 
 .bg-cream-dots {

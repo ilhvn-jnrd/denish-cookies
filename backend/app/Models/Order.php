@@ -53,6 +53,15 @@ class Order extends Model
         'completed_at' => 'datetime',
     ];
 
+    protected $appends = [
+        'admin_fee',
+    ];
+
+    public function getAdminFeeAttribute(): float
+    {
+        return max(0, round($this->gross_amount - $this->subtotal - $this->shipping_cost, 2));
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
