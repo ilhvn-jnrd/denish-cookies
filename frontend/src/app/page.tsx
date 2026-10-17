@@ -241,12 +241,12 @@ export default function HomePage() {
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-6 border-b border-amber-100">
-          {/* Category Tabs */}
-          <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-6 border-b border-amber-100">
+          {/* Category Tabs (Horizontally scrollable on mobile) */}
+          <div className="flex items-center overflow-x-auto no-scrollbar gap-2 pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 w-[calc(100%+2rem)] sm:w-auto">
             <button
               onClick={() => setSelectedCategory('all')}
-              className={`px-4 py-2 rounded-2xl text-xs font-bold transition ${
+              className={`px-3.5 sm:px-4 py-2 rounded-2xl text-xs font-bold transition whitespace-nowrap flex-shrink-0 ${
                 selectedCategory === 'all'
                   ? 'bg-brand-indigo text-white shadow-sm'
                   : 'bg-white text-brand-indigo border border-gray-200 hover:border-brand-yellow'
@@ -258,7 +258,7 @@ export default function HomePage() {
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.slug)}
-                className={`px-4 py-2 rounded-2xl text-xs font-bold transition ${
+                className={`px-3.5 sm:px-4 py-2 rounded-2xl text-xs font-bold transition whitespace-nowrap flex-shrink-0 ${
                   selectedCategory === cat.slug
                     ? 'bg-brand-indigo text-white shadow-sm'
                     : 'bg-white text-brand-indigo border border-gray-200 hover:border-brand-yellow'
@@ -270,10 +270,10 @@ export default function HomePage() {
           </div>
 
           {/* Stock / PO Filter Toggle */}
-          <div className="flex items-center gap-1.5 bg-amber-50 p-1 rounded-2xl border border-amber-200 text-xs font-bold">
+          <div className="flex items-center gap-1.5 bg-amber-50 p-1 rounded-2xl border border-amber-200 text-xs font-bold self-start md:self-auto overflow-x-auto">
             <button
               onClick={() => setSelectedType('all')}
-              className={`px-3 py-1.5 rounded-xl transition ${
+              className={`px-3 py-1.5 rounded-xl transition whitespace-nowrap ${
                 selectedType === 'all' ? 'bg-white text-brand-indigo shadow-sm' : 'text-amber-800'
               }`}
             >
@@ -281,7 +281,7 @@ export default function HomePage() {
             </button>
             <button
               onClick={() => setSelectedType('ready')}
-              className={`px-3 py-1.5 rounded-xl transition ${
+              className={`px-3 py-1.5 rounded-xl transition whitespace-nowrap ${
                 selectedType === 'ready' ? 'bg-emerald-600 text-white shadow-sm' : 'text-amber-800'
               }`}
             >
@@ -289,7 +289,7 @@ export default function HomePage() {
             </button>
             <button
               onClick={() => setSelectedType('preorder')}
-              className={`px-3 py-1.5 rounded-xl transition ${
+              className={`px-3 py-1.5 rounded-xl transition whitespace-nowrap ${
                 selectedType === 'preorder' ? 'bg-amber-600 text-white shadow-sm' : 'text-amber-800'
               }`}
             >
@@ -298,16 +298,16 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Product Grid */}
-        <div className="mt-8">
+        {/* Product Grid (2-column on mobile, 4-column on desktop) */}
+        <div className="mt-6 sm:mt-8">
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
               {[...Array(8)].map((_, i) => (
-                <div key={i} className="bg-white rounded-3xl p-4 border border-gray-100 shadow-sm animate-pulse space-y-3">
-                  <div className="aspect-square bg-gray-200 rounded-2xl" />
+                <div key={i} className="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-4 border border-gray-100 shadow-sm animate-pulse space-y-2 sm:space-y-3">
+                  <div className="aspect-square bg-gray-200 rounded-xl sm:rounded-2xl" />
                   <div className="h-4 bg-gray-200 rounded w-3/4" />
-                  <div className="h-3 bg-gray-100 rounded w-full" />
-                  <div className="h-5 bg-gray-200 rounded w-1/2 pt-2" />
+                  <div className="h-3 bg-gray-100 rounded w-full hidden sm:block" />
+                  <div className="h-5 bg-gray-200 rounded w-1/2 pt-1" />
                 </div>
               ))}
             </div>
@@ -332,7 +332,7 @@ export default function HomePage() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
               {products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

@@ -48,7 +48,10 @@ export default function LeafletMapPicker({
       if (!isMounted) return;
 
       if (!mapInstanceRef.current && mapContainerRef.current) {
-        const map = L.map(mapContainerRef.current).setView([currentCoords.lat, currentCoords.lng], 14);
+        const map = L.map(mapContainerRef.current, {
+          scrollWheelZoom: false,
+          touchZoom: true,
+        }).setView([currentCoords.lat, currentCoords.lng], 14);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
@@ -213,21 +216,21 @@ export default function LeafletMapPicker({
 
       {/* Map Container */}
       <div
-        className="relative border-2 border-brand-yellow/30 rounded-2xl overflow-hidden shadow-inner bg-amber-50/50"
-        style={{ height }}
+        className="relative border-2 border-brand-yellow/30 rounded-xl sm:rounded-2xl overflow-hidden shadow-inner bg-amber-50/50 w-full h-56 sm:h-72"
+        style={height ? { height } : undefined}
       >
         <div ref={mapContainerRef} className="w-full h-full" />
 
         {/* Pin Location Overlay Info */}
-        <div className="absolute bottom-2 left-2 right-2 bg-white/95 backdrop-blur-sm p-2.5 rounded-xl border border-brand-yellow/40 shadow-md flex items-center justify-between text-xs z-[400]">
-          <div className="flex items-center gap-2 truncate">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
-            <span className="font-medium text-brand-indigo truncate">
-              Titik Koordinat: {currentCoords.lat.toFixed(5)}, {currentCoords.lng.toFixed(5)}
+        <div className="absolute bottom-2 left-2 right-2 bg-white/95 backdrop-blur-sm p-2 sm:p-2.5 rounded-xl border border-brand-yellow/40 shadow-md flex items-center justify-between text-[11px] sm:text-xs z-[400] gap-1">
+          <div className="flex items-center gap-1.5 truncate">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
+            <span className="font-mono font-medium text-brand-indigo truncate text-[10px] sm:text-xs">
+              {currentCoords.lat.toFixed(5)}, {currentCoords.lng.toFixed(5)}
             </span>
           </div>
-          <span className="text-[11px] text-gray-500 font-semibold flex items-center gap-1 bg-amber-100/60 text-amber-800 px-2 py-0.5 rounded-md flex-shrink-0">
-            <Check className="w-3 h-3 text-emerald-600" /> Geser pin ke rumah Anda
+          <span className="text-[10px] sm:text-[11px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md flex-shrink-0 font-bold">
+            Geser pin ke alamat Anda
           </span>
         </div>
       </div>

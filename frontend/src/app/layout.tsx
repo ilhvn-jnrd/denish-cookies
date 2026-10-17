@@ -5,6 +5,7 @@ import { CartProvider } from '@/context/CartContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
+import MobileBottomCartBar from '@/components/MobileBottomCartBar';
 
 export const metadata: Metadata = {
   title: "De'nish Cookies — Making Taste Better | Premium Homemade Cookies",
@@ -46,13 +47,14 @@ export default function RootLayout({
           async
         />
       </head>
-      <body className="antialiased flex flex-col min-h-screen">
+      <body className="antialiased flex flex-col min-h-screen overflow-x-hidden">
         <AuthProvider>
           <CartProvider>
             <Navbar />
             <main className="flex-1">{children}</main>
             <Footer />
             <CartDrawer />
+            <MobileBottomCartBar />
           </CartProvider>
         </AuthProvider>
       </body>

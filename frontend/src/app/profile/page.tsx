@@ -255,10 +255,10 @@ export default function ProfilePage() {
 
       {/* Add Address Modal with Leaflet GPS Map */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
-          <div className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl overflow-hidden my-8 border border-gray-200">
-            <div className="bg-brand-indigo text-white px-6 py-4 flex items-center justify-between">
-              <h3 className="font-heading font-bold text-base flex items-center gap-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm">
+          <div className="relative w-full max-w-xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border border-gray-200 max-h-[90dvh] flex flex-col">
+            <div className="bg-brand-indigo text-white px-5 py-3.5 sm:px-6 sm:py-4 flex items-center justify-between flex-shrink-0">
+              <h3 className="font-heading font-bold text-sm sm:text-base flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-brand-yellow" /> Tambah Alamat Pengiriman
               </h3>
               <button
@@ -269,7 +269,8 @@ export default function ProfilePage() {
               </button>
             </div>
 
-            <form onSubmit={handleCreateAddress} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+            <form onSubmit={handleCreateAddress} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 flex flex-col justify-between">
+              <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-gray-700 mb-1">
@@ -383,19 +384,21 @@ export default function ProfilePage() {
                   }}
                 />
               </div>
+              </div>
 
-              <div className="pt-3 flex items-center justify-end gap-2">
+              {/* Sticky bottom action footer */}
+              <div className="pt-3 border-t border-gray-100 flex items-center justify-end gap-2 bg-white sticky bottom-0">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold"
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold min-h-[40px]"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="btn-yellow text-xs px-5 py-2"
+                  className="btn-yellow text-xs px-5 py-2 min-h-[40px]"
                 >
                   {isSubmitting ? 'Menyimpan...' : 'Simpan Alamat'}
                 </button>

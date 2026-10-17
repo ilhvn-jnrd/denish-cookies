@@ -57,9 +57,9 @@ export default function AdminDashboardPage() {
 
   if (isLoading || loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-8 space-y-6 animate-pulse">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-6 space-y-6 animate-pulse pb-24 lg:pb-8">
         <div className="h-28 bg-gray-200 rounded-3xl" />
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="h-24 bg-gray-200 rounded-2xl" />
           <div className="h-24 bg-gray-200 rounded-2xl" />
           <div className="h-24 bg-gray-200 rounded-2xl" />
@@ -70,7 +70,7 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-8 pb-24 lg:pb-8">
       <AdminHeader />
 
       {/* KPI Stats Cards */}

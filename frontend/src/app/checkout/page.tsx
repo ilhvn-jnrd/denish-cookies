@@ -300,7 +300,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-8">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-xs text-gray-500 font-medium">
         <Link href="/" className="hover:text-brand-red transition flex items-center gap-1">

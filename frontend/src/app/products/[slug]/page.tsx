@@ -91,7 +91,7 @@ export default function ProductDetailPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-8 sm:space-y-12 pb-24 md:pb-8">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-xs text-gray-500 font-medium">
         <Link href="/" className="hover:text-brand-red transition flex items-center gap-1">
@@ -266,7 +266,7 @@ export default function ProductDetailPage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
             {related.map((prod) => (
               <ProductCard key={prod.id} product={prod} />
             ))}
