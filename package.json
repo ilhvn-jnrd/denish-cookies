@@ -13,6 +13,7 @@
     "dev:backend": "php -S localhost:8000 -t backend/public",
     "build": "npm --prefix frontend run build",
     "build:frontend": "npm --prefix frontend run build",
+    "start": "npm --prefix frontend run start",
     "start:frontend": "npm --prefix frontend run start",
     "artisan": "php backend/artisan",
     "migrate": "php backend/artisan migrate",
