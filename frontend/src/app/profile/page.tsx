@@ -37,8 +37,8 @@ export default function ProfilePage() {
   const [cityName, setCityName] = useState('Kota Bandung');
   const [postalCode, setPostalCode] = useState('40291');
   const [coords, setCoords] = useState<{ lat: number; lng: number }>({
-    lat: -6.9147,
-    lng: 107.6619,
+    lat: -6.917547878001074,
+    lng: 107.6634056367421,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 

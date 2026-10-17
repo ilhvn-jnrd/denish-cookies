@@ -10,6 +10,7 @@ use App\Models\ShippingSetting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -347,27 +348,63 @@ class AdminController extends Controller
 
     public function updateShippingSettings(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'store_name' => 'required|string',
-            'store_phone' => 'required|string',
-            'store_address' => 'required|string',
-            'store_city' => 'required|string',
-            'store_lat' => 'required|numeric',
-            'store_lng' => 'required|numeric',
-            'gojek_instant_rate_per_km' => 'required|numeric|min:0',
-            'gojek_instant_min_fare' => 'required|numeric|min:0',
-            'gojek_sameday_flat_under_15km' => 'required|numeric|min:0',
-            'gojek_sameday_flat_over_15km' => 'required|numeric|min:0',
-            'max_distance_gojek_km' => 'required|numeric|min:1',
-            'road_distance_factor' => 'required|numeric|min:1',
+        $request->validate([
+            'store_name' => 'nullable|string',
+            'store_phone' => 'nullable|string',
+            'store_address' => 'nullable|string',
+            'store_city' => 'nullable|string',
+            'store_lat' => 'nullable|numeric',
+            'latitude' => 'nullable|numeric',
+            'store_lng' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'gojek_instant_rate_per_km' => 'nullable|numeric|min:0',
+            'instant_rate_per_km' => 'nullable|numeric|min:0',
+            'gojek_instant_min_fare' => 'nullable|numeric|min:0',
+            'gojek_sameday_flat_under_15km' => 'nullable|numeric|min:0',
+            'gojek_sameday_flat_over_15km' => 'nullable|numeric|min:0',
+            'max_distance_gojek_km' => 'nullable|numeric|min:1',
+            'road_distance_factor' => 'nullable|numeric|min:1',
         ]);
 
-        $settings = ShippingSetting::current();
-        $settings->update($validated);
+        $lat = $request->input('store_lat', $request->input('latitude'));
+        $lng = $request->input('store_lng', $request->input('longitude'));
+        $instantRate = $request->input('gojek_instant_rate_per_km', $request->input('instant_rate_per_km', 4000));
+
+        $data = [
+            'store_name' => $request->input('store_name', "De'nish Cookies Kitchen"),
+            'store_phone' => $request->input('store_phone', '088218106303'),
+            'store_address' => $request->input('store_address', 'Jl. Cibatu Raya No. 55, Kel. Antapani Tengah, Kec. Antapani, Kota Bandung, Jawa Barat'),
+            'store_city' => $request->input('store_city', 'Kota Bandung'),
+            'store_lat' => (float) ($lat ?? -6.917547878001074),
+            'store_lng' => (float) ($lng ?? 107.6634056367421),
+            'gojek_instant_rate_per_km' => (float) $instantRate,
+            'gojek_instant_min_fare' => (float) $request->input('gojek_instant_min_fare', 15000),
+            'gojek_sameday_flat_under_15km' => (float) $request->input('gojek_sameday_flat_under_15km', 18000),
+            'gojek_sameday_flat_over_15km' => (float) $request->input('gojek_sameday_flat_over_15km', 25000),
+            'max_distance_gojek_km' => (float) $request->input('max_distance_gojek_km', 40),
+            'road_distance_factor' => (float) $request->input('road_distance_factor', 1.3),
+        ];
+
+        // Ensure record exists or update record #1
+        $settings = ShippingSetting::first();
+        if ($settings) {
+            $settings->update($data);
+        } else {
+            $settings = ShippingSetting::create($data);
+        }
+
+        try {
+            Cache::flush();
+        } catch (\Throwable $e) {
+            // ignore cache flush error if cache driver doesn't support flush
+        }
+
+        $fresh = $settings->fresh();
 
         return response()->json([
             'message' => 'Pengaturan pengiriman berhasil disimpan',
-            'data' => $settings,
+            'data' => $fresh,
+            'settings' => $fresh,
         ]);
     }
 

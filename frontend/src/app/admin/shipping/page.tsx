@@ -29,14 +29,15 @@ export default function AdminShippingPage() {
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Store Kitchen Form state
-  const [storeName, setStoreName] = useState("De'nish Cookies Kitchen Bandung");
+  // Store Kitchen Form state (Official De'nish Cookies Antapani Bandung coordinates)
+  const [storeName, setStoreName] = useState("De'nish Cookies Kitchen");
   const [storePhone, setStorePhone] = useState('088218106303');
-  const [storeAddress, setStoreAddress] = useState('Jl. Cibatu Raya No. 55, Desa/Kelurahan Antapani Tengah, Kec. Antapani, Kota Bandung, Provinsi Jawa Barat');
+  const [storeAddress, setStoreAddress] = useState('Jl. Cibatu Raya No. 55, Kel. Antapani Tengah, Kec. Antapani, Kota Bandung, Jawa Barat');
   const [storeCity, setStoreCity] = useState('Kota Bandung');
-  const [storeLat, setStoreLat] = useState(-6.9147);
-  const [storeLng, setStoreLng] = useState(107.6619);
+  const [storeLat, setStoreLat] = useState(-6.917547878001074);
+  const [storeLng, setStoreLng] = useState(107.6634056367421);
 
   // Gojek Parameters
   const [instantRatePerKm, setInstantRatePerKm] = useState(4000);
@@ -56,27 +57,62 @@ export default function AdminShippingPage() {
   const [paxelLarge, setPaxelLarge] = useState(40000);
   const [paxelEst, setPaxelEst] = useState('Pengiriman Reguler / Luar Kota');
 
+  const applySettings = (s: any) => {
+    if (!s) return;
+    setSettings(s);
+    if (s.store_name) setStoreName(s.store_name);
+    if (s.store_phone) setStorePhone(s.store_phone);
+    if (s.store_address) setStoreAddress(s.store_address);
+    if (s.store_city) setStoreCity(s.store_city);
+
+    const lat = typeof s.store_lat === 'number' ? s.store_lat : parseFloat(s.store_lat ?? s.latitude);
+    const lng = typeof s.store_lng === 'number' ? s.store_lng : parseFloat(s.store_lng ?? s.longitude);
+
+    if (!isNaN(lat)) setStoreLat(lat);
+    if (!isNaN(lng)) setStoreLng(lng);
+
+    if (s.gojek_instant_rate_per_km !== undefined) setInstantRatePerKm(Number(s.gojek_instant_rate_per_km));
+    if (s.gojek_instant_min_fare !== undefined) setInstantMinFare(Number(s.gojek_instant_min_fare));
+    if (s.gojek_sameday_flat_under_15km !== undefined) setSamedayUnder15(Number(s.gojek_sameday_flat_under_15km));
+    if (s.gojek_sameday_flat_over_15km !== undefined) setSamedayOver15(Number(s.gojek_sameday_flat_over_15km));
+    if (s.max_distance_gojek_km !== undefined) setMaxDistanceGojek(Number(s.max_distance_gojek_km));
+    if (s.road_distance_factor !== undefined) setRoadFactor(Number(s.road_distance_factor));
+  };
+
   const loadSettings = async () => {
     setLoading(true);
+    setErrorMessage(null);
+
+    // Read localStorage fallback only if not legacy Jakarta address
+    try {
+      const cached = localStorage.getItem('denish_shipping_settings');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (
+          parsed &&
+          !parsed.store_address?.toLowerCase().includes('duren sawit') &&
+          !parsed.store_city?.toLowerCase().includes('jakarta') &&
+          ((Number(parsed.store_lat) || 0) < -6.5)
+        ) {
+          applySettings(parsed);
+        } else {
+          localStorage.removeItem('denish_shipping_settings');
+        }
+      }
+    } catch {
+      // ignore
+    }
+
     const res = await fetchApi<{ settings: any; paxel_rates: any[] }>('/admin/shipping-settings');
-    if (res.data) {
+    if (res.data?.settings) {
       const s = res.data.settings;
-      setSettings(s);
-      setPaxelRates(res.data.paxel_rates || []);
-
-      setStoreName(s.store_name);
-      setStorePhone(s.store_phone);
-      setStoreAddress(s.store_address || '');
-      setStoreCity(s.store_city);
-      setStoreLat(s.store_lat);
-      setStoreLng(s.store_lng);
-
-      setInstantRatePerKm(s.gojek_instant_rate_per_km);
-      setInstantMinFare(s.gojek_instant_min_fare);
-      setSamedayUnder15(s.gojek_sameday_flat_under_15km);
-      setSamedayOver15(s.gojek_sameday_flat_over_15km);
-      setMaxDistanceGojek(s.max_distance_gojek_km);
-      setRoadFactor(s.road_distance_factor);
+      applySettings(s);
+      localStorage.setItem('denish_shipping_settings', JSON.stringify(s));
+      if (res.data.paxel_rates) {
+        setPaxelRates(res.data.paxel_rates);
+      }
+    } else if (res.error) {
+      setErrorMessage(res.error);
     }
     setLoading(false);
   };
@@ -95,6 +131,7 @@ export default function AdminShippingPage() {
     e.preventDefault();
     setIsSaving(true);
     setSavedSuccess(false);
+    setErrorMessage(null);
 
     const payload = {
       store_name: storeName,
@@ -111,6 +148,9 @@ export default function AdminShippingPage() {
       road_distance_factor: roadFactor,
     };
 
+    // Save to localStorage immediately so UI stays synced
+    localStorage.setItem('denish_shipping_settings', JSON.stringify(payload));
+
     const res = await fetchApi('/admin/shipping-settings', {
       method: 'PUT',
       body: JSON.stringify(payload),
@@ -118,8 +158,14 @@ export default function AdminShippingPage() {
 
     if (res.data) {
       setSavedSuccess(true);
-      setTimeout(() => setSavedSuccess(false), 3000);
-      loadSettings();
+      setTimeout(() => setSavedSuccess(false), 3500);
+      const updated = res.data.data || res.data.settings;
+      if (updated) {
+        applySettings(updated);
+        localStorage.setItem('denish_shipping_settings', JSON.stringify(updated));
+      }
+    } else {
+      setErrorMessage(res.error || 'Gagal menyimpan pengaturan ke server.');
     }
     setIsSaving(false);
   };
@@ -199,6 +245,13 @@ export default function AdminShippingPage() {
         </div>
       )}
 
+      {errorMessage && (
+        <div className="p-4 bg-red-50 text-red-800 text-xs rounded-2xl border border-red-200 flex items-center gap-2 font-bold animate-fade-in">
+          <AlertCircle className="w-5 h-5 text-brand-red flex-shrink-0" />
+          {errorMessage}
+        </div>
+      )}
+
       {/* Store Kitchen Settings & Gojek */}
       <form onSubmit={handleSaveStoreSettings} className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -270,8 +323,11 @@ export default function AdminShippingPage() {
                   type="number"
                   step="any"
                   value={storeLat}
-                  onChange={(e) => setStoreLat(parseFloat(e.target.value))}
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono"
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    setStoreLat(isNaN(val) ? 0 : val);
+                  }}
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow"
                 />
               </div>
 
@@ -283,17 +339,25 @@ export default function AdminShippingPage() {
                   type="number"
                   step="any"
                   value={storeLng}
-                  onChange={(e) => setStoreLng(parseFloat(e.target.value))}
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono"
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    setStoreLng(isNaN(val) ? 0 : val);
+                  }}
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow"
                 />
               </div>
             </div>
 
             {/* Map Pin for Kitchen */}
-            <div className="space-y-1 pt-1">
-              <label className="block text-xs font-bold text-brand-indigo">
-                Posisikan Pin Peta ke Lokasi Dapur Anda:
-              </label>
+            <div className="space-y-2 pt-1">
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold text-brand-indigo">
+                  Posisikan Pin Peta ke Lokasi Dapur Anda:
+                </label>
+                <span className="text-[11px] font-mono font-bold text-brand-red bg-amber-50 px-2.5 py-0.5 rounded-md border border-amber-200">
+                  GPS: {storeLat.toFixed(6)}, {storeLng.toFixed(6)}
+                </span>
+              </div>
               <LeafletMapPicker
                 initialLat={storeLat}
                 initialLng={storeLng}

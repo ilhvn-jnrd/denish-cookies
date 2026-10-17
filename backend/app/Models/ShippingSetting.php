@@ -37,19 +37,42 @@ class ShippingSetting extends Model
 
     public static function current(): self
     {
-        return static::firstOrCreate([], [
-            'store_name' => "De'nish Cookies Kitchen Bandung",
-            'store_phone' => "088218106303",
-            'store_address' => "Jl. Cibatu Raya No. 55, Desa/Kelurahan Antapani Tengah, Kec. Antapani, Kota Bandung, Provinsi Jawa Barat",
-            'store_city' => "Kota Bandung",
-            'store_lat' => -6.9147,
-            'store_lng' => 107.6619,
-            'gojek_instant_rate_per_km' => 4000,
-            'gojek_instant_min_fare' => 15000,
-            'gojek_sameday_flat_under_15km' => 18000,
-            'gojek_sameday_flat_over_15km' => 25000,
-            'max_distance_gojek_km' => 40.0,
-            'road_distance_factor' => 1.3,
-        ]);
+        $setting = static::first();
+        if (!$setting) {
+            return static::create([
+                'store_name' => "De'nish Cookies Kitchen",
+                'store_phone' => "088218106303",
+                'store_address' => "Jl. Cibatu Raya No. 55, Kel. Antapani Tengah, Kec. Antapani, Kota Bandung, Jawa Barat",
+                'store_city' => "Kota Bandung",
+                'store_lat' => -6.917547878001074,
+                'store_lng' => 107.6634056367421,
+                'gojek_instant_rate_per_km' => 4000,
+                'gojek_instant_min_fare' => 15000,
+                'gojek_sameday_flat_under_15km' => 18000,
+                'gojek_sameday_flat_over_15km' => 25000,
+                'max_distance_gojek_km' => 40.0,
+                'road_distance_factor' => 1.3,
+            ]);
+        }
+
+        // Auto-heal legacy database rows (e.g. initial dump with Jakarta or older Bandung coords)
+        if (
+            str_contains(strtolower($setting->store_address ?? ''), 'duren sawit') ||
+            str_contains(strtolower($setting->store_city ?? ''), 'jakarta') ||
+            $setting->store_lat > -6.5 ||
+            abs($setting->store_lat - (-6.9147)) < 0.0001
+        ) {
+            $setting->update([
+                'store_name' => "De'nish Cookies Kitchen",
+                'store_phone' => "088218106303",
+                'store_address' => "Jl. Cibatu Raya No. 55, Kel. Antapani Tengah, Kec. Antapani, Kota Bandung, Jawa Barat",
+                'store_city' => "Kota Bandung",
+                'store_lat' => -6.917547878001074,
+                'store_lng' => 107.6634056367421,
+                'gojek_instant_rate_per_km' => 4000,
+            ]);
+        }
+
+        return $setting;
     }
 }

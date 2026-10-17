@@ -71,18 +71,18 @@ return new class extends Migration
         // 5. Shipping & Store Kitchen Settings (Intra-City Gojek & Global Config)
         Schema::create('shipping_settings', function (Blueprint $table) {
             $table->id();
-            $table->string('store_name')->default('Denish Cookies Kitchen Bandung');
+            $table->string('store_name')->default("De'nish Cookies Kitchen");
             $table->string('store_phone')->default('088218106303');
             $table->text('store_address')->nullable();
             $table->string('store_city')->default('Kota Bandung');
-            $table->double('store_lat', 10, 7)->default(-6.9147); // Antapani Bandung reference coordinate
-            $table->double('store_lng', 10, 7)->default(107.6619);
+            $table->double('store_lat', 16, 12)->default(-6.917547878001074);
+            $table->double('store_lng', 16, 12)->default(107.6634056367421);
             $table->decimal('gojek_instant_rate_per_km', 10, 2)->default(4000);
             $table->decimal('gojek_instant_min_fare', 10, 2)->default(15000);
             $table->decimal('gojek_sameday_flat_under_15km', 10, 2)->default(18000);
             $table->decimal('gojek_sameday_flat_over_15km', 10, 2)->default(25000);
             $table->decimal('max_distance_gojek_km', 6, 2)->default(40.0);
-            $table->decimal('road_distance_factor', 4, 2)->default(1.3); // Road factor
+            $table->decimal('road_distance_factor', 4, 2)->default(1.3);
             $table->timestamps();
         });
 

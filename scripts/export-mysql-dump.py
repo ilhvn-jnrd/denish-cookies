@@ -84,12 +84,12 @@ CREATE TABLE IF NOT EXISTS `products` (
         'shipping_settings': """
 CREATE TABLE IF NOT EXISTS `shipping_settings` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `store_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'De\\'nish Cookies Kitchen Bandung',
+  `store_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'De\\'nish Cookies Kitchen',
   `store_phone` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '088218106303',
   `store_address` text COLLATE utf8mb4_unicode_ci,
   `store_city` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Kota Bandung',
-  `store_lat` double NOT NULL DEFAULT '-6.9147',
-  `store_lng` double NOT NULL DEFAULT '107.6619',
+  `store_lat` double NOT NULL DEFAULT '-6.917547878001074',
+  `store_lng` double NOT NULL DEFAULT '107.6634056367421',
   `gojek_instant_rate_per_km` decimal(10,2) NOT NULL DEFAULT '4000.00',
   `gojek_instant_min_fare` decimal(10,2) NOT NULL DEFAULT '15000.00',
   `gojek_sameday_flat_under_15km` decimal(10,2) NOT NULL DEFAULT '18000.00',

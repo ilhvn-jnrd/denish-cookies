@@ -80,9 +80,11 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::put('/products/{id}', [AdminController::class, 'updateProduct']);
     Route::delete('/products/{id}', [AdminController::class, 'deleteProduct']);
 
-    // Shipping & Paxel Rate Matrix
-    Route::get('/shipping-settings', [AdminController::class, 'getShippingSettings']);
-    Route::put('/shipping-settings', [AdminController::class, 'updateShippingSettings']);
+    // Shipping & Paxel Rate Matrix (Flexible support for /shipping-settings and /shipping)
+    Route::match(['get'], '/shipping-settings', [AdminController::class, 'getShippingSettings']);
+    Route::match(['post', 'put'], '/shipping-settings', [AdminController::class, 'updateShippingSettings']);
+    Route::match(['get'], '/shipping', [AdminController::class, 'getShippingSettings']);
+    Route::match(['post', 'put'], '/shipping', [AdminController::class, 'updateShippingSettings']);
     Route::post('/paxel-rates', [AdminController::class, 'storePaxelRate']);
     Route::put('/paxel-rates/{id}', [AdminController::class, 'updatePaxelRate']);
     Route::delete('/paxel-rates/{id}', [AdminController::class, 'deletePaxelRate']);

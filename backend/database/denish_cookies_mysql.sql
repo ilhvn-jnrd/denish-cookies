@@ -106,12 +106,12 @@ INSERT INTO `products` (`id`, `category_id`, `name`, `slug`, `description`, `pri
 -- --------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `shipping_settings` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `store_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'De\'nish Cookies Kitchen Bandung',
+  `store_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'De\'nish Cookies Kitchen',
   `store_phone` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '088218106303',
   `store_address` text COLLATE utf8mb4_unicode_ci,
   `store_city` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Kota Bandung',
-  `store_lat` double NOT NULL DEFAULT '-6.9147',
-  `store_lng` double NOT NULL DEFAULT '107.6619',
+  `store_lat` double NOT NULL DEFAULT '-6.917547878001074',
+  `store_lng` double NOT NULL DEFAULT '107.6634056367421',
   `gojek_instant_rate_per_km` decimal(10,2) NOT NULL DEFAULT '4000.00',
   `gojek_instant_min_fare` decimal(10,2) NOT NULL DEFAULT '15000.00',
   `gojek_sameday_flat_under_15km` decimal(10,2) NOT NULL DEFAULT '18000.00',
@@ -125,7 +125,7 @@ CREATE TABLE IF NOT EXISTS `shipping_settings` (
 
 -- Dumping data for table `shipping_settings`
 INSERT INTO `shipping_settings` (`id`, `store_name`, `store_phone`, `store_address`, `store_city`, `store_lat`, `store_lng`, `gojek_instant_rate_per_km`, `gojek_instant_min_fare`, `gojek_sameday_flat_under_15km`, `gojek_sameday_flat_over_15km`, `max_distance_gojek_km`, `road_distance_factor`, `created_at`, `updated_at`) VALUES
-  (1, 'De\'nish Cookies Kitchen Bandung', '088218106303', 'Jl. Cibatu Raya No. 55, Desa/Kelurahan Antapani Tengah, Kec. Antapani, Kota Bandung, Provinsi Jawa Barat', 'Kota Bandung', -6.9147, 107.6619, 4000, 15000, 18000, 25000, 40, 1.3, '2026-10-17 21:42:59', '2026-10-17 21:42:59');
+  (1, 'De\'nish Cookies Kitchen', '088218106303', 'Jl. Cibatu Raya No. 55, Kel. Antapani Tengah, Kec. Antapani, Kota Bandung, Jawa Barat', 'Kota Bandung', -6.917547878001074, 107.6634056367421, 4000, 15000, 18000, 25000, 40, 1.3, '2026-10-18 06:00:00', '2026-10-18 06:00:00');
 
 -- --------------------------------------------------------
 -- Table structure for table `paxel_rates`
@@ -191,7 +191,7 @@ CREATE TABLE IF NOT EXISTS `user_addresses` (
 
 -- Dumping data for table `user_addresses`
 INSERT INTO `user_addresses` (`id`, `user_id`, `label`, `recipient_name`, `phone`, `full_address`, `province`, `city_name`, `postal_code`, `latitude`, `longitude`, `is_in_city`, `is_default`, `created_at`, `updated_at`) VALUES
-  (1, 2, 'Rumah (Bandung)', 'Budi Santoso', '081311223344', 'Jl. Cibatu Raya No. 55, Antapani Tengah, Antapani', 'Jawa Barat', 'Kota Bandung', '40291', -6.9147, 107.6619, 1, 1, '2026-10-17 21:42:58', '2026-10-17 21:42:58'),
+  (1, 2, 'Rumah (Bandung)', 'Budi Santoso', '081311223344', 'Jl. Cibatu Raya No. 55, Kel. Antapani Tengah, Kec. Antapani, Kota Bandung, Jawa Barat', 'Jawa Barat', 'Kota Bandung', '40291', -6.917547878001074, 107.6634056367421, 1, 1, '2026-10-18 06:00:00', '2026-10-18 06:00:00'),
   (2, 2, 'Kantor (Bandung)', 'Budi Santoso (Kantor)', '081311223344', 'Jl. R.E. Martadinata No. 55, Citarum, Bandung Wetan', 'Jawa Barat', 'Bandung', '40115', -6.90782, 107.61895, 0, 0, '2026-10-17 21:42:58', '2026-10-17 21:42:58');
 
 -- --------------------------------------------------------
@@ -234,7 +234,7 @@ CREATE TABLE IF NOT EXISTS `orders` (
 
 -- Dumping data for table `orders`
 INSERT INTO `orders` (`id`, `order_number`, `user_id`, `recipient_name`, `recipient_phone`, `shipping_address`, `shipping_city`, `shipping_province`, `shipping_postal_code`, `shipping_lat`, `shipping_lng`, `courier_type`, `courier_service_name`, `distance_km`, `total_weight_grams`, `box_breakdown`, `subtotal`, `shipping_cost`, `gross_amount`, `payment_status`, `order_status`, `snap_token`, `tracking_number`, `notes`, `paid_at`, `shipped_at`, `completed_at`, `created_at`, `updated_at`) VALUES
-  (1, 'DC-20261016-A101', 2, 'Budi Santoso', '081311223344', 'Jl. Cibatu Raya No. 55, Antapani Tengah, Antapani', 'Kota Bandung', 'Jawa Barat', '40291', -6.9147, 107.6619, 'gojek_instant', 'Gojek Instant Driver (6.2 km)', 6.2, 1000, 'Paper Bag De\'nish + Bubble Wrap', 280000, 18600, 298600, 'paid', 'shipped', NULL, 'GK-98234-JKT', 'Tolong titip di pos satpam bila rumah kosong.', '2026-10-16 21:42:59', '2026-10-17 16:42:59', NULL, '2026-10-17 21:42:59', '2026-10-17 21:42:59'),
+  (1, 'DC-20261016-A101', 2, 'Budi Santoso', '081311223344', 'Jl. Cibatu Raya No. 55, Kel. Antapani Tengah, Kec. Antapani, Kota Bandung, Jawa Barat', 'Kota Bandung', 'Jawa Barat', '40291', -6.917547878001074, 107.6634056367421, 'gojek_instant', 'Gojek Instant Driver (6.2 km)', 6.2, 1000, 'Paper Bag De\'nish + Bubble Wrap', 280000, 18600, 298600, 'paid', 'shipped', NULL, 'GK-98234-JKT', 'Tolong titip di pos satpam bila rumah kosong.', '2026-10-16 21:42:59', '2026-10-17 16:42:59', NULL, '2026-10-17 21:42:59', '2026-10-17 21:42:59'),
   (2, 'DC-20261017-B202', 2, 'Ibu Ratna Dewi', '081288776655', 'Jl. R.E. Martadinata No. 55, Citarum, Bandung Wetan', 'Bandung', 'Jawa Barat', '40115', -6.90782, 107.61895, 'paxel', 'Paxel Delivery (1 Box Large)', NULL, 2200, '1 Box Large (Kapasitas s/d 5 kg)', 495000, 40000, 535000, 'paid', 'processing', NULL, 'PXL-BDG-2026101701', 'Untuk hadiah ulang tahun mertua. Mohon dipastikan aman.', '2026-10-17 19:42:59', NULL, NULL, '2026-10-17 21:42:59', '2026-10-17 21:42:59');
 
 -- --------------------------------------------------------

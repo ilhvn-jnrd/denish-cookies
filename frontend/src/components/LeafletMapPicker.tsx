@@ -11,8 +11,8 @@ interface LeafletMapPickerProps {
 }
 
 export default function LeafletMapPicker({
-  initialLat = -6.9147, // Default Antapani Bandung / Store
-  initialLng = 107.6619,
+  initialLat = -6.917547878001074, // Default De'nish Cookies Kitchen Antapani Bandung
+  initialLng = 107.6634056367421,
   onLocationSelect,
   height = '350px',
 }: LeafletMapPickerProps) {
@@ -28,6 +28,32 @@ export default function LeafletMapPicker({
   const [isSearching, setIsSearching] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
+
+  // Synchronize when initialLat or initialLng props change (e.g. from parent inputs or API load)
+  useEffect(() => {
+    if (
+      typeof initialLat === 'number' &&
+      !isNaN(initialLat) &&
+      typeof initialLng === 'number' &&
+      !isNaN(initialLng)
+    ) {
+      setCurrentCoords((prev) => {
+        if (
+          Math.abs(prev.lat - initialLat) > 0.000001 ||
+          Math.abs(prev.lng - initialLng) > 0.000001
+        ) {
+          if (markerRef.current) {
+            markerRef.current.setLatLng([initialLat, initialLng]);
+          }
+          if (mapInstanceRef.current) {
+            mapInstanceRef.current.setView([initialLat, initialLng], mapInstanceRef.current.getZoom() || 15);
+          }
+          return { lat: initialLat, lng: initialLng };
+        }
+        return prev;
+      });
+    }
+  }, [initialLat, initialLng]);
 
   useEffect(() => {
     let isMounted = true;
@@ -48,10 +74,13 @@ export default function LeafletMapPicker({
       if (!isMounted) return;
 
       if (!mapInstanceRef.current && mapContainerRef.current) {
+        const targetLat = typeof initialLat === 'number' && !isNaN(initialLat) ? initialLat : -6.917547878001074;
+        const targetLng = typeof initialLng === 'number' && !isNaN(initialLng) ? initialLng : 107.6634056367421;
+
         const map = L.map(mapContainerRef.current, {
           scrollWheelZoom: false,
           touchZoom: true,
-        }).setView([currentCoords.lat, currentCoords.lng], 14);
+        }).setView([targetLat, targetLng], 15);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
@@ -68,24 +97,35 @@ export default function LeafletMapPicker({
           iconAnchor: [18, 36],
         });
 
-        const marker = L.marker([currentCoords.lat, currentCoords.lng], {
+        const marker = L.marker([targetLat, targetLng], {
           draggable: true,
           icon: customIcon,
         }).addTo(map);
 
-        marker.on('dragend', (e: any) => {
-          const position = e.target.getLatLng();
-          const newCoords = { lat: Number(position.lat.toFixed(6)), lng: Number(position.lng.toFixed(6)) };
+        const updateFromLatLng = (lat: number, lng: number) => {
+          const newCoords = {
+            lat: Number(lat.toFixed(6)),
+            lng: Number(lng.toFixed(6)),
+          };
           setCurrentCoords(newCoords);
           onLocationSelect(newCoords);
+        };
+
+        // Real-time update while dragging
+        marker.on('drag', (e: any) => {
+          const position = e.target.getLatLng();
+          updateFromLatLng(position.lat, position.lng);
+        });
+
+        marker.on('dragend', (e: any) => {
+          const position = e.target.getLatLng();
+          updateFromLatLng(position.lat, position.lng);
         });
 
         map.on('click', (e: any) => {
           const { lat, lng } = e.latlng;
-          const newCoords = { lat: Number(lat.toFixed(6)), lng: Number(lng.toFixed(6)) };
           marker.setLatLng([lat, lng]);
-          setCurrentCoords(newCoords);
-          onLocationSelect(newCoords);
+          updateFromLatLng(lat, lng);
         });
 
         mapInstanceRef.current = map;
@@ -226,7 +266,7 @@ export default function LeafletMapPicker({
           <div className="flex items-center gap-1.5 truncate">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
             <span className="font-mono font-medium text-brand-indigo truncate text-[10px] sm:text-xs">
-              {currentCoords.lat.toFixed(5)}, {currentCoords.lng.toFixed(5)}
+              {(typeof currentCoords.lat === 'number' && !isNaN(currentCoords.lat) ? currentCoords.lat : initialLat).toFixed(6)}, {(typeof currentCoords.lng === 'number' && !isNaN(currentCoords.lng) ? currentCoords.lng : initialLng).toFixed(6)}
             </span>
           </div>
           <span className="text-[10px] sm:text-[11px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md flex-shrink-0 font-bold">

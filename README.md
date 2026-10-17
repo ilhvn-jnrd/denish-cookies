@@ -57,9 +57,9 @@ Diturunkan langsung dari logo resmi **De'nish Cookies**:
 De'nish Cookies tidak menggunakan kurir reguler sembarangan untuk mencegah kue hancur. Pengiriman ditangani oleh 2 kurir khusus:
 
 ### A. Gojek Dalam Kota (Intra-City / Radius &le; 40 km)
-- Titik koordinat dapur disimpan di tabel `shipping_settings` (Duren Sawit, Jakarta Timur: `-6.225014, 106.900447`).
+- Titik koordinat dapur disimpan di tabel `shipping_settings` (Antapani Tengah, Kota Bandung: `-6.917547878001074, 107.6634056367421`).
 - Jarak dihitung akurat dari koordinat GPS pin Leaflet pelanggan menggunakan **Haversine Great-Circle Formula** dikalikan **1.3x Road Factor** (representasi rute jalan riil).
-1. **Gojek Instant:** Maksimal 20 kg (`20.000 gram`). Tarif = `max(Rp 15.000, ceil(jarak_km) * Rp 3.000)`. Tiba dalam 1-3 jam.
+1. **Gojek Instant:** Maksimal 20 kg (`20.000 gram`). Tarif = `max(Rp 15.000, ceil(jarak_km) * Rp 4.000)`. Tiba dalam 1-3 jam.
 2. **Gojek SameDay:** Maksimal 7 kg (`7.000 gram`). Tarif flat: jarak &le; 15 km = Rp 18.000, jarak 15 - 40 km = Rp 25.000.
 
 ### B. Paxel Luar Kota (Inter-City / Cold-Chain & Safe Box)
