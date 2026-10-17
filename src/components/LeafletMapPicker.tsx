@@ -133,8 +133,8 @@ export default function LeafletMapPicker({
   };
 
   // Search Address via OpenStreetMap Nominatim
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSearch = async (e?: React.SyntheticEvent) => {
+    if (e) e.preventDefault();
     if (!searchQuery.trim()) return;
 
     setIsSearching(true);
@@ -169,23 +169,30 @@ export default function LeafletMapPicker({
     <div className="flex flex-col gap-2">
       {/* Search and Action Bar */}
       <div className="flex flex-col sm:flex-row gap-2">
-        <form onSubmit={handleSearch} className="relative flex-1 flex">
+        <div className="relative flex-1 flex">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleSearch();
+              }
+            }}
             placeholder="Cari jalan, kelurahan, atau kota tujuan..."
             className="w-full pl-9 pr-20 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-brand-yellow shadow-sm"
           />
           <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
           <button
-            type="submit"
+            type="button"
+            onClick={handleSearch}
             disabled={isSearching}
             className="absolute right-1.5 top-1.5 px-3 py-1.5 bg-brand-indigo text-white rounded-lg text-xs font-semibold hover:bg-brand-indigoLight transition"
           >
             {isSearching ? 'Mencari...' : 'Cari'}
           </button>
-        </form>
+        </div>
 
         <button
           type="button"
