@@ -17,9 +17,9 @@ class MidtransService
 
     public function __construct()
     {
-        $this->serverKey = env('MIDTRANS_SERVER_KEY', 'sandbox-mock');
-        $this->clientKey = env('MIDTRANS_CLIENT_KEY', 'SB-Mid-client-mock');
-        $this->isProduction = (bool) env('MIDTRANS_IS_PRODUCTION', false);
+        $this->serverKey = config('services.midtrans.server_key', env('MIDTRANS_SERVER_KEY', 'sandbox-mock'));
+        $this->clientKey = config('services.midtrans.client_key', env('MIDTRANS_CLIENT_KEY', 'SB-Mid-client-mock'));
+        $this->isProduction = (bool) config('services.midtrans.is_production', env('MIDTRANS_IS_PRODUCTION', false));
 
         $this->snapApiUrl = $this->isProduction
             ? 'https://app.midtrans.com/snap/v1/transactions'
@@ -28,6 +28,11 @@ class MidtransService
 
     public function isMockMode(): bool
     {
+        // Production environment MUST NEVER run in mock mode
+        if (app()->environment('production')) {
+            return false;
+        }
+
         return empty($this->serverKey) || $this->serverKey === 'sandbox-mock';
     }
 
@@ -122,9 +127,13 @@ class MidtransService
             Log::error('Midtrans Snap Error: ' . $response->body());
             throw new Exception('Midtrans API error: ' . $response->body());
         } catch (Exception $e) {
-            Log::warning('Midtrans request failed, falling back to mock token: ' . $e->getMessage());
+            Log::warning('Midtrans request failed: ' . $e->getMessage());
 
-            // Fallback so checkout isn't blocked on localhost if keys are not live
+            if (app()->environment('production')) {
+                throw new Exception('Gagal memproses transaksi Midtrans di lingkungan produksi: ' . $e->getMessage());
+            }
+
+            // Fallback so checkout isn't blocked on localhost/sandbox demo if keys are not live
             $fallbackToken = 'SNAP-FALLBACK-' . strtoupper(Str::random(24));
             $order->update(['snap_token' => $fallbackToken]);
 
@@ -138,16 +147,22 @@ class MidtransService
     }
 
     /**
-     * Verify signature key for Midtrans Webhook.
+     * Verify signature key for Midtrans Webhook using timing-safe hash_equals.
      * signature = SHA512(order_id + status_code + gross_amount + server_key)
      */
     public function verifySignature(string $orderId, string $statusCode, string $grossAmount, string $signatureKey): bool
     {
-        if ($this->isMockMode()) {
+        $expectedSignature = hash('sha512', $orderId . $statusCode . $grossAmount . $this->serverKey);
+
+        if (hash_equals($expectedSignature, $signatureKey)) {
             return true;
         }
 
-        $computedSignature = hash('sha512', $orderId . $statusCode . $grossAmount . $this->serverKey);
-        return hash_equals($computedSignature, $signatureKey);
+        // Allow mock bypass only in non-production when explicitly using sandbox mock token
+        if (!app()->environment('production') && $this->isMockMode() && in_array($signatureKey, ['mock-bypass', 'sandbox-mock-signature'], true)) {
+            return true;
+        }
+
+        return false;
     }
 }

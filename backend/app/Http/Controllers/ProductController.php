@@ -13,16 +13,17 @@ class ProductController extends Controller
     {
         $query = Product::with('category')->where('is_active', true);
 
-        // Filter by category slug
+        // Filter by category slug (alphanumeric and dashes only)
         if ($request->filled('category')) {
-            $query->whereHas('category', function ($q) use ($request) {
-                $q->where('slug', $request->category);
+            $categorySlug = preg_replace('/[^a-z0-9\-]/i', '', (string) $request->category);
+            $query->whereHas('category', function ($q) use ($categorySlug) {
+                $q->where('slug', $categorySlug);
             });
         }
 
-        // Filter by search keyword
+        // Filter by search keyword with wildcard escaping
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], (string) $request->search);
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%")
                   ->orWhere('description', 'LIKE', "%{$search}%");
@@ -43,11 +44,18 @@ class ProductController extends Controller
             $query->where('is_featured', true);
         }
 
-        // Sorting
-        if ($request->sort === 'price_asc') {
+        // Strictly whitelisted sorting
+        $sort = $request->input('sort');
+        if ($sort === 'price_asc') {
             $query->orderBy('price', 'asc');
-        } elseif ($request->sort === 'price_desc') {
+        } elseif ($sort === 'price_desc') {
             $query->orderBy('price', 'desc');
+        } elseif ($sort === 'name_asc') {
+            $query->orderBy('name', 'asc');
+        } elseif ($sort === 'name_desc') {
+            $query->orderBy('name', 'desc');
+        } elseif ($sort === 'oldest') {
+            $query->orderBy('id', 'asc');
         } else {
             $query->orderBy('is_featured', 'desc')->orderBy('id', 'desc');
         }

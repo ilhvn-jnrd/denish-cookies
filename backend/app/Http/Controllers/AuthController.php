@@ -19,13 +19,14 @@ class AuthController extends Controller
             'password' => 'required|string|min:6',
         ]);
 
-        $user = User::create([
+        $user = new User([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'] ?? null,
-            'role' => 'customer',
             'password' => Hash::make($validated['password']),
         ]);
+        $user->role = 'customer';
+        $user->save();
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -78,6 +79,46 @@ class AuthController extends Controller
 
         return response()->json([
             'user' => $user,
+        ]);
+    }
+
+    /**
+     * Update customer profile safely - strictly ignores 'role'.
+     */
+    public function updateProfile(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'phone' => 'nullable|string|max:30',
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        if (isset($validated['name'])) {
+            $user->name = $validated['name'];
+        }
+
+        if (array_key_exists('phone', $validated)) {
+            $user->phone = $validated['phone'];
+        }
+
+        if (!empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+        }
+
+        // Never modify $user->role!
+        $user->save();
+
+        return response()->json([
+            'message' => 'Profil berhasil diperbarui',
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'role' => $user->role,
+            ],
         ]);
     }
 

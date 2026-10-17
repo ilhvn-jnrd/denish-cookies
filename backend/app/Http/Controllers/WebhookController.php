@@ -40,9 +40,9 @@ class WebhookController extends Controller
         }
 
         // Verify Signature
-        if ($signatureKey && !$this->midtransService->verifySignature($orderId, $statusCode, $grossAmount, $signatureKey)) {
+        if (!$signatureKey || !$this->midtransService->verifySignature((string) $orderId, (string) $statusCode, (string) $grossAmount, (string) $signatureKey)) {
             Log::warning("Midtrans Webhook Signature Mismatch for Order: {$orderId}");
-            return response()->json(['message' => 'Invalid signature key'], 403);
+            return response()->json(['message' => 'Invalid or missing signature key'], 403);
         }
 
         $order = Order::with('items')->where('order_number', $orderId)->first();
@@ -74,31 +74,35 @@ class WebhookController extends Controller
     }
 
     /**
-     * Mark order as paid and idempotently deduct stock.
+     * Mark order as paid and idempotently deduct stock with pessimistic locking.
      */
     protected function markOrderAsPaid(Order $order): void
     {
-        // Check if already processed to ensure idempotency
-        if ($order->payment_status === 'paid') {
-            return;
-        }
-
         DB::transaction(function () use ($order) {
-            $order->update([
+            $lockedOrder = Order::with('items')
+                ->where('id', $order->id)
+                ->lockForUpdate()
+                ->first();
+
+            if (!$lockedOrder || $lockedOrder->payment_status === 'paid') {
+                return;
+            }
+
+            $lockedOrder->update([
                 'payment_status' => 'paid',
                 'order_status' => 'paid',
                 'paid_at' => Carbon::now(),
             ]);
 
-            // Deduct stock idempotently for ready stock items
-            foreach ($order->items as $item) {
-                $product = Product::find($item->product_id);
+            // Deduct stock idempotently for ready stock items with row lock
+            foreach ($lockedOrder->items as $item) {
+                $product = Product::lockForUpdate()->find($item->product_id);
                 if ($product && !$item->is_preorder) {
                     $product->decrement('stock', min($product->stock, $item->quantity));
                 }
             }
-        });
 
-        Log::info("Order {$order->order_number} marked as PAID and stock deducted.");
+            Log::info("Order {$lockedOrder->order_number} marked as PAID and stock deducted.");
+        });
     }
 }

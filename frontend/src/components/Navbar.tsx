@@ -10,6 +10,11 @@ export default function Navbar() {
   const { totalItems, setIsCartOpen } = useCart();
   const { user, isAdmin, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-brand-yellow/30 shadow-sm">
@@ -68,7 +73,7 @@ export default function Navbar() {
             <Link href="/#tentang" className="hover:text-brand-red transition">
               Tentang Kami
             </Link>
-            {user && (
+            {mounted && user && (
               <Link href="/orders" className="hover:text-brand-red transition">
                 Pesanan Saya
               </Link>
@@ -77,7 +82,7 @@ export default function Navbar() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
-            {isAdmin && (
+            {mounted && isAdmin && (
               <Link
                 href="/admin"
                 className="px-3.5 py-2 bg-purple-100 text-brand-indigo hover:bg-purple-200 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition border border-purple-300"
@@ -87,7 +92,7 @@ export default function Navbar() {
               </Link>
             )}
 
-            {user ? (
+            {mounted && user ? (
               <div className="flex items-center gap-2">
                 <Link
                   href="/profile"
@@ -119,7 +124,7 @@ export default function Navbar() {
               aria-label="Keranjang Belanja"
             >
               <ShoppingBag className="w-5 h-5" />
-              {totalItems > 0 && (
+              {mounted && totalItems > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 bg-brand-red text-white text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-cookieRed animate-bounce">
                   {totalItems}
                 </span>
@@ -134,7 +139,7 @@ export default function Navbar() {
               className="relative p-2 bg-brand-yellow text-brand-indigo rounded-xl"
             >
               <ShoppingBag className="w-5 h-5" />
-              {totalItems > 0 && (
+              {mounted && totalItems > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 bg-brand-red text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center">
                   {totalItems}
                 </span>
@@ -183,7 +188,7 @@ export default function Navbar() {
             >
               Tentang Kami
             </Link>
-            {user && (
+            {mounted && user && (
               <Link
                 href="/orders"
                 onClick={() => setMobileMenuOpen(false)}
@@ -192,7 +197,7 @@ export default function Navbar() {
                 Pesanan Saya
               </Link>
             )}
-            {isAdmin && (
+            {mounted && isAdmin && (
               <Link
                 href="/admin"
                 onClick={() => setMobileMenuOpen(false)}
@@ -204,7 +209,7 @@ export default function Navbar() {
           </nav>
 
           <div className="pt-3 border-t border-gray-100">
-            {user ? (
+            {mounted && user ? (
               <div className="flex items-center justify-between">
                 <Link
                   href="/profile"
