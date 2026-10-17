@@ -106,7 +106,7 @@ export default function OrderDetailPage() {
           </button>
 
           <a
-            href={`https://wa.me/6281298765432?text=${whatsappMessage}`}
+            href={`https://wa.me/6288218106303?text=${whatsappMessage}`}
             target="_blank"
             rel="noopener noreferrer"
             className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-sm"

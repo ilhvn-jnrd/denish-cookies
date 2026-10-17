@@ -245,10 +245,10 @@ export default function ProductDetailPage() {
               Pilihan Pengiriman Tersedia:
             </div>
             <p>
-              • <strong>Gojek Instant &amp; SameDay:</strong> Wilayah Jadetabek langsung sampai dari Kitchen Duren Sawit.
+              • <strong>Gojek Instant &amp; SameDay:</strong> Wilayah Kota Bandung &amp; sekitarnya langsung sampai dari Kitchen Antapani, Kota Bandung.
             </p>
             <p>
-              • <strong>Paxel Cold-Chain / Safe Box:</strong> Pengiriman luar kota (Bandung, Semarang, Surabaya, Bali, dll) dengan kardus pelindung khusus anti remuk.
+              • <strong>Paxel Safe-Box Khusus Makanan:</strong> Pengiriman luar kota (Jabodetabek, Semarang, Surabaya, Bali, dll) dengan kardus pelindung khusus anti remuk dan penanganan Food Safe.
             </p>
           </div>
         </div>

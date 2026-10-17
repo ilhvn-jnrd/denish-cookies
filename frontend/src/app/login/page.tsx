@@ -39,7 +39,7 @@ export default function LoginPage() {
       {/* Brand Header */}
       <div className="text-center space-y-2">
         <div className="w-16 h-16 mx-auto rounded-3xl overflow-hidden border-2 border-brand-yellow shadow-md bg-white">
-          <img src="/logo.jpg" alt="De'nish Cookies" className="w-full h-full object-cover" />
+          <img src="/logo.png" alt="De'nish Cookies" className="w-full h-full object-cover" />
         </div>
         <h1 className="font-heading font-black text-2xl text-brand-indigo">
           Masuk ke Akun Anda

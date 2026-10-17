@@ -46,12 +46,12 @@ export default function CheckoutPage() {
   const [recipientName, setRecipientName] = useState(user?.name || '');
   const [recipientPhone, setRecipientPhone] = useState(user?.phone || '');
   const [fullAddress, setFullAddress] = useState('');
-  const [province, setProvince] = useState('DKI Jakarta');
-  const [cityName, setCityName] = useState('Jakarta Timur');
-  const [postalCode, setPostalCode] = useState('');
+  const [province, setProvince] = useState('Jawa Barat');
+  const [cityName, setCityName] = useState('Kota Bandung');
+  const [postalCode, setPostalCode] = useState('40291');
   const [coords, setCoords] = useState<{ lat: number; lng: number }>({
-    lat: -6.228540,
-    lng: 106.943180,
+    lat: -6.9147,
+    lng: 107.6619,
   });
   const [notes, setNotes] = useState('');
 
@@ -112,7 +112,7 @@ export default function CheckoutPage() {
       setShippingError(null);
 
       const payload = {
-        city_name: cityName || 'Jakarta Timur',
+        city_name: cityName || 'Kota Bandung',
         latitude: coords.lat,
         longitude: coords.lng,
         total_weight_grams: totalWeightGrams,
@@ -408,7 +408,7 @@ export default function CheckoutPage() {
                   required
                   value={recipientPhone}
                   onChange={(e) => setRecipientPhone(e.target.value)}
-                  placeholder="081298765432"
+                  placeholder="088218106303"
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow"
                 />
               </div>
@@ -423,7 +423,7 @@ export default function CheckoutPage() {
                 rows={2}
                 value={fullAddress}
                 onChange={(e) => setFullAddress(e.target.value)}
-                placeholder="Jl. Robusta Raya Blok Q3 No. 18, Duren Sawit"
+                placeholder="Jl. Cibatu Raya No. 55, Antapani, Kota Bandung"
                 className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow"
               />
             </div>
@@ -438,7 +438,7 @@ export default function CheckoutPage() {
                   required
                   value={province}
                   onChange={(e) => setProvince(e.target.value)}
-                  placeholder="DKI Jakarta / Jawa Barat"
+                  placeholder="Jawa Barat"
                   className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow"
                 />
               </div>
@@ -452,7 +452,7 @@ export default function CheckoutPage() {
                   required
                   value={cityName}
                   onChange={(e) => setCityName(e.target.value)}
-                  placeholder="Jakarta Timur / Bandung"
+                  placeholder="Kota Bandung"
                   className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow"
                 />
               </div>
@@ -465,7 +465,7 @@ export default function CheckoutPage() {
                   type="text"
                   value={postalCode}
                   onChange={(e) => setPostalCode(e.target.value)}
-                  placeholder="13460"
+                  placeholder="40291"
                   className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow"
                 />
               </div>
@@ -599,7 +599,7 @@ export default function CheckoutPage() {
                   <div className="flex items-center gap-2.5 truncate">
                     <div className="w-10 h-10 rounded-xl overflow-hidden bg-amber-50 flex-shrink-0">
                       <img
-                        src={item.product.image_url || '/logo.jpg'}
+                        src={item.product.image_url || '/logo.png'}
                         alt={item.product.name}
                         className="w-full h-full object-cover"
                       />

@@ -13,7 +13,7 @@ export default function Footer() {
           <div className="space-y-4 md:col-span-1">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-2xl overflow-hidden bg-white border-2 border-brand-yellow shadow-md flex-shrink-0">
-                <img src="/logo.jpg" alt="De'nish Cookies" className="w-full h-full object-cover" />
+                <img src="/logo.png" alt="De'nish Cookies" className="w-full h-full object-cover" />
               </div>
               <div>
                 <h3 className="font-heading font-extrabold text-xl text-white">
@@ -25,7 +25,7 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-xs text-indigo-200 leading-relaxed">
-              Pelopor kue kering homemade premium dengan 100% Wijsman Butter asli. Diracik dengan resep otentik warisan keluarga tanpa pemanis buatan.
+              Pelopor kue kering homemade premium dengan 100% Wijsman Butter asli. Diracik dengan standar higienis tinggi tanpa bahan pemanis buatan.
             </p>
             <div className="flex items-center gap-2 text-xs text-brand-yellow font-bold">
               <ShieldCheck className="w-4 h-4 text-emerald-400" /> Bahan Pilihan Halal &amp; Higienis
@@ -35,32 +35,27 @@ export default function Footer() {
           {/* Quick Links */}
           <div className="space-y-3">
             <h4 className="font-heading font-bold text-sm text-brand-yellow uppercase tracking-wider">
-              Koleksi Kue
+              Koleksi Favorit
             </h4>
             <ul className="space-y-2 text-xs text-indigo-200">
               <li>
                 <Link href="/#katalog" className="hover:text-brand-yellow transition">
-                  Nastar Wisman Spesial
+                  Kastangel
                 </Link>
               </li>
               <li>
                 <Link href="/#katalog" className="hover:text-brand-yellow transition">
-                  Kastengel Keju Edam Asli
+                  Nastar Keju
                 </Link>
               </li>
               <li>
                 <Link href="/#katalog" className="hover:text-brand-yellow transition">
-                  Putri Salju Kacang Mede
+                  Bokkepootjes
                 </Link>
               </li>
               <li>
                 <Link href="/#katalog" className="hover:text-brand-yellow transition">
-                  Double Choco Almond
-                </Link>
-              </li>
-              <li>
-                <Link href="/#katalog" className="hover:text-brand-yellow transition">
-                  Hampers De&apos;nish Royal Box
+                  Sagu Keju
                 </Link>
               </li>
             </ul>
@@ -76,14 +71,14 @@ export default function Footer() {
                 <Truck className="w-4 h-4 text-brand-yellow flex-shrink-0 mt-0.5" />
                 <div>
                   <strong className="text-white block">Gojek Instant &amp; SameDay</strong>
-                  <span>Khusus wilayah Jadetabek (Radius s/d 40 km dari Kitchen Duren Sawit).</span>
+                  <span>Khusus wilayah Kota Bandung &amp; sekitarnya (Radius s/d 40 km dari Kitchen Antapani).</span>
                 </div>
               </li>
               <li className="flex items-start gap-2">
                 <Truck className="w-4 h-4 text-brand-red flex-shrink-0 mt-0.5" />
                 <div>
-                  <strong className="text-white block">Paxel Cold-Chain / Box Khusus</strong>
-                  <span>Antar kota se-Pulau Jawa, Bali, Medan, Makassar (1 hari sampai).</span>
+                  <strong className="text-white block">Paxel Safe-Box Khusus Makanan</strong>
+                  <span>Pengiriman luar kota aman dengan penanganan khusus paket makanan (Food Safe) agar kualitas kue tetap terjaga hingga sampai di tujuan.</span>
                 </div>
               </li>
             </ul>
@@ -97,22 +92,22 @@ export default function Footer() {
             <ul className="space-y-2.5 text-xs text-indigo-200">
               <li className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-brand-red flex-shrink-0 mt-0.5" />
-                <span>Jl. Robusta Raya / Pahlawan Revolusi No. 42, Duren Sawit, Jakarta Timur, 13430</span>
+                <span>Jl. Cibatu Raya No. 55, Kel. Antapani Tengah, Kec. Antapani, Kota Bandung, Jawa Barat</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                 <a
-                  href="https://wa.me/6281298765432"
+                  href="https://wa.me/6288218106303"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-brand-yellow transition font-bold"
                 >
-                  WhatsApp: 0812-9876-5432
+                  WhatsApp: +62 882-1810-6303
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-brand-yellow flex-shrink-0" />
-                <span>order@denishcookies.com</span>
+                <span>denishcookie@gmail.com</span>
               </li>
             </ul>
           </div>
@@ -124,13 +119,6 @@ export default function Footer() {
             &copy; 2026 <strong className="text-white">De&apos;nish Cookies</strong>. Made with{' '}
             <Heart className="w-3.5 h-3.5 text-brand-red inline fill-brand-red" /> for Indonesian SME Bakery.
           </p>
-          <div className="flex items-center gap-4 text-[11px]">
-            <span>Deployment Ready: Hostinger Unlimited &amp; Node.js</span>
-            <span>•</span>
-            <Link href="/admin" className="hover:text-brand-yellow underline">
-              Admin Portal
-            </Link>
-          </div>
         </div>
       </div>
     </footer>

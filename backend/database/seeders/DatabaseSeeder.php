@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
         // 1. Users
         $admin = User::firstOrCreate(['email' => 'admin@denishcookies.com'], [
             'name' => "De'nish Owner / Admin",
-            'phone' => '081298765432',
+            'phone' => '088218106303',
             'role' => 'admin',
             'password' => Hash::make('password123'),
         ]);
@@ -38,15 +38,15 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // 2. User Addresses for Customer
-        UserAddress::firstOrCreate(['user_id' => $customer->id, 'label' => 'Rumah (Jakarta Timur)'], [
+        UserAddress::firstOrCreate(['user_id' => $customer->id, 'label' => 'Rumah (Bandung)'], [
             'recipient_name' => 'Budi Santoso',
             'phone' => '081311223344',
-            'full_address' => 'Jl. Robusta Raya Blok Q3 No. 18, Pondok Kopi, Duren Sawit',
-            'province' => 'DKI Jakarta',
-            'city_name' => 'Jakarta Timur',
-            'postal_code' => '13460',
-            'latitude' => -6.228540,
-            'longitude' => 106.943180,
+            'full_address' => 'Jl. Cibatu Raya No. 55, Antapani Tengah, Antapani',
+            'province' => 'Jawa Barat',
+            'city_name' => 'Kota Bandung',
+            'postal_code' => '40291',
+            'latitude' => -6.9147,
+            'longitude' => 107.6619,
             'is_in_city' => true,
             'is_default' => true,
         ]);
@@ -207,25 +207,25 @@ class DatabaseSeeder extends Seeder
 
         // 5. Paxel Rates Matrix (15+ Major Indonesian Cities)
         $paxelData = [
-            ['city_name' => 'Jakarta Timur', 'province' => 'DKI Jakarta', 'small_rate' => 18000, 'medium_rate' => 25000, 'large_rate' => 32000, 'estimated_days' => 'Sameday / 1 Hari'],
-            ['city_name' => 'Jakarta Selatan', 'province' => 'DKI Jakarta', 'small_rate' => 18000, 'medium_rate' => 25000, 'large_rate' => 32000, 'estimated_days' => 'Sameday / 1 Hari'],
-            ['city_name' => 'Jakarta Pusat', 'province' => 'DKI Jakarta', 'small_rate' => 18000, 'medium_rate' => 25000, 'large_rate' => 32000, 'estimated_days' => 'Sameday / 1 Hari'],
-            ['city_name' => 'Jakarta Barat', 'province' => 'DKI Jakarta', 'small_rate' => 18000, 'medium_rate' => 25000, 'large_rate' => 32000, 'estimated_days' => 'Sameday / 1 Hari'],
-            ['city_name' => 'Jakarta Utara', 'province' => 'DKI Jakarta', 'small_rate' => 18000, 'medium_rate' => 25000, 'large_rate' => 32000, 'estimated_days' => 'Sameday / 1 Hari'],
-            ['city_name' => 'Bekasi', 'province' => 'Jawa Barat', 'small_rate' => 18000, 'medium_rate' => 25000, 'large_rate' => 32000, 'estimated_days' => 'Sameday / 1 Hari'],
-            ['city_name' => 'Depok', 'province' => 'Jawa Barat', 'small_rate' => 18000, 'medium_rate' => 25000, 'large_rate' => 32000, 'estimated_days' => 'Sameday / 1 Hari'],
-            ['city_name' => 'Tangerang', 'province' => 'Banten', 'small_rate' => 18000, 'medium_rate' => 25000, 'large_rate' => 32000, 'estimated_days' => 'Sameday / 1 Hari'],
-            ['city_name' => 'Bogor', 'province' => 'Jawa Barat', 'small_rate' => 20000, 'medium_rate' => 28000, 'large_rate' => 36000, 'estimated_days' => '1 Hari Sampai'],
-            ['city_name' => 'Bandung', 'province' => 'Jawa Barat', 'small_rate' => 22000, 'medium_rate' => 30000, 'large_rate' => 40000, 'estimated_days' => '1 Hari Sampai'],
-            ['city_name' => 'Cirebon', 'province' => 'Jawa Barat', 'small_rate' => 25000, 'medium_rate' => 35000, 'large_rate' => 45000, 'estimated_days' => '1 Hari Sampai'],
-            ['city_name' => 'Semarang', 'province' => 'Jawa Tengah', 'small_rate' => 25000, 'medium_rate' => 35000, 'large_rate' => 45000, 'estimated_days' => '1 Hari Sampai'],
-            ['city_name' => 'Solo', 'province' => 'Jawa Tengah', 'small_rate' => 25000, 'medium_rate' => 35000, 'large_rate' => 45000, 'estimated_days' => '1 Hari Sampai'],
-            ['city_name' => 'Yogyakarta', 'province' => 'DI Yogyakarta', 'small_rate' => 25000, 'medium_rate' => 35000, 'large_rate' => 45000, 'estimated_days' => '1 Hari Sampai'],
-            ['city_name' => 'Surabaya', 'province' => 'Jawa Timur', 'small_rate' => 28000, 'medium_rate' => 38000, 'large_rate' => 50000, 'estimated_days' => '1 Hari Sampai (Nextday)'],
-            ['city_name' => 'Malang', 'province' => 'Jawa Timur', 'small_rate' => 28000, 'medium_rate' => 38000, 'large_rate' => 50000, 'estimated_days' => '1 Hari Sampai (Nextday)'],
-            ['city_name' => 'Denpasar', 'province' => 'Bali', 'small_rate' => 35000, 'medium_rate' => 48000, 'large_rate' => 65000, 'estimated_days' => '1-2 Hari Cold Chain'],
-            ['city_name' => 'Medan', 'province' => 'Sumatera Utara', 'small_rate' => 45000, 'medium_rate' => 60000, 'large_rate' => 85000, 'estimated_days' => '2 Hari Sampai'],
-            ['city_name' => 'Makassar', 'province' => 'Sulawesi Selatan', 'small_rate' => 45000, 'medium_rate' => 65000, 'large_rate' => 90000, 'estimated_days' => '2 Hari Sampai'],
+            ['city_name' => 'Jakarta Timur', 'province' => 'DKI Jakarta', 'small_rate' => 18000, 'medium_rate' => 25000, 'large_rate' => 32000, 'estimated_days' => 'Pengiriman Reguler / Luar Kota'],
+            ['city_name' => 'Jakarta Selatan', 'province' => 'DKI Jakarta', 'small_rate' => 18000, 'medium_rate' => 25000, 'large_rate' => 32000, 'estimated_days' => 'Pengiriman Reguler / Luar Kota'],
+            ['city_name' => 'Jakarta Pusat', 'province' => 'DKI Jakarta', 'small_rate' => 18000, 'medium_rate' => 25000, 'large_rate' => 32000, 'estimated_days' => 'Pengiriman Reguler / Luar Kota'],
+            ['city_name' => 'Jakarta Barat', 'province' => 'DKI Jakarta', 'small_rate' => 18000, 'medium_rate' => 25000, 'large_rate' => 32000, 'estimated_days' => 'Pengiriman Reguler / Luar Kota'],
+            ['city_name' => 'Jakarta Utara', 'province' => 'DKI Jakarta', 'small_rate' => 18000, 'medium_rate' => 25000, 'large_rate' => 32000, 'estimated_days' => 'Pengiriman Reguler / Luar Kota'],
+            ['city_name' => 'Bekasi', 'province' => 'Jawa Barat', 'small_rate' => 18000, 'medium_rate' => 25000, 'large_rate' => 32000, 'estimated_days' => 'Pengiriman Reguler / Luar Kota'],
+            ['city_name' => 'Depok', 'province' => 'Jawa Barat', 'small_rate' => 18000, 'medium_rate' => 25000, 'large_rate' => 32000, 'estimated_days' => 'Pengiriman Reguler / Luar Kota'],
+            ['city_name' => 'Tangerang', 'province' => 'Banten', 'small_rate' => 18000, 'medium_rate' => 25000, 'large_rate' => 32000, 'estimated_days' => 'Pengiriman Reguler / Luar Kota'],
+            ['city_name' => 'Bogor', 'province' => 'Jawa Barat', 'small_rate' => 20000, 'medium_rate' => 28000, 'large_rate' => 36000, 'estimated_days' => 'Pengiriman Reguler / Luar Kota'],
+            ['city_name' => 'Bandung', 'province' => 'Jawa Barat', 'small_rate' => 22000, 'medium_rate' => 30000, 'large_rate' => 40000, 'estimated_days' => 'Pengiriman Reguler / Luar Kota'],
+            ['city_name' => 'Cirebon', 'province' => 'Jawa Barat', 'small_rate' => 25000, 'medium_rate' => 35000, 'large_rate' => 45000, 'estimated_days' => 'Pengiriman Reguler / Luar Kota'],
+            ['city_name' => 'Semarang', 'province' => 'Jawa Tengah', 'small_rate' => 25000, 'medium_rate' => 35000, 'large_rate' => 45000, 'estimated_days' => 'Pengiriman Reguler / Luar Kota'],
+            ['city_name' => 'Solo', 'province' => 'Jawa Tengah', 'small_rate' => 25000, 'medium_rate' => 35000, 'large_rate' => 45000, 'estimated_days' => 'Pengiriman Reguler / Luar Kota'],
+            ['city_name' => 'Yogyakarta', 'province' => 'DI Yogyakarta', 'small_rate' => 25000, 'medium_rate' => 35000, 'large_rate' => 45000, 'estimated_days' => 'Pengiriman Reguler / Luar Kota'],
+            ['city_name' => 'Surabaya', 'province' => 'Jawa Timur', 'small_rate' => 28000, 'medium_rate' => 38000, 'large_rate' => 50000, 'estimated_days' => 'Pengiriman Reguler / Luar Kota'],
+            ['city_name' => 'Malang', 'province' => 'Jawa Timur', 'small_rate' => 28000, 'medium_rate' => 38000, 'large_rate' => 50000, 'estimated_days' => 'Pengiriman Reguler / Luar Kota'],
+            ['city_name' => 'Denpasar', 'province' => 'Bali', 'small_rate' => 35000, 'medium_rate' => 48000, 'large_rate' => 65000, 'estimated_days' => 'Pengiriman Luar Kota / Antar Pulau'],
+            ['city_name' => 'Medan', 'province' => 'Sumatera Utara', 'small_rate' => 45000, 'medium_rate' => 60000, 'large_rate' => 85000, 'estimated_days' => 'Pengiriman Luar Kota / Antar Pulau'],
+            ['city_name' => 'Makassar', 'province' => 'Sulawesi Selatan', 'small_rate' => 45000, 'medium_rate' => 65000, 'large_rate' => 90000, 'estimated_days' => 'Pengiriman Luar Kota / Antar Pulau'],
         ];
 
         foreach ($paxelData as $paxel) {
@@ -240,12 +240,12 @@ class DatabaseSeeder extends Seeder
             'user_id' => $customer->id,
             'recipient_name' => 'Budi Santoso',
             'recipient_phone' => '081311223344',
-            'shipping_address' => 'Jl. Robusta Raya Blok Q3 No. 18, Pondok Kopi, Duren Sawit',
-            'shipping_city' => 'Jakarta Timur',
-            'shipping_province' => 'DKI Jakarta',
-            'shipping_postal_code' => '13460',
-            'shipping_lat' => -6.228540,
-            'shipping_lng' => 106.943180,
+            'shipping_address' => 'Jl. Cibatu Raya No. 55, Antapani Tengah, Antapani',
+            'shipping_city' => 'Kota Bandung',
+            'shipping_province' => 'Jawa Barat',
+            'shipping_postal_code' => '40291',
+            'shipping_lat' => -6.9147,
+            'shipping_lng' => 107.6619,
             'courier_type' => 'gojek_instant',
             'courier_service_name' => 'Gojek Instant Driver (6.2 km)',
             'distance_km' => 6.2,

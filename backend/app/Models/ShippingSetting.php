@@ -38,13 +38,13 @@ class ShippingSetting extends Model
     public static function current(): self
     {
         return static::firstOrCreate([], [
-            'store_name' => "Denish Cookies Kitchen",
-            'store_phone' => "081298765432",
-            'store_address' => "Jl. Pahlawan Revolusi No. 42, Duren Sawit, Jakarta Timur, 13430",
-            'store_city' => "Jakarta Timur",
-            'store_lat' => -6.225014,
-            'store_lng' => 106.900447,
-            'gojek_instant_rate_per_km' => 3000,
+            'store_name' => "De'nish Cookies Kitchen Bandung",
+            'store_phone' => "088218106303",
+            'store_address' => "Jl. Cibatu Raya No. 55, Desa/Kelurahan Antapani Tengah, Kec. Antapani, Kota Bandung, Provinsi Jawa Barat",
+            'store_city' => "Kota Bandung",
+            'store_lat' => -6.9147,
+            'store_lng' => 107.6619,
+            'gojek_instant_rate_per_km' => 4000,
             'gojek_instant_min_fare' => 15000,
             'gojek_sameday_flat_under_15km' => 18000,
             'gojek_sameday_flat_over_15km' => 25000,

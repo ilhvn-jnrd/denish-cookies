@@ -35,7 +35,7 @@ export default function RegisterPage() {
     <div className="max-w-md mx-auto px-4 py-16 space-y-6">
       <div className="text-center space-y-2">
         <div className="w-16 h-16 mx-auto rounded-3xl overflow-hidden border-2 border-brand-yellow shadow-md bg-white">
-          <img src="/logo.jpg" alt="De'nish Cookies" className="w-full h-full object-cover" />
+          <img src="/logo.png" alt="De'nish Cookies" className="w-full h-full object-cover" />
         </div>
         <h1 className="font-heading font-black text-2xl text-brand-indigo">
           Daftar Akun Baru
@@ -98,7 +98,7 @@ export default function RegisterPage() {
                 required
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="081298765432"
+                placeholder="088218106303"
                 className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow"
               />
               <Phone className="w-4 h-4 text-gray-400 absolute left-3 top-3" />

@@ -77,11 +77,11 @@ export default function ShippingLabelModal({ isOpen, onClose, order }: ShippingL
               {/* Sender */}
               <div className="space-y-1 pr-2 border-r border-gray-300">
                 <span className="font-bold text-[10px] text-gray-500 uppercase">Pengirim:</span>
-                <p className="font-bold text-gray-900">De&apos;nish Cookies Kitchen</p>
+                <p className="font-bold text-gray-900">De&apos;nish Cookies Kitchen Bandung</p>
                 <p className="text-[11px] text-gray-700 leading-snug">
-                  Jl. Robusta / Pahlawan Revolusi, Duren Sawit, Jakarta Timur, 13430
+                  Jl. Cibatu Raya No. 55, Kel. Antapani Tengah, Kec. Antapani, Kota Bandung, Jawa Barat
                 </p>
-                <p className="font-mono text-[11px] text-gray-900 font-semibold">WA: 0812-9876-5432</p>
+                <p className="font-mono text-[11px] text-gray-900 font-semibold">WA: +62 882-1810-6303</p>
               </div>
 
               {/* Recipient */}

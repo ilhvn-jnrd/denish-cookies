@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
 import MobileBottomCartBar from '@/components/MobileBottomCartBar';
+import FloatingSocialBalloon from '@/components/FloatingSocialBalloon';
 
 export const metadata: Metadata = {
   title: "De'nish Cookies — Making Taste Better | Premium Homemade Cookies",
@@ -15,12 +16,13 @@ export const metadata: Metadata = {
     "De'nish Cookies",
     "Kue Kering Nastar Wisman",
     "Kastengel Keju Edam",
-    "Hampers Lebaran Jakarta",
+    "Hampers Lebaran Bandung",
+    "Kue Kering Bandung",
     "Paxel Luar Kota",
-    "Gojek Instant Kue Kering",
+    "Gojek Instant Bandung",
   ],
   icons: {
-    icon: '/logo.jpg',
+    icon: '/logo.png',
   },
 };
 
@@ -55,6 +57,7 @@ export default function RootLayout({
             <Footer />
             <CartDrawer />
             <MobileBottomCartBar />
+            <FloatingSocialBalloon />
           </CartProvider>
         </AuthProvider>
       </body>

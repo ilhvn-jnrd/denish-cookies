@@ -265,7 +265,7 @@ export default function AdminProductsPage() {
               <div className="flex gap-3">
                 <div className="w-20 h-20 rounded-xl overflow-hidden bg-amber-50 flex-shrink-0 border border-gray-200">
                   <img
-                    src={p.image_url || '/logo.jpg'}
+                    src={p.image_url || '/logo.png'}
                     alt={p.name}
                     className="w-full h-full object-cover"
                   />
@@ -376,7 +376,7 @@ export default function AdminProductsPage() {
                     <td className="p-4 flex items-center gap-3">
                       <div className="w-12 h-12 rounded-xl overflow-hidden bg-amber-50 flex-shrink-0 border border-gray-200">
                         <img
-                          src={p.image_url || '/logo.jpg'}
+                          src={p.image_url || '/logo.png'}
                           alt={p.name}
                           className="w-full h-full object-cover"
                         />

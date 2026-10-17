@@ -11,8 +11,8 @@ interface LeafletMapPickerProps {
 }
 
 export default function LeafletMapPicker({
-  initialLat = -6.225014, // Default near Jakarta / Store
-  initialLng = 106.900447,
+  initialLat = -6.9147, // Default Antapani Bandung / Store
+  initialLng = 107.6619,
   onLocationSelect,
   height = '350px',
 }: LeafletMapPickerProps) {

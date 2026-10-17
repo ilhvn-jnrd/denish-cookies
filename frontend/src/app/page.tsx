@@ -107,7 +107,7 @@ export default function HomePage() {
                 </div>
                 <div className="bg-white/60 backdrop-blur-sm p-3 rounded-2xl border border-brand-indigo/10">
                   <span className="text-xs font-black text-brand-indigo block">Gojek Instant</span>
-                  <span className="text-[11px] text-gray-700">1-3 Jam Jadetabek</span>
+                  <span className="text-[11px] text-gray-700">Pengiriman Instant Area Bandung</span>
                 </div>
               </div>
             </div>
@@ -117,8 +117,8 @@ export default function HomePage() {
               <div className="relative mx-auto max-w-md bg-white p-4 rounded-3xl shadow-2xl border-4 border-white rotate-1 hover:rotate-0 transition-transform duration-500">
                 <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-amber-100">
                   <img
-                    src="https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?auto=format&fit=crop&w=800&q=80"
-                    alt="Nastar Wisman Spesial De'nish Cookies"
+                    src="/nastar_keju.jpg"
+                    alt="Nastar Keju De'nish Cookies"
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute top-3 left-3 bg-brand-red text-white text-xs font-black px-3 py-1 rounded-full shadow-md uppercase">
@@ -126,30 +126,23 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="p-4 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-amber-700 uppercase">Signature Festive</span>
-                    <span className="text-xs text-amber-600 font-bold flex items-center gap-1">
-                      <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" /> 4.9 (480+ Ulasan)
-                    </span>
+                <div className="p-4 space-y-3">
+                  <div>
+                    <span className="text-xs font-bold text-amber-700 uppercase block mb-1">Signature Festive</span>
+                    <h3 className="font-heading font-black text-2xl text-brand-indigo">
+                      Nastar Keju
+                    </h3>
                   </div>
-                  <h3 className="font-heading font-black text-xl text-brand-indigo">
-                    Nastar Wisman Spesial 500gr
-                  </h3>
-                  <p className="text-xs text-gray-600 line-clamp-2">
-                    Nastar lumer di mulut dengan selai nanas madu homemade manis asam segar dan aroma butter wijsman istimewa.
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Perpaduan adonan nastar lembut yang lumer di mulut dengan isian selai nanas pilihan dan taburan keju gurih yang melimpah.
                   </p>
-                  <div className="pt-2 flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] text-gray-400 block font-semibold">Harga Toples 500gr</span>
-                      <span className="font-heading font-black text-xl text-brand-red">Rp 135.000</span>
-                    </div>
-                    <Link
-                      href="/products/nastar-wisman-spesial-500gr"
-                      className="px-4 py-2 bg-brand-yellow text-brand-indigo font-bold text-xs rounded-xl hover:bg-brand-yellowHover shadow-sm"
+                  <div className="pt-2">
+                    <a
+                      href="#katalog"
+                      className="w-full py-3 bg-brand-yellow hover:bg-brand-yellowHover text-brand-indigo font-black text-xs rounded-xl shadow-cookie flex items-center justify-center gap-2 transition active:scale-95"
                     >
-                      Beli Toples Ini
-                    </Link>
+                      <ShoppingBag className="w-4 h-4" /> Beli Toples Ini
+                    </a>
                   </div>
                 </div>
               </div>
@@ -189,7 +182,7 @@ export default function HomePage() {
             </div>
             <h3 className="font-heading font-bold text-lg text-brand-indigo">Freshly Baked Homemade</h3>
             <p className="text-xs text-gray-600 leading-relaxed">
-              Bukan kue pabrikan massal. Setiap batch dipanggang hati-hati secara higienis di dapur kami di Duren Sawit.
+              Bukan kue pabrikan massal. Setiap batch dipanggang hati-hati secara higienis di dapur kami di Antapani, Kota Bandung.
             </p>
           </div>
 
@@ -369,7 +362,7 @@ export default function HomePage() {
                     </div>
                     <div>
                       <h3 className="font-heading font-bold text-lg text-white">Gojek Dalam Kota</h3>
-                      <p className="text-[11px] text-emerald-300 font-bold">Jadetabek (Radius s/d 40 km)</p>
+                      <p className="text-[11px] text-emerald-300 font-bold">Kota Bandung &amp; Sekitarnya (Radius s/d 40 km)</p>
                     </div>
                   </div>
                   <span className="px-2.5 py-1 bg-emerald-500/20 text-emerald-300 rounded-lg text-[10px] font-black uppercase">
@@ -380,7 +373,7 @@ export default function HomePage() {
                 <ul className="space-y-2 text-xs text-indigo-100">
                   <li className="flex items-start gap-2">
                     <span className="text-brand-yellow font-black">•</span>
-                    <span><strong>Gojek Instant:</strong> Tarif Rp 3.000/km (min Rp 15.000). Tiba 1-3 jam, kapasitas s/d 20 kg.</span>
+                    <span><strong>Gojek Instant:</strong> Tarif Rp 4.000/km (min Rp 15.000). Tiba 1-3 jam, kapasitas s/d 20 kg.</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-brand-yellow font-black">•</span>
@@ -388,7 +381,7 @@ export default function HomePage() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-brand-yellow font-black">•</span>
-                    <span>Jarak dihitung otomatis menggunakan GPS Peta OpenStreetMap dari Kitchen Duren Sawit.</span>
+                    <span>Jarak dihitung otomatis menggunakan GPS Peta OpenStreetMap dari Kitchen Antapani, Kota Bandung.</span>
                   </li>
                 </ul>
               </div>
@@ -402,11 +395,11 @@ export default function HomePage() {
                     </div>
                     <div>
                       <h3 className="font-heading font-bold text-lg text-white">Paxel Antar Kota</h3>
-                      <p className="text-[11px] text-purple-300 font-bold">Pulau Jawa, Bali, Medan, Makassar</p>
+                      <p className="text-[11px] text-purple-300 font-bold">Pengiriman Luar Kota Seluruh Indonesia</p>
                     </div>
                   </div>
                   <span className="px-2.5 py-1 bg-purple-500/20 text-purple-300 rounded-lg text-[10px] font-black uppercase">
-                    Cold Chain
+                    Food Safe
                   </span>
                 </div>
 
@@ -421,7 +414,7 @@ export default function HomePage() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-brand-yellow font-black">•</span>
-                    <span>Estimasi 1 hari sampai (Nextday) dengan fasilitas freezer/chiller aman leleh.</span>
+                    <span>Pengiriman luar kota aman dengan penanganan khusus paket makanan (Food Safe) agar kualitas kue tetap terjaga hingga sampai di tujuan.</span>
                   </li>
                 </ul>
               </div>
@@ -457,7 +450,7 @@ export default function HomePage() {
               </div>
               <div>
                 <p className="font-heading font-bold text-xs text-brand-indigo">dr. Anita Nuraini</p>
-                <p className="text-[10px] text-gray-400">Jakarta Selatan</p>
+                <p className="text-[10px] text-gray-400">Bandung</p>
               </div>
             </div>
           </div>
@@ -469,7 +462,7 @@ export default function HomePage() {
               ))}
             </div>
             <p className="text-xs text-gray-700 italic leading-relaxed">
-              &quot;Kirim hampers Royal Box isi 4 toples ke mertua di Surabaya via Paxel. Alhamdulillah 1 hari sampai dan tidak ada kue yang retak sama sekali! Box-nya mewah sekali ada greeting cardnya.&quot;
+              &quot;Kirim hampers Royal Box isi 4 toples ke mertua di Surabaya via Paxel. Alhamdulillah kue sampai dalam kondisi utuh dan tidak ada yang retak sama sekali! Box-nya mewah sekali ada greeting cardnya.&quot;
             </p>
             <div className="flex items-center gap-3 pt-2 border-t border-gray-100">
               <div className="w-9 h-9 rounded-full bg-brand-indigo text-white font-black flex items-center justify-center text-xs">
@@ -512,17 +505,17 @@ export default function HomePage() {
               Cerita Dapur Kami
             </span>
             <h2 className="font-heading font-black text-3xl text-brand-indigo">
-              De&apos;nish Cookies: Dibuat dengan Cinta &amp; Resep Ibu
+              De&apos;nish Cookies: Making Taste Better
             </h2>
             <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
-              Berawal dari hobi membuat kue kering untuk keluarga di hari raya, De&apos;nish Cookies tumbuh menjadi UMKM kuliner bakery yang konsisten mempertahankan resep butter asli dan selai nanas madu olahan sendiri.
+              Berawal dari komitmen menyajikan kue kering homemade terbaik, De&apos;nish Cookies berfokus pada cita rasa otentik dan kualitas tanpa kompromi. Kami menggunakan 100% Wijsman butter asli dan bahan pilihan bermutu tinggi tanpa tambahan pemanis buatan.
             </p>
             <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
-              Bagi kami, toples kue bukan sekadar camilan, melainkan simbol kehangatan silaturahmi yang merekatkan momen kebersamaan Anda bersama orang-orang tercinta.
+              Setiap toples dipanggang secara higienis dan fresh untuk memastikan aroma wangi serta tekstur lembut yang lumer di mulut tetap konsisten di setiap sajian istimewa Anda.
             </p>
             <div className="pt-2">
               <a
-                href="https://wa.me/6281298765432"
+                href="https://wa.me/6288218106303"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-yellow text-xs px-5 py-3"
@@ -534,8 +527,8 @@ export default function HomePage() {
 
           <div className="relative aspect-video rounded-2xl overflow-hidden shadow-lg border-2 border-white">
             <img
-              src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=800&q=80"
-              alt="Baking De'nish Cookies"
+              src="/produk_unggulan.jpg"
+              alt="Produk Unggulan De'nish Cookies"
               className="w-full h-full object-cover"
             />
           </div>

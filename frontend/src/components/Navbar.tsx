@@ -25,7 +25,7 @@ export default function Navbar() {
         </span>
         <span className="text-amber-200">★ 100% Wijsman Butter Homemade Cookies ★</span>
         <a
-          href="https://wa.me/6281298765432?text=Halo%20Denish%20Cookies,%20saya%20ingin%20tanya%20produk%20kue"
+          href="https://wa.me/6288218106303?text=Halo%20Denish%20Cookies,%20saya%20ingin%20tanya%20produk%20kue"
           target="_blank"
           rel="noopener noreferrer"
           className="text-white hover:text-brand-yellow transition underline flex items-center gap-1 font-bold"
@@ -40,7 +40,7 @@ export default function Navbar() {
           <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl overflow-hidden border-2 border-brand-yellow shadow-md flex-shrink-0 bg-white group-hover:scale-105 transition-transform">
               <img
-                src="/logo.jpg"
+                src="/logo.png"
                 alt="De'nish Cookies Logo"
                 className="w-full h-full object-cover"
                 onError={(e) => {

@@ -65,7 +65,7 @@ class ShippingCalculatorService
                     'is_available' => $instantWeightOk,
                     'cost' => $instantWeightOk ? (float) $instantCost : 0,
                     'max_weight_grams' => 20000,
-                    'description' => "Pengiriman instan motor langsung dari Duren Sawit ({$distanceKm} km)",
+                    'description' => "Pengiriman instan motor langsung dari Antapani, Kota Bandung ({$distanceKm} km)",
                     'warning' => !$instantWeightOk ? 'Berat melebihi batas maksimal Gojek Instant (20 kg)' : null,
                 ];
 
@@ -95,14 +95,14 @@ class ShippingCalculatorService
 
         // Fallback default if not explicitly found in matrix
         if (!$paxelRate) {
-            $paxelRate = PaxelRate::where('city_name', 'LIKE', '%Jakarta%')->first()
+            $paxelRate = PaxelRate::where('city_name', 'LIKE', '%Bandung%')->first()
                 ?? new PaxelRate([
-                    'city_name' => $cleanCity ?: 'Jabodetabek',
-                    'province' => 'Jawa',
+                    'city_name' => $cleanCity ?: 'Kota Bandung',
+                    'province' => 'Jawa Barat',
                     'small_rate' => 22000,
                     'medium_rate' => 30000,
                     'large_rate' => 40000,
-                    'estimated_days' => '1 Hari Sampai / Sameday Cold Chain',
+                    'estimated_days' => 'Pengiriman Reguler / Luar Kota',
                 ]);
         }
 
@@ -111,7 +111,7 @@ class ShippingCalculatorService
         $options[] = [
             'courier_type' => 'paxel',
             'service_name' => "Paxel Delivery ({$paxelCalculation['box_summary']})",
-            'delivery_time' => $paxelRate->estimated_days ?? '1 Hari Sampai / Sameday',
+            'delivery_time' => $paxelRate->estimated_days ?? 'Pengiriman Reguler / Luar Kota',
             'distance_km' => null,
             'is_available' => true,
             'cost' => (float) $paxelCalculation['total_cost'],

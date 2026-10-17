@@ -33,12 +33,12 @@ export default function ProfilePage() {
   const [recipientName, setRecipientName] = useState('');
   const [phone, setPhone] = useState('');
   const [fullAddress, setFullAddress] = useState('');
-  const [province, setProvince] = useState('DKI Jakarta');
-  const [cityName, setCityName] = useState('Jakarta Timur');
-  const [postalCode, setPostalCode] = useState('');
+  const [province, setProvince] = useState('Jawa Barat');
+  const [cityName, setCityName] = useState('Kota Bandung');
+  const [postalCode, setPostalCode] = useState('40291');
   const [coords, setCoords] = useState<{ lat: number; lng: number }>({
-    lat: -6.228540,
-    lng: 106.943180,
+    lat: -6.9147,
+    lng: 107.6619,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -322,7 +322,7 @@ export default function ProfilePage() {
                   rows={2}
                   value={fullAddress}
                   onChange={(e) => setFullAddress(e.target.value)}
-                  placeholder="Jl. Robusta Raya Blok Q3 No. 18"
+                  placeholder="Jl. Cibatu Raya No. 55, Antapani, Kota Bandung"
                   className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow"
                 />
               </div>

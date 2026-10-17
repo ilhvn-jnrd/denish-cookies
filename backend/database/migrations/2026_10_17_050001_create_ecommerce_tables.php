@@ -64,20 +64,20 @@ return new class extends Migration
             $table->decimal('small_rate', 10, 2); // <= 1.5 kg
             $table->decimal('medium_rate', 10, 2); // 1.51 kg - 3.0 kg
             $table->decimal('large_rate', 10, 2); // 3.01 kg - 5.0 kg
-            $table->string('estimated_days')->default('1 Hari Sampai / Sameday Cold Chain');
+            $table->string('estimated_days')->default('Pengiriman Reguler / Luar Kota');
             $table->timestamps();
         });
 
         // 5. Shipping & Store Kitchen Settings (Intra-City Gojek & Global Config)
         Schema::create('shipping_settings', function (Blueprint $table) {
             $table->id();
-            $table->string('store_name')->default('Denish Cookies Kitchen');
-            $table->string('store_phone')->default('081298765432');
+            $table->string('store_name')->default('Denish Cookies Kitchen Bandung');
+            $table->string('store_phone')->default('088218106303');
             $table->text('store_address')->nullable();
-            $table->string('store_city')->default('Jakarta Timur');
-            $table->double('store_lat', 10, 7)->default(-6.225014); // Central/East Jakarta reference coordinate
-            $table->double('store_lng', 10, 7)->default(106.900447);
-            $table->decimal('gojek_instant_rate_per_km', 10, 2)->default(3000);
+            $table->string('store_city')->default('Kota Bandung');
+            $table->double('store_lat', 10, 7)->default(-6.9147); // Antapani Bandung reference coordinate
+            $table->double('store_lng', 10, 7)->default(107.6619);
+            $table->decimal('gojek_instant_rate_per_km', 10, 2)->default(4000);
             $table->decimal('gojek_instant_min_fare', 10, 2)->default(15000);
             $table->decimal('gojek_sameday_flat_under_15km', 10, 2)->default(18000);
             $table->decimal('gojek_sameday_flat_over_15km', 10, 2)->default(25000);

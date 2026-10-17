@@ -31,15 +31,15 @@ export default function AdminShippingPage() {
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   // Store Kitchen Form state
-  const [storeName, setStoreName] = useState("De'nish Cookies Kitchen");
-  const [storePhone, setStorePhone] = useState('081298765432');
-  const [storeAddress, setStoreAddress] = useState('Jl. Robusta Raya / Pahlawan Revolusi No. 42, Duren Sawit');
-  const [storeCity, setStoreCity] = useState('Jakarta Timur');
-  const [storeLat, setStoreLat] = useState(-6.225014);
-  const [storeLng, setStoreLng] = useState(106.900447);
+  const [storeName, setStoreName] = useState("De'nish Cookies Kitchen Bandung");
+  const [storePhone, setStorePhone] = useState('088218106303');
+  const [storeAddress, setStoreAddress] = useState('Jl. Cibatu Raya No. 55, Desa/Kelurahan Antapani Tengah, Kec. Antapani, Kota Bandung, Provinsi Jawa Barat');
+  const [storeCity, setStoreCity] = useState('Kota Bandung');
+  const [storeLat, setStoreLat] = useState(-6.9147);
+  const [storeLng, setStoreLng] = useState(107.6619);
 
   // Gojek Parameters
-  const [instantRatePerKm, setInstantRatePerKm] = useState(3000);
+  const [instantRatePerKm, setInstantRatePerKm] = useState(4000);
   const [instantMinFare, setInstantMinFare] = useState(15000);
   const [samedayUnder15, setSamedayUnder15] = useState(18000);
   const [samedayOver15, setSamedayOver15] = useState(25000);
@@ -54,7 +54,7 @@ export default function AdminShippingPage() {
   const [paxelSmall, setPaxelSmall] = useState(22000);
   const [paxelMedium, setPaxelMedium] = useState(30000);
   const [paxelLarge, setPaxelLarge] = useState(40000);
-  const [paxelEst, setPaxelEst] = useState('1 Hari Sampai');
+  const [paxelEst, setPaxelEst] = useState('Pengiriman Reguler / Luar Kota');
 
   const loadSettings = async () => {
     setLoading(true);
@@ -132,7 +132,7 @@ export default function AdminShippingPage() {
       setPaxelSmall(rate.small_rate);
       setPaxelMedium(rate.medium_rate);
       setPaxelLarge(rate.large_rate);
-      setPaxelEst(rate.estimated_days || '1 Hari Sampai');
+      setPaxelEst(rate.estimated_days || 'Pengiriman Reguler / Luar Kota');
     } else {
       setEditingPaxel(null);
       setPaxelCity('');
@@ -140,7 +140,7 @@ export default function AdminShippingPage() {
       setPaxelSmall(25000);
       setPaxelMedium(35000);
       setPaxelLarge(45000);
-      setPaxelEst('1 Hari Sampai');
+      setPaxelEst('Pengiriman Reguler / Luar Kota');
     }
     setShowPaxelModal(true);
   };
@@ -323,7 +323,7 @@ export default function AdminShippingPage() {
                   onChange={(e) => setInstantRatePerKm(Number(e.target.value))}
                   className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-brand-indigo"
                 />
-                <span className="text-[10px] text-gray-400">Default: Rp 3.000 / km</span>
+                <span className="text-[10px] text-gray-400">Default: Rp 4.000 / km</span>
               </div>
 
               <div>
@@ -556,7 +556,7 @@ export default function AdminShippingPage() {
                   required
                   value={paxelEst}
                   onChange={(e) => setPaxelEst(e.target.value)}
-                  placeholder="1 Hari Sampai / Sameday Cold Chain"
+                  placeholder="Pengiriman Reguler / Luar Kota"
                   className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
                 />
               </div>
