@@ -1,0 +1,34 @@
+{
+  "name": "denish-cookies",
+  "version": "1.0.0",
+  "private": true,
+  "description": "De'nish Cookies - Premium Homemade Bakery E-Commerce Monorepo (Next.js 14 + Laravel 11)",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "php -S localhost:8000 -t backend/public",
+    "build": "npm --prefix frontend run build",
+    "build:frontend": "npm --prefix frontend run build",
+    "start:frontend": "npm --prefix frontend run start",
+    "artisan": "php backend/artisan",
+    "migrate": "php backend/artisan migrate",
+    "seed": "php backend/artisan db:seed"
+  },
+  "keywords": [
+    "ecommerce",
+    "bakery",
+    "denish-cookies",
+    "nextjs",
+    "laravel",
+    "umkm",
+    "paxel",
+    "gojek",
+    "midtrans"
+  ],
+  "author": "De'nish Cookies Team",
+  "license": "MIT"
+}
