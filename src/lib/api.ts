@@ -8,9 +8,12 @@ export async function fetchApi<T = any>(
 
   const headers: Record<string, string> = {
     'Accept': 'application/json',
-    'Content-Type': 'application/json',
     ...(options.headers as Record<string, string> || {}),
   };
+
+  if (!(options.body instanceof FormData) && !headers['Content-Type']) {
+    headers['Content-Type'] = 'application/json';
+  }
 
   if (typeof window !== 'undefined') {
     const token = localStorage.getItem('denish_token');

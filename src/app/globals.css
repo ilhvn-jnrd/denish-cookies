@@ -72,3 +72,20 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   border-radius: 1rem;
   z-index: 10;
 }
+
+/* Hide scrollbar for horizontally scrollable tabs/carousels on mobile */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Prevent iOS Safari / Android auto-zoom on inputs below 16px */
+@media screen and (max-width: 640px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+

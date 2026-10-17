@@ -180,11 +180,11 @@ export default function AdminShippingPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-8 pb-24 lg:pb-8">
       <AdminHeader />
 
       <div>
-        <h1 className="font-heading font-black text-2xl text-brand-indigo">
+        <h1 className="font-heading font-black text-xl sm:text-2xl text-brand-indigo">
           Pengaturan Dapur &amp; Tarif Ekspedisi
         </h1>
         <p className="text-xs text-gray-500">
@@ -473,22 +473,25 @@ export default function AdminShippingPage() {
 
       {/* Paxel Rate Edit Modal */}
       {showPaxelModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200">
-            <div className="bg-brand-indigo text-white px-6 py-4 flex items-center justify-between">
-              <h3 className="font-heading font-bold text-base">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm">
+          <div className="relative w-full max-w-md max-h-[90dvh] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col border border-gray-200">
+            {/* Sticky Header */}
+            <div className="sticky top-0 z-10 bg-brand-indigo text-white px-5 py-4 flex items-center justify-between flex-shrink-0">
+              <h3 className="font-heading font-bold text-sm sm:text-base">
                 {editingPaxel ? 'Edit Tarif Paxel Kota' : 'Tambah Tarif Paxel Kota Baru'}
               </h3>
               <button
+                type="button"
                 onClick={() => setShowPaxelModal(false)}
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"
+                aria-label="Tutup"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSavePaxel} className="p-6 space-y-3 text-xs">
-              <div className="grid grid-cols-2 gap-3">
+            <form onSubmit={handleSavePaxel} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-gray-700 mb-1">Nama Kota *</label>
                   <input
@@ -497,7 +500,7 @@ export default function AdminShippingPage() {
                     value={paxelCity}
                     onChange={(e) => setPaxelCity(e.target.value)}
                     placeholder="Bandung / Surabaya"
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl"
+                    className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
                   />
                 </div>
                 <div>
@@ -508,7 +511,7 @@ export default function AdminShippingPage() {
                     value={paxelProvince}
                     onChange={(e) => setPaxelProvince(e.target.value)}
                     placeholder="Jawa Barat"
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl"
+                    className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
                   />
                 </div>
               </div>
@@ -521,7 +524,7 @@ export default function AdminShippingPage() {
                     required
                     value={paxelSmall}
                     onChange={(e) => setPaxelSmall(Number(e.target.value))}
-                    className="w-full px-2.5 py-2 bg-gray-50 border border-gray-200 rounded-xl"
+                    className="w-full px-2.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold"
                   />
                 </div>
                 <div>
@@ -531,7 +534,7 @@ export default function AdminShippingPage() {
                     required
                     value={paxelMedium}
                     onChange={(e) => setPaxelMedium(Number(e.target.value))}
-                    className="w-full px-2.5 py-2 bg-gray-50 border border-gray-200 rounded-xl"
+                    className="w-full px-2.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold"
                   />
                 </div>
                 <div>
@@ -541,7 +544,7 @@ export default function AdminShippingPage() {
                     required
                     value={paxelLarge}
                     onChange={(e) => setPaxelLarge(Number(e.target.value))}
-                    className="w-full px-2.5 py-2 bg-gray-50 border border-gray-200 rounded-xl"
+                    className="w-full px-2.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold text-brand-red"
                   />
                 </div>
               </div>
@@ -554,19 +557,23 @@ export default function AdminShippingPage() {
                   value={paxelEst}
                   onChange={(e) => setPaxelEst(e.target.value)}
                   placeholder="1 Hari Sampai / Sameday Cold Chain"
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl"
+                  className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
                 />
               </div>
 
-              <div className="pt-3 flex items-center justify-end gap-2 border-t border-gray-100">
+              {/* Sticky Action Footer */}
+              <div className="pt-3 flex items-center justify-end gap-2 border-t border-gray-100 sticky bottom-0 bg-white pb-1">
                 <button
                   type="button"
                   onClick={() => setShowPaxelModal(false)}
-                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl font-bold"
+                  className="min-h-[44px] px-4 py-2 bg-gray-100 text-gray-700 rounded-xl font-bold"
                 >
                   Batal
                 </button>
-                <button type="submit" className="btn-yellow text-xs px-5 py-2 font-black">
+                <button
+                  type="submit"
+                  className="min-h-[44px] btn-yellow text-xs px-5 py-2 font-black shadow-md"
+                >
                   Simpan Tarif
                 </button>
               </div>

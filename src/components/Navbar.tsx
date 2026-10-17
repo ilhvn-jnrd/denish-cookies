@@ -34,11 +34,11 @@ export default function Navbar() {
         </a>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo Brand */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-12 h-12 rounded-2xl overflow-hidden border-2 border-brand-yellow shadow-md flex-shrink-0 bg-white group-hover:scale-105 transition-transform">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl overflow-hidden border-2 border-brand-yellow shadow-md flex-shrink-0 bg-white group-hover:scale-105 transition-transform">
               <img
                 src="/logo.jpg"
                 alt="De'nish Cookies Logo"
@@ -50,10 +50,10 @@ export default function Navbar() {
               />
             </div>
             <div>
-              <span className="font-heading font-extrabold text-2xl text-brand-indigo tracking-tight group-hover:text-brand-red transition">
+              <span className="font-heading font-extrabold text-lg sm:text-2xl text-brand-indigo tracking-tight group-hover:text-brand-red transition">
                 De&apos;nish <span className="text-brand-yellow">Cookies</span>
               </span>
-              <p className="text-[10px] text-gray-500 font-bold tracking-wider uppercase block">
+              <p className="text-[9px] sm:text-[10px] text-gray-500 font-bold tracking-wider uppercase block">
                 Making Taste Better
               </p>
             </div>
@@ -133,14 +133,15 @@ export default function Navbar() {
           </div>
 
           {/* Mobile buttons */}
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex items-center gap-1.5 md:hidden">
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative p-2 bg-brand-yellow text-brand-indigo rounded-xl"
+              className="relative w-10 h-10 bg-brand-yellow text-brand-indigo rounded-xl flex items-center justify-center active:scale-95 shadow-sm"
+              aria-label="Keranjang Belanja"
             >
               <ShoppingBag className="w-5 h-5" />
               {mounted && totalItems > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-brand-red text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-brand-red text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center">
                   {totalItems}
                 </span>
               )}
@@ -148,7 +149,8 @@ export default function Navbar() {
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-brand-indigo rounded-xl hover:bg-amber-50"
+              className="w-10 h-10 flex items-center justify-center text-brand-indigo rounded-xl hover:bg-amber-50 active:scale-95"
+              aria-label="Menu Navigasi"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
