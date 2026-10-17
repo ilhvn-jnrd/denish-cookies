@@ -14,22 +14,24 @@ use Illuminate\Support\Facades\Route;
 | Public Routes
 |--------------------------------------------------------------------------
 */
-// Authentication
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+// Authentication (Rate limited: 5 attempts per minute per IP)
+Route::middleware('throttle:5,1')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+});
 
 // Catalog
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/{slug}', [ProductController::class, 'show']);
 Route::get('/categories', [ProductController::class, 'categories']);
 
-// Shipping Engine
-Route::post('/shipping/calculate', [ShippingController::class, 'calculate']);
+// Shipping Engine (Rate limited: 20 calculations per minute per IP)
+Route::post('/shipping/calculate', [ShippingController::class, 'calculate'])->middleware('throttle:20,1');
 Route::get('/shipping/paxel-cities', [ShippingController::class, 'paxelCities']);
 Route::get('/shipping/store-info', [ShippingController::class, 'storeInfo']);
 
-// Orders & Checkout
-Route::post('/checkout', [OrderController::class, 'checkout']);
+// Orders & Checkout (Rate limited: 20 checkouts per minute per IP)
+Route::post('/checkout', [OrderController::class, 'checkout'])->middleware('throttle:20,1');
 Route::get('/orders/detail/{orderNumber}', [OrderController::class, 'show']);
 Route::post('/orders/{orderNumber}/simulate-payment', [OrderController::class, 'simulatePayment']);
 
@@ -43,6 +45,7 @@ Route::post('/webhooks/midtrans', [WebhookController::class, 'midtrans']);
 */
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'profile']);
+    Route::put('/user', [AuthController::class, 'updateProfile']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // Address Management with Leaflet GPS Coordinates
@@ -72,6 +75,7 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     // Products Management
     Route::get('/products', [AdminController::class, 'products']);
     Route::post('/products', [AdminController::class, 'storeProduct']);
+    Route::post('/products/upload-image', [AdminController::class, 'uploadProductImage']);
     Route::put('/products/{id}', [AdminController::class, 'updateProduct']);
     Route::delete('/products/{id}', [AdminController::class, 'deleteProduct']);
 

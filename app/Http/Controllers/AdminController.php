@@ -10,6 +10,7 @@ use App\Models\ShippingSetting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class AdminController extends Controller
@@ -67,26 +68,39 @@ class AdminController extends Controller
     }
 
     /**
-     * List Orders for Admin with filters.
+     * List Orders for Admin with whitelisted filters.
      */
     public function orders(Request $request): JsonResponse
     {
         $query = Order::with(['items', 'user']);
 
+        // Strictly whitelist order_status values
         if ($request->filled('status')) {
-            $query->where('order_status', $request->status);
+            $allowedStatus = ['pending', 'paid', 'processing', 'shipped', 'completed', 'cancelled'];
+            if (in_array($request->status, $allowedStatus, true)) {
+                $query->where('order_status', $request->status);
+            }
         }
 
+        // Strictly whitelist payment_status values
         if ($request->filled('payment_status')) {
-            $query->where('payment_status', $request->payment_status);
+            $allowedPaymentStatus = ['pending', 'paid', 'failed', 'expired', 'cancelled'];
+            if (in_array($request->payment_status, $allowedPaymentStatus, true)) {
+                $query->where('payment_status', $request->payment_status);
+            }
         }
 
+        // Strictly whitelist courier_type values
         if ($request->filled('courier')) {
-            $query->where('courier_type', $request->courier);
+            $allowedCouriers = ['gojek_instant', 'gojek_sameday', 'paxel'];
+            if (in_array($request->courier, $allowedCouriers, true)) {
+                $query->where('courier_type', $request->courier);
+            }
         }
 
+        // Search with wildcard escaping
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], (string) $request->search);
             $query->where(function ($q) use ($search) {
                 $q->where('order_number', 'LIKE', "%{$search}%")
                   ->orWhere('recipient_name', 'LIKE', "%{$search}%")
@@ -109,7 +123,7 @@ class AdminController extends Controller
 
         $validated = $request->validate([
             'order_status' => 'required|in:pending,paid,processing,shipped,completed,cancelled',
-            'tracking_number' => 'nullable|string',
+            'tracking_number' => 'nullable|string|max:100',
         ]);
 
         $updateData = ['order_status' => $validated['order_status']];
@@ -142,12 +156,45 @@ class AdminController extends Controller
         $query = Product::with('category');
 
         if ($request->filled('search')) {
-            $query->where('name', 'LIKE', "%{$request->search}%");
+            $search = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], (string) $request->search);
+            $query->where('name', 'LIKE', "%{$search}%");
         }
 
         $products = $query->orderBy('id', 'desc')->paginate(20);
 
         return response()->json($products);
+    }
+
+    /**
+     * Secure Photo Upload for Products.
+     * Enforces mime-type, max size (3MB), and generates random UUID filename.
+     */
+    public function uploadProductImage(Request $request): JsonResponse
+    {
+        $request->validate([
+            'image' => [
+                'required',
+                'file',
+                'image',
+                'mimes:jpeg,jpg,png,webp',
+                'mimetypes:image/jpeg,image/png,image/webp',
+                'max:3072',
+            ],
+        ]);
+
+        $file = $request->file('image');
+        $extension = strtolower($file->getClientOriginalExtension());
+        if (!in_array($extension, ['jpg', 'jpeg', 'png', 'webp'], true)) {
+            $extension = 'jpg';
+        }
+
+        $filename = Str::uuid()->toString() . '.' . $extension;
+        $path = $file->storeAs('products', $filename, 'public');
+
+        return response()->json([
+            'message' => 'Foto produk berhasil diunggah secara aman',
+            'url' => '/storage/' . $path,
+        ]);
     }
 
     public function storeProduct(Request $request): JsonResponse
@@ -161,10 +208,31 @@ class AdminController extends Controller
             'stock' => 'required|integer|min:0',
             'is_preorder' => 'required|boolean',
             'po_lead_days' => 'nullable|integer|min:1',
-            'image_url' => 'nullable|string',
+            'image_url' => 'nullable|string|max:500',
+            'image' => [
+                'nullable',
+                'file',
+                'image',
+                'mimes:jpeg,jpg,png,webp',
+                'mimetypes:image/jpeg,image/png,image/webp',
+                'max:3072',
+            ],
             'is_featured' => 'nullable|boolean',
             'is_active' => 'nullable|boolean',
         ]);
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $extension = strtolower($file->getClientOriginalExtension());
+            if (!in_array($extension, ['jpg', 'jpeg', 'png', 'webp'], true)) {
+                $extension = 'jpg';
+            }
+            $filename = Str::uuid()->toString() . '.' . $extension;
+            $path = $file->storeAs('products', $filename, 'public');
+            $validated['image_url'] = '/storage/' . $path;
+        }
+
+        unset($validated['image']);
 
         $validated['slug'] = Str::slug($validated['name']) . '-' . Str::random(4);
 
@@ -189,10 +257,38 @@ class AdminController extends Controller
             'stock' => 'sometimes|required|integer|min:0',
             'is_preorder' => 'sometimes|required|boolean',
             'po_lead_days' => 'nullable|integer|min:1',
-            'image_url' => 'nullable|string',
+            'image_url' => 'nullable|string|max:500',
+            'image' => [
+                'nullable',
+                'file',
+                'image',
+                'mimes:jpeg,jpg,png,webp',
+                'mimetypes:image/jpeg,image/png,image/webp',
+                'max:3072',
+            ],
             'is_featured' => 'nullable|boolean',
             'is_active' => 'nullable|boolean',
         ]);
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $extension = strtolower($file->getClientOriginalExtension());
+            if (!in_array($extension, ['jpg', 'jpeg', 'png', 'webp'], true)) {
+                $extension = 'jpg';
+            }
+            $filename = Str::uuid()->toString() . '.' . $extension;
+            $path = $file->storeAs('products', $filename, 'public');
+
+            // Delete old product image if stored locally
+            $this->deleteStoredImage($product->image_url);
+
+            $validated['image_url'] = '/storage/' . $path;
+        } elseif (array_key_exists('image_url', $validated) && $validated['image_url'] !== $product->image_url) {
+            // If image_url was explicitly changed to another URL, delete previous stored photo
+            $this->deleteStoredImage($product->image_url);
+        }
+
+        unset($validated['image']);
 
         if (!empty($validated['name']) && $validated['name'] !== $product->name) {
             $validated['slug'] = Str::slug($validated['name']) . '-' . Str::random(4);
@@ -209,11 +305,30 @@ class AdminController extends Controller
     public function deleteProduct(int $id): JsonResponse
     {
         $product = Product::findOrFail($id);
+
+        // Delete photo from storage if stored locally
+        $this->deleteStoredImage($product->image_url);
+
         $product->delete();
 
         return response()->json([
             'message' => 'Produk berhasil dihapus',
         ]);
+    }
+
+    /**
+     * Delete locally uploaded product photo safely.
+     */
+    protected function deleteStoredImage(?string $imageUrl): void
+    {
+        if (!$imageUrl) {
+            return;
+        }
+
+        if (str_starts_with($imageUrl, '/storage/products/')) {
+            $relativePath = str_replace('/storage/', '', $imageUrl);
+            Storage::disk('public')->delete($relativePath);
+        }
     }
 
     /**

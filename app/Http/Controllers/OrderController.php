@@ -54,9 +54,18 @@ class OrderController extends Controller
             $subtotal = 0;
             $itemsData = [];
 
-            // 1. Validate stocks and gather product data
+            // 1. Validate stocks and gather product data using lockForUpdate
+            $productIds = array_column($validated['items'], 'product_id');
+            $products = Product::whereIn('id', $productIds)->lockForUpdate()->get()->keyBy('id');
+
             foreach ($validated['items'] as $itemInput) {
-                $product = Product::lockForUpdate()->findOrFail($itemInput['product_id']);
+                $product = $products->get($itemInput['product_id']);
+
+                if (!$product) {
+                    throw ValidationException::withMessages([
+                        'items' => ["Produk dengan ID {$itemInput['product_id']} tidak ditemukan."],
+                    ]);
+                }
 
                 if (!$product->is_active) {
                     throw ValidationException::withMessages([
@@ -188,13 +197,24 @@ class OrderController extends Controller
     }
 
     /**
-     * Get single order details by order_number.
+     * Get single order details by order_number with IDOR protection.
      */
-    public function show(string $orderNumber): JsonResponse
+    public function show(Request $request, string $orderNumber): JsonResponse
     {
         $order = Order::with(['items', 'user'])
             ->where('order_number', $orderNumber)
             ->firstOrFail();
+
+        $currentUser = $request->user('sanctum');
+
+        // IDOR protection: if order belongs to a registered user, ensure only the owner or an admin can access it
+        if ($order->user_id !== null) {
+            if (!$currentUser || ($currentUser->id !== $order->user_id && $currentUser->role !== 'admin')) {
+                return response()->json([
+                    'message' => 'Akses ditolak. Anda tidak memiliki izin untuk melihat pesanan ini.',
+                ], 403);
+            }
+        }
 
         return response()->json([
             'data' => $order,
@@ -203,33 +223,57 @@ class OrderController extends Controller
 
     /**
      * Local Demo / Mock Payment Simulator.
-     * Allows instant testing of payment completion and stock deduction without live gateway.
+     * Allows instant testing of payment completion and stock deduction in sandbox/local mock mode only.
      */
-    public function simulatePayment(string $orderNumber): JsonResponse
+    public function simulatePayment(Request $request, string $orderNumber): JsonResponse
     {
-        $order = Order::with('items')->where('order_number', $orderNumber)->firstOrFail();
-
-        if ($order->payment_status === 'paid') {
+        // Strictly disable mock simulator in production
+        if (app()->environment('production')) {
             return response()->json([
-                'message' => 'Pesanan sudah berstatus LUNAS.',
-                'order' => $order,
-            ]);
+                'message' => 'Simulasi pembayaran dinonaktifkan di lingkungan production.',
+            ], 403);
         }
 
-        DB::transaction(function () use ($order) {
-            $order->update([
+        if (!$this->midtransService->isMockMode()) {
+            return response()->json([
+                'message' => 'Simulasi pembayaran hanya diizinkan pada local demo sandbox mock.',
+            ], 403);
+        }
+
+        $currentUser = $request->user('sanctum');
+
+        $order = DB::transaction(function () use ($orderNumber, $currentUser) {
+            $lockedOrder = Order::with('items')
+                ->where('order_number', $orderNumber)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            // IDOR protection on payment simulation
+            if ($lockedOrder->user_id !== null) {
+                if (!$currentUser || ($currentUser->id !== $lockedOrder->user_id && $currentUser->role !== 'admin')) {
+                    abort(403, 'Akses ditolak. Anda tidak berhak mensimulasikan pembayaran untuk pesanan ini.');
+                }
+            }
+
+            if ($lockedOrder->payment_status === 'paid') {
+                return $lockedOrder;
+            }
+
+            $lockedOrder->update([
                 'payment_status' => 'paid',
                 'order_status' => 'paid',
                 'paid_at' => Carbon::now(),
             ]);
 
-            // Deduct stock idempotently
-            foreach ($order->items as $item) {
-                $product = Product::find($item->product_id);
+            // Deduct stock idempotently with row locks
+            foreach ($lockedOrder->items as $item) {
+                $product = Product::lockForUpdate()->find($item->product_id);
                 if ($product && !$item->is_preorder) {
                     $product->decrement('stock', min($product->stock, $item->quantity));
                 }
             }
+
+            return $lockedOrder;
         });
 
         return response()->json([
