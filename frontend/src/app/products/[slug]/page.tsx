@@ -152,6 +152,10 @@ export default function ProductDetailPage() {
               <span className="text-xs text-emerald-700 font-semibold flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" /> 100% Pure Anchor Butter
               </span>
+              <span className="text-xs text-gray-400">•</span>
+              <span className="text-xs text-purple-700 font-semibold flex items-center gap-1">
+                <ShieldCheck className="w-3.5 h-3.5" /> 100% Halal Resmi
+              </span>
             </div>
           </div>
 
@@ -250,6 +254,21 @@ export default function ProductDetailPage() {
             <p>
               • <strong>Paxel Safe-Box Khusus Makanan:</strong> Pengiriman luar kota (Jabodetabek, Semarang, Surabaya, Bali, dll) dengan kardus pelindung khusus anti remuk dan penanganan Food Safe.
             </p>
+          </div>
+
+          {/* Halal Assurance Box */}
+          <div className="p-3.5 rounded-2xl bg-purple-50/70 border border-purple-200/80 space-y-2 text-xs">
+            <div className="flex items-center gap-2 font-bold text-purple-950">
+              <div className="flex items-center gap-1 p-0.5 bg-white rounded-md border border-purple-200">
+                <img src="/logo_halal_124_ungu.png" alt="Halal Indonesia" className="h-5 w-auto object-contain" />
+                <img src="/logo_halal_224_ungu.png" alt="Halal MUI" className="h-5 w-auto object-contain" />
+              </div>
+              <span>Sertifikat Halal Resmi Terverifikasi:</span>
+            </div>
+            <div className="font-mono text-[11px] font-bold text-brand-indigo flex flex-wrap gap-x-4 gap-y-1">
+              <span>No. 1: <strong className="text-purple-900">ID32110015308660124</strong></span>
+              <span>No. 2: <strong className="text-purple-900">ID32110015422560224</strong></span>
+            </div>
           </div>
         </div>
       </div>

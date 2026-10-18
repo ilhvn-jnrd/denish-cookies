@@ -27,8 +27,39 @@ export default function Footer() {
             <p className="text-xs text-indigo-200 leading-relaxed">
               Pelopor kue kering homemade premium dengan 100% Anchor Butter asli. Diracik dengan standar higienis tinggi tanpa bahan pemanis buatan.
             </p>
-            <div className="flex items-center gap-2 text-xs text-brand-yellow font-bold">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" /> Bahan Pilihan Halal &amp; Higienis
+            <div className="bg-white/10 p-3 rounded-2xl border border-white/15 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 p-1 bg-white rounded-lg flex-shrink-0">
+                  <img
+                    src="/logo_halal_124_ungu.png"
+                    alt="Halal"
+                    className="h-6 w-auto object-contain"
+                  />
+                  <img
+                    src="/logo_halal_224_ungu.png"
+                    alt="Halal"
+                    className="h-6 w-auto object-contain"
+                  />
+                </div>
+                <div>
+                  <div className="text-[11px] font-bold text-white leading-tight">
+                    Sertifikat Halal Resmi
+                  </div>
+                  <div className="text-[9px] text-brand-yellow font-semibold">
+                    BPJPH &amp; MUI Terverifikasi
+                  </div>
+                </div>
+              </div>
+              <div className="text-[10px] text-indigo-200 font-mono space-y-0.5 pt-1 border-t border-white/10">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="text-gray-300">No. 1:</span>
+                  <span className="text-brand-yellow font-bold">ID32110015308660124</span>
+                </div>
+                <div className="flex items-center justify-between gap-1">
+                  <span className="text-gray-300">No. 2:</span>
+                  <span className="text-brand-yellow font-bold">ID32110015422560224</span>
+                </div>
+              </div>
             </div>
           </div>
 

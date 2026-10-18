@@ -86,27 +86,53 @@ export default function HomePage() {
                 Kelezatan toples kue kering legit dengan aroma semerbak 100% pure Anchor butter murni. Dibuat fresh setiap hari dengan resep warisan keluarga yang lumer di lidah.
               </p>
 
-              {/* Halal Trust Badge */}
-              <div className="inline-flex flex-col sm:flex-row items-center gap-3 sm:gap-4 bg-white/95 backdrop-blur-sm px-4 py-2.5 rounded-2xl shadow-md border border-brand-indigo/10 max-w-md mx-auto lg:mx-0">
-                <div className="flex items-center gap-2.5 flex-shrink-0">
-                  <img
-                    src="/logo_halal_124_ungu.png"
-                    alt="Logo Halal Indonesia"
-                    className="h-9 sm:h-11 w-auto object-contain"
-                  />
-                  <img
-                    src="/logo_halal_224_ungu.png"
-                    alt="Logo Halal MUI"
-                    className="h-9 sm:h-11 w-auto object-contain"
-                  />
-                </div>
-                <div className="h-7 w-px bg-brand-indigo/15 hidden sm:block flex-shrink-0" />
-                <div className="text-center sm:text-left">
-                  <div className="text-xs sm:text-sm font-black text-brand-indigo leading-tight">
-                    100% Terjamin Halal
+              {/* Halal Trust Badge with Explicit Certificate Numbers */}
+              <div className="bg-white/95 backdrop-blur-sm p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl shadow-md border border-brand-indigo/10 max-w-lg mx-auto lg:mx-0 space-y-2.5">
+                <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
+                  <div className="flex items-center gap-2.5 flex-shrink-0 bg-purple-50/80 p-1.5 rounded-xl border border-purple-100">
+                    <img
+                      src="/logo_halal_124_ungu.png"
+                      alt="Logo Halal Indonesia"
+                      className="h-10 sm:h-12 w-auto object-contain"
+                    />
+                    <img
+                      src="/logo_halal_224_ungu.png"
+                      alt="Logo Halal MUI"
+                      className="h-10 sm:h-12 w-auto object-contain"
+                    />
                   </div>
-                  <div className="text-[10px] sm:text-[11px] font-semibold text-gray-600 mt-0.5">
-                    Bahan Baku &amp; Produksi Bersertifikat Halal
+                  <div className="text-center sm:text-left flex-1">
+                    <div className="flex items-center justify-center sm:justify-start gap-1.5">
+                      <span className="text-xs sm:text-sm font-black text-brand-indigo tracking-tight">
+                        100% Terjamin Halal Resmi
+                      </span>
+                      <span className="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full">
+                        Terverifikasi
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-gray-600 font-medium mt-0.5">
+                      Bahan Baku &amp; Proses Produksi Bersertifikat Halal
+                    </p>
+                  </div>
+                </div>
+
+                {/* Explicit Certificate Numbers */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-brand-indigo/10 text-left">
+                  <div className="bg-purple-50/70 border border-purple-200/80 rounded-xl px-2.5 py-1.5 flex items-center justify-between sm:justify-start gap-2 shadow-2xs">
+                    <span className="text-[10px] font-bold text-purple-900 uppercase tracking-wider flex-shrink-0">
+                      Sertifikat 1:
+                    </span>
+                    <span className="font-mono font-bold text-[11px] sm:text-xs text-purple-950 tracking-wider">
+                      ID32110015308660124
+                    </span>
+                  </div>
+                  <div className="bg-purple-50/70 border border-purple-200/80 rounded-xl px-2.5 py-1.5 flex items-center justify-between sm:justify-start gap-2 shadow-2xs">
+                    <span className="text-[10px] font-bold text-purple-900 uppercase tracking-wider flex-shrink-0">
+                      Sertifikat 2:
+                    </span>
+                    <span className="font-mono font-bold text-[11px] sm:text-xs text-purple-950 tracking-wider">
+                      ID32110015422560224
+                    </span>
                   </div>
                 </div>
               </div>
@@ -193,9 +219,9 @@ export default function HomePage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Card 1: 100% Halal & Higienis */}
-          <div className="bg-white p-6 rounded-3xl border border-amber-100 shadow-cookie space-y-3 hover:-translate-y-1 transition duration-300">
+          <div className="bg-white p-6 rounded-3xl border border-purple-100 shadow-cookie space-y-3.5 hover:-translate-y-1 transition duration-300 relative">
             <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 p-1.5 bg-amber-50 rounded-2xl border border-brand-indigo/10">
+              <div className="flex items-center gap-2 p-1.5 bg-purple-50 rounded-2xl border border-purple-200/60">
                 <img
                   src="/logo_halal_124_ungu.png"
                   alt="Logo Halal Indonesia"
@@ -207,11 +233,31 @@ export default function HomePage() {
                   className="h-10 sm:h-11 w-auto object-contain"
                 />
               </div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
-                100% Terjamin
+              <span className="text-[10px] font-black uppercase tracking-wider text-purple-700 bg-purple-50 border border-purple-200 px-2.5 py-1 rounded-full">
+                Sertifikat Resmi
               </span>
             </div>
-            <h3 className="font-heading font-bold text-lg text-brand-indigo">100% Halal &amp; Higienis</h3>
+
+            <h3 className="font-heading font-bold text-lg text-brand-indigo">
+              100% Halal &amp; Higienis
+            </h3>
+
+            {/* Kotak Informasi Nomor Sertifikat Halal */}
+            <div className="bg-purple-50/70 border border-purple-200/70 rounded-2xl p-2.5 space-y-1 text-left">
+              <div className="text-[10px] font-black uppercase tracking-wider text-purple-900 flex items-center justify-between">
+                <span>No. Sertifikat Halal:</span>
+                <span className="text-emerald-700 font-bold">BPJPH / MUI</span>
+              </div>
+              <div className="space-y-0.5">
+                <div className="font-mono text-[11px] font-bold text-brand-indigo bg-white px-2 py-0.5 rounded-lg border border-purple-100">
+                  ID32110015308660124
+                </div>
+                <div className="font-mono text-[11px] font-bold text-brand-indigo bg-white px-2 py-0.5 rounded-lg border border-purple-100">
+                  ID32110015422560224
+                </div>
+              </div>
+            </div>
+
             <p className="text-xs text-gray-600 leading-relaxed">
               Seluruh varian kue kering De&apos;nish Cookies diproduksi secara higienis menggunakan bahan baku berkualitas yang 100% terjamin kehalalannya, aman dan tenang dikonsumsi bersama keluarga tercinta.
             </p>
