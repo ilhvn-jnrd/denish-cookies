@@ -15,6 +15,11 @@ import {
   Package,
   Layers,
   Zap,
+  MapPin,
+  Clock,
+  Snowflake,
+  Shield,
+  Navigation,
 } from 'lucide-react';
 import { fetchApi } from '@/lib/api';
 import { Product } from '@/context/CartContext';
@@ -476,88 +481,240 @@ export default function HomePage() {
 
       {/* SHIPPING INFO SECTION: GOJEK DALAM KOTA & PAXEL LUAR KOTA */}
       <section id="pengiriman" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-br from-brand-indigo via-brand-indigoDark to-brand-indigo text-white rounded-3xl p-8 sm:p-12 shadow-2xl relative overflow-hidden border border-brand-yellow/30">
-          <div className="absolute inset-0 bg-bakery-pattern opacity-15 pointer-events-none" />
-          <div className="absolute top-0 right-0 w-80 h-80 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="bg-gradient-to-br from-[#1C0F45] via-[#2E1A7A] to-[#160B3B] text-white rounded-3xl p-6 sm:p-10 lg:p-12 shadow-2xl relative overflow-hidden border border-brand-yellow/30">
+          <div className="absolute inset-0 bg-bakery-pattern opacity-10 pointer-events-none" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-purple-600/15 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 space-y-8">
-            <div className="max-w-2xl space-y-3">
-              <span className="text-xs font-black uppercase tracking-widest text-brand-yellow">
-                Sistem Logistik Spesialis Kue Kering
-              </span>
-              <h2 className="font-heading font-black text-3xl sm:text-4xl text-white">
+            {/* Header */}
+            <div className="max-w-3xl space-y-3 text-center sm:text-left">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-yellow/15 border border-brand-yellow/30 text-brand-yellow text-xs font-black uppercase tracking-wider">
+                <Truck className="w-3.5 h-3.5" />
+                <span>Sistem Logistik Spesialis Kue Kering</span>
+              </div>
+              <h2 className="font-heading font-black text-3xl sm:text-4xl text-white tracking-tight">
                 Pengiriman Ekstra Aman &amp; Terjamin
               </h2>
-              <p className="text-xs sm:text-sm text-indigo-200 leading-relaxed">
-                Kami memahami kue kering rapuh dan mudah remuk. Oleh karena itu, De&apos;nish Cookies bekerja sama langsung dengan <strong className="text-white">Gojek (Dalam Kota)</strong> dan <strong className="text-white">Paxel (Luar Kota)</strong> yang dilengkapi fasilitas pendingin dan penanganan khusus makanan.
+              <p className="text-xs sm:text-sm text-indigo-200 leading-relaxed max-w-2xl">
+                Kami memahami kue kering rapuh dan mudah remuk. De&apos;nish Cookies bekerja sama langsung dengan <strong className="text-brand-yellow">Gojek Instant (Dalam Kota Bandung)</strong> dan <strong className="text-purple-300">Paxel Cold-Chain (Luar Kota Se-Indonesia)</strong> yang dilengkapi fasilitas pendingin dan kardus khusus makanan agar kue tiba utuh &amp; renyah.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Gojek Card */}
-              <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/15 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-black">
-                      GJ
-                    </div>
-                    <div>
-                      <h3 className="font-heading font-bold text-lg text-white">Gojek Dalam Kota</h3>
-                      <p className="text-[11px] text-emerald-300 font-bold">Kota Bandung &amp; Sekitarnya (Radius s/d 40 km)</p>
-                    </div>
+            {/* ANIMATED DELIVERY EXPRESSWAY ROAD (Mobil & Motor Berjalan) */}
+            <div className="bg-[#12082E]/90 backdrop-blur-md rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-brand-yellow/25 relative overflow-hidden shadow-inner space-y-3">
+              {/* Top Route Points & Guarantee Badge */}
+              <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
+                {/* Point A: Kitchen Antapani */}
+                <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl">
+                  <div className="relative flex items-center justify-center">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping absolute" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 relative" />
                   </div>
-                  <span className="px-2.5 py-1 bg-emerald-500/20 text-emerald-300 rounded-lg text-[10px] font-black uppercase">
-                    Langsung Antar
-                  </span>
+                  <div>
+                    <span className="font-bold text-white text-[11px] sm:text-xs block">🏠 Kitchen Antapani</span>
+                    <span className="text-[10px] text-amber-300 font-medium block">Pusat Dapur Bandung</span>
+                  </div>
                 </div>
 
-                <ul className="space-y-2 text-xs text-indigo-100">
-                  <li className="flex items-start gap-2">
-                    <span className="text-brand-yellow font-black">•</span>
-                    <span><strong>Gojek Instant:</strong> Tarif Rp 4.000/km (min Rp 15.000). Tiba 1-3 jam, kapasitas s/d 20 kg.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-brand-yellow font-black">•</span>
-                    <span><strong>Gojek SameDay:</strong> Tarif flat Rp 18.000 (&le;15km) &amp; Rp 25.000 (15-40km). Tiba di hari yang sama, maks 7 kg.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-brand-yellow font-black">•</span>
-                    <span>Jarak dihitung otomatis menggunakan GPS Peta OpenStreetMap dari Kitchen Antapani, Kota Bandung.</span>
-                  </li>
-                </ul>
+                {/* Center Route Guarantee Pill */}
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-yellow/15 border border-brand-yellow/40 text-brand-yellow text-[10px] sm:text-[11px] font-black uppercase tracking-wider shadow-sm">
+                  <ShieldCheck className="w-3.5 h-3.5 text-brand-yellow" />
+                  <span>Jalur Logistik Anti Hancur Se-Jawa</span>
+                </div>
+
+                {/* Point B: Customer's Doorstep */}
+                <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl">
+                  <MapPin className="w-4 h-4 text-brand-red flex-shrink-0" />
+                  <div>
+                    <span className="font-bold text-white text-[11px] sm:text-xs block">📍 Rumah Anda</span>
+                    <span className="text-[10px] text-emerald-300 font-extrabold block">Tiba Utuh &amp; Renyah</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* The Highway Road Track with Moving Vehicles */}
+              <div className="relative h-14 sm:h-18 bg-gradient-to-r from-gray-950 via-gray-900 to-gray-950 rounded-xl sm:rounded-2xl overflow-hidden border border-white/15 flex items-center shadow-2xl">
+                {/* Road Curbs (Top & Bottom Yellow Borders) */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-yellow via-white to-brand-yellow opacity-40" />
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-yellow via-white to-brand-yellow opacity-40" />
+
+                {/* Road Center Dashed Line in Motion */}
+                <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-0.5 animate-road-dash opacity-70" />
+
+                {/* Moving Vehicle 1: Paxel Cold-Chain Van (Truck) */}
+                <div className="absolute top-1/2 -translate-y-1/2 animate-delivery-van pointer-events-none z-10 flex items-center">
+                  <div className="animate-vehicle-bob flex items-center gap-1.5 bg-purple-950/95 text-white px-3 py-1.5 rounded-2xl border border-purple-400 shadow-xl text-xs font-black whitespace-nowrap">
+                    <span className="text-base sm:text-lg leading-none">🚚</span>
+                    <span className="text-[10px] sm:text-[11px] text-purple-200 font-extrabold">Paxel Cold-Chain</span>
+                    <span className="text-xs text-cyan-300">❄️</span>
+                  </div>
+                </div>
+
+                {/* Moving Vehicle 2: Gojek Instant Motorcycle */}
+                <div className="absolute top-1/2 -translate-y-1/2 animate-delivery-bike pointer-events-none z-10 flex items-center">
+                  <div className="animate-vehicle-bob flex items-center gap-1.5 bg-emerald-950/95 text-white px-2.5 py-1.5 rounded-2xl border border-emerald-400 shadow-xl text-xs font-black whitespace-nowrap">
+                    <span className="text-base sm:text-lg leading-none">🛵</span>
+                    <span className="text-[10px] sm:text-[11px] text-emerald-200 font-extrabold">Gojek Instant</span>
+                    <span className="text-xs text-amber-300">⚡</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Road Micro Caption */}
+              <div className="flex flex-wrap items-center justify-between gap-2 text-[10.5px] text-indigo-200/80 pt-1 px-1 font-medium">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400" /> GPS OpenStreetMap Terintegrasi
+                </span>
+                <span className="text-brand-yellow font-bold">
+                  Kardus Makanan Khusus + Bubble Wrap Tebal Berlapis
+                </span>
+              </div>
+            </div>
+
+            {/* 2 Detailed Cards: Gojek & Paxel */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Gojek Card */}
+              <div className="bg-white/10 backdrop-blur-md p-6 sm:p-7 rounded-3xl border border-emerald-400/25 space-y-5 hover:border-emerald-400/50 hover:-translate-y-1 transition duration-300 shadow-xl">
+                {/* Header with Visual Icon */}
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-white flex items-center justify-center font-black shadow-lg flex-shrink-0 text-xl">
+                      🛵
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-heading font-black text-xl text-white">Gojek Dalam Kota</h3>
+                        <span className="px-2 py-0.5 bg-emerald-500/30 text-emerald-300 rounded-full text-[10px] font-black uppercase">
+                          Area Bandung
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-emerald-300 font-bold mt-0.5">
+                        Jemput dari Kitchen Antapani (Radius s/d 40 km)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Features Specs Cards */}
+                <div className="space-y-2.5 text-xs">
+                  <div className="bg-white/5 border border-white/10 rounded-2xl p-3 space-y-1">
+                    <div className="flex items-center justify-between text-emerald-300 font-extrabold text-[11px]">
+                      <span>⚡ Gojek Instant (Prioritas Utama)</span>
+                      <span className="text-amber-300">1–3 Jam Tiba</span>
+                    </div>
+                    <p className="text-indigo-100 text-[11px] leading-relaxed">
+                      Tarif Rp 4.000/km (min. Rp 15.000). Pengantaran langsung tanpa operan, kapasitas muat s/d 20 kg toples.
+                    </p>
+                  </div>
+
+                  <div className="bg-white/5 border border-white/10 rounded-2xl p-3 space-y-1">
+                    <div className="flex items-center justify-between text-emerald-300 font-extrabold text-[11px]">
+                      <span>🛵 Gojek SameDay (Opsi Hemat)</span>
+                      <span className="text-amber-300">Hari yang Sama</span>
+                    </div>
+                    <p className="text-indigo-100 text-[11px] leading-relaxed">
+                      Tarif flat hemat Rp 18.000 (&le;15 km) &amp; Rp 25.000 (15–40 km). Maksimal 7 kg toples.
+                    </p>
+                  </div>
+
+                  <div className="bg-white/5 border border-white/10 rounded-2xl p-3 space-y-1">
+                    <div className="flex items-center gap-1.5 text-emerald-300 font-extrabold text-[11px]">
+                      <Navigation className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Kalkulasi Otomatis Jarak GPS</span>
+                    </div>
+                    <p className="text-indigo-100 text-[11px] leading-relaxed">
+                      Jarak dan ongkir dihitung otomatis dari koordinat GPS Kitchen Antapani via peta terintegrasi.
+                    </p>
+                  </div>
+                </div>
               </div>
 
               {/* Paxel Card */}
-              <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/15 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-black">
-                      PX
+              <div className="bg-white/10 backdrop-blur-md p-6 sm:p-7 rounded-3xl border border-purple-400/25 space-y-5 hover:border-purple-400/50 hover:-translate-y-1 transition duration-300 shadow-xl">
+                {/* Header with Visual Icon */}
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white flex items-center justify-center font-black shadow-lg flex-shrink-0 text-xl">
+                      🚚
                     </div>
                     <div>
-                      <h3 className="font-heading font-bold text-lg text-white">Paxel Antar Kota</h3>
-                      <p className="text-[11px] text-purple-300 font-bold">Pengiriman Luar Kota Seluruh Indonesia</p>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-heading font-black text-xl text-white">Paxel Antar Kota</h3>
+                        <span className="px-2 py-0.5 bg-purple-500/30 text-purple-300 rounded-full text-[10px] font-black uppercase">
+                          Luar Kota
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-purple-300 font-bold mt-0.5">
+                        Ekspedisi Spesialis Paket Makanan Se-Indonesia
+                      </p>
                     </div>
                   </div>
-                  <span className="px-2.5 py-1 bg-purple-500/20 text-purple-300 rounded-lg text-[10px] font-black uppercase">
-                    Food Safe
-                  </span>
                 </div>
 
-                <ul className="space-y-2 text-xs text-indigo-100">
-                  <li className="flex items-start gap-2">
-                    <span className="text-brand-yellow font-black">•</span>
-                    <span><strong>Tier Box Otomatis:</strong> Box Small (&le;1.5kg), Box Medium (&le;3kg), Box Large (&le;5kg).</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-brand-yellow font-black">•</span>
-                    <span><strong>Split Box Otomatis:</strong> Pesanan di atas 5 kg otomatis dihitung kelipatan box agar toples tidak bertumpuk berat.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-brand-yellow font-black">•</span>
-                    <span>Pengiriman luar kota aman dengan penanganan khusus paket makanan (Food Safe) agar kualitas kue tetap terjaga hingga sampai di tujuan.</span>
-                  </li>
-                </ul>
+                {/* Features Specs Cards */}
+                <div className="space-y-2.5 text-xs">
+                  <div className="bg-white/5 border border-white/10 rounded-2xl p-3 space-y-1">
+                    <div className="flex items-center justify-between text-purple-300 font-extrabold text-[11px]">
+                      <span>❄️ Rantai Pendingin (Cold-Chain)</span>
+                      <span className="text-cyan-300">Food-Safe Certified</span>
+                    </div>
+                    <p className="text-indigo-100 text-[11px] leading-relaxed">
+                      Fasilitas pendingin menjaga butter Anchor tetap segar, wangi, dan tidak berminyak/lumer di jalan.
+                    </p>
+                  </div>
+
+                  <div className="bg-white/5 border border-white/10 rounded-2xl p-3 space-y-1">
+                    <div className="flex items-center justify-between text-purple-300 font-extrabold text-[11px]">
+                      <span>📦 Kardus Makanan Berstandar Tier Box</span>
+                      <span className="text-amber-300">S / M / L</span>
+                    </div>
+                    <p className="text-indigo-100 text-[11px] leading-relaxed">
+                      Tersedia Box Small (&le;1.5kg), Medium (&le;3kg), dan Large (&le;5kg) yang pas dengan ukuran toples kue.
+                    </p>
+                  </div>
+
+                  <div className="bg-white/5 border border-white/10 rounded-2xl p-3 space-y-1">
+                    <div className="flex items-center gap-1.5 text-purple-300 font-extrabold text-[11px]">
+                      <Package className="w-3.5 h-3.5 text-purple-400" />
+                      <span>Auto Split Box Cerdas (&gt;5 kg)</span>
+                    </div>
+                    <p className="text-indigo-100 text-[11px] leading-relaxed">
+                      Pesanan lebih dari 5 kg otomatis dipecah kelipatan kardus agar toples di tumpukan bawah tidak tertindih.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 4-Step Reassurance Journey Bar */}
+            <div className="pt-2">
+              <div className="text-center mb-3">
+                <span className="text-[11px] font-extrabold uppercase tracking-widest text-brand-yellow">
+                  4 Langkah Jaminan Kue Utuh &amp; Renyah Sampai Meja Anda
+                </span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-3.5 text-center space-y-1 hover:bg-white/10 transition">
+                  <span className="text-xl sm:text-2xl block">🔥</span>
+                  <span className="text-xs font-bold text-white block">1. Freshly Baked</span>
+                  <span className="text-[10px] text-indigo-200 block">Dipanggang fresh di Kitchen</span>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-3.5 text-center space-y-1 hover:bg-white/10 transition">
+                  <span className="text-xl sm:text-2xl block">🛡️</span>
+                  <span className="text-xs font-bold text-white block">2. Segel &amp; Bubble Wrap</span>
+                  <span className="text-[10px] text-indigo-200 block">Toples tersegel kedap udara</span>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-3.5 text-center space-y-1 hover:bg-white/10 transition">
+                  <span className="text-xl sm:text-2xl block">📦</span>
+                  <span className="text-xs font-bold text-white block">3. Kardus Khusus Makanan</span>
+                  <span className="text-[10px] text-indigo-200 block">Paxel Safe-Box anti guncang</span>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-3.5 text-center space-y-1 hover:bg-white/10 transition">
+                  <span className="text-xl sm:text-2xl block">✨</span>
+                  <span className="text-xs font-bold text-white block">4. Tiba Utuh &amp; Renyah</span>
+                  <span className="text-[10px] text-indigo-200 block">Lumer legit dinikmati keluarga</span>
+                </div>
               </div>
             </div>
           </div>
