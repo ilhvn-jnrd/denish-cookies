@@ -60,12 +60,12 @@ export default function HomePage() {
   return (
     <div className="space-y-16 pb-20">
       {/* HERO SECTION */}
-      <section className="relative overflow-hidden bg-brand-yellow pt-12 pb-16 lg:py-20 border-b-4 border-brand-indigo/10">
-        {/* Seamless bakery pattern overlay */}
-        <div className="absolute inset-0 bg-bakery-pattern opacity-40 pointer-events-none" />
-        {/* Subtle decorative circles */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/20 blur-2xl pointer-events-none" />
-        <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-amber-400/30 blur-2xl pointer-events-none" />
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#FFF3B0] via-[#FFD100] to-[#F59E0B] pt-12 pb-20 sm:pb-24 lg:pt-16 lg:pb-32">
+        {/* Warm Radial Glow / Soft Light */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#FFF8D6_0%,_#FFD100_55%,_#F59E0B_100%)] opacity-90 pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] sm:w-[950px] h-[500px] sm:h-[700px] bg-[#FFFBEA]/45 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/25 blur-2xl pointer-events-none" />
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-amber-400/35 blur-2xl pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
@@ -83,7 +83,7 @@ export default function HomePage() {
               </h1>
 
               <p className="text-base sm:text-lg text-brand-indigo/85 font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                Kelezatan toples kue kering legit dengan aroma semerbak 100% pure Anchor butter murni. Dibuat fresh setiap hari dengan resep warisan keluarga yang lumer di lidah.
+                Kelezatan kue kering homemade dengan aroma semerbak 100% pure Anchor butter murni. Dipanggang fresh setiap hari dari bahan-bahan pilihan berkualitas yang lembut dan lumer di mulut.
               </p>
 
               {/* Halal Trust Badge with Explicit Certificate Numbers */}
@@ -164,42 +164,74 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right Hero Visual Card */}
-            <div className="lg:col-span-5 relative">
-              <div className="relative mx-auto max-w-md bg-white p-4 rounded-3xl shadow-2xl border-4 border-white rotate-1 hover:rotate-0 transition-transform duration-500">
-                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-amber-100">
-                  <img
-                    src="/nastar_keju.jpg"
-                    alt="Nastar Keju De'nish Cookies"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-3 left-3 bg-brand-red text-white text-xs font-black px-3 py-1 rounded-full shadow-md uppercase">
-                    Favorit Keluarga
-                  </div>
+            {/* Right Hero Visual Card with Decorative Halo & Floating Badges */}
+            <div className="lg:col-span-5 relative flex items-center justify-center py-6 lg:py-0">
+              {/* Decorative Halo & Dashed Ring framing behind Card */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] sm:w-[420px] sm:h-[420px] rounded-full bg-white/35 blur-2xl pointer-events-none" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] sm:w-[440px] sm:h-[440px] rounded-full border-2 border-dashed border-[#2E1A7A]/15 pointer-events-none" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] h-[380px] sm:w-[470px] sm:h-[470px] rounded-full border border-white/40 pointer-events-none" />
+
+              {/* Card Container with Floating Badges */}
+              <div className="relative mx-auto w-full max-w-md">
+                {/* Floating Badge 1: Top-Left */}
+                <div className="absolute -top-3 sm:-top-4 -left-2 sm:-left-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full shadow-lg border border-[#2E1A7A]/10 flex items-center gap-1.5 text-xs font-bold text-brand-indigo transition-transform hover:scale-105 select-none">
+                  <span className="text-sm sm:text-base leading-none">🧀</span>
+                  <span>Taburan Keju Melimpah</span>
                 </div>
 
-                <div className="p-4 space-y-3">
-                  <div>
-                    <span className="text-xs font-bold text-amber-700 uppercase block mb-1">Signature Festive</span>
-                    <h3 className="font-heading font-black text-2xl text-brand-indigo">
-                      Nastar Keju
-                    </h3>
+                {/* Floating Badge 2: Bottom-Right */}
+                <div className="absolute -bottom-3 sm:-bottom-4 -right-2 sm:-right-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full shadow-lg border border-[#2E1A7A]/10 flex items-center gap-1.5 text-xs font-bold text-brand-indigo transition-transform hover:scale-105 select-none">
+                  <span className="text-sm sm:text-base leading-none">🧈</span>
+                  <span>100% Pure Anchor Butter</span>
+                </div>
+
+                {/* The Card */}
+                <div className="relative bg-white p-4 rounded-3xl shadow-2xl border-4 border-white rotate-1 hover:rotate-0 transition-transform duration-500">
+                  <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-amber-100">
+                    <img
+                      src="/nastar_keju.jpg"
+                      alt="Nastar Keju De'nish Cookies"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-3 left-3 bg-brand-red text-white text-xs font-black px-3 py-1 rounded-full shadow-md uppercase">
+                      Favorit Keluarga
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-600 leading-relaxed">
-                    Perpaduan adonan nastar lembut yang lumer di mulut dengan isian selai nanas pilihan dan taburan keju gurih yang melimpah.
-                  </p>
-                  <div className="pt-2">
-                    <a
-                      href="#katalog"
-                      className="w-full py-3 bg-brand-yellow hover:bg-brand-yellowHover text-brand-indigo font-black text-xs rounded-xl shadow-cookie flex items-center justify-center gap-2 transition active:scale-95"
-                    >
-                      <ShoppingBag className="w-4 h-4" /> Beli Toples Ini
-                    </a>
+
+                  <div className="p-4 space-y-3">
+                    <div>
+                      <span className="text-xs font-bold text-amber-700 uppercase block mb-1">Signature Festive</span>
+                      <h3 className="font-heading font-black text-2xl text-brand-indigo">
+                        Nastar Keju
+                      </h3>
+                    </div>
+                    <p className="text-xs text-gray-600 leading-relaxed">
+                      Perpaduan adonan nastar lembut yang lumer di mulut dengan isian selai nanas pilihan dan taburan keju gurih yang melimpah.
+                    </p>
+                    <div className="pt-2">
+                      <a
+                        href="#katalog"
+                        className="w-full py-3 bg-brand-yellow hover:bg-brand-yellowHover text-brand-indigo font-black text-xs rounded-xl shadow-cookie flex items-center justify-center gap-2 transition active:scale-95"
+                      >
+                        <ShoppingBag className="w-4 h-4" /> Beli Toples Ini
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Smooth Wave Curve Divider to Cream Section Below */}
+        <div className="absolute -bottom-[1px] left-0 right-0 w-full overflow-hidden leading-none pointer-events-none z-10">
+          <svg
+            className="relative block w-full h-8 sm:h-12 md:h-16 lg:h-20 text-[#FFFDF5] fill-current"
+            viewBox="0 0 1200 120"
+            preserveAspectRatio="none"
+          >
+            <path d="M0,45 C180,95 380,10 580,55 C780,100 980,25 1200,50 L1200,120 L0,120 Z" />
+          </svg>
         </div>
       </section>
 
