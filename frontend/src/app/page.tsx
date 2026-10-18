@@ -86,8 +86,33 @@ export default function HomePage() {
                 Kelezatan toples kue kering legit dengan aroma semerbak 100% Wijsman butter murni. Dibuat fresh setiap hari dengan resep warisan keluarga yang lumer di lidah.
               </p>
 
+              {/* Halal Trust Badge */}
+              <div className="inline-flex flex-col sm:flex-row items-center gap-3 sm:gap-4 bg-white/95 backdrop-blur-sm px-4 py-2.5 rounded-2xl shadow-md border border-brand-indigo/10 max-w-md mx-auto lg:mx-0">
+                <div className="flex items-center gap-2.5 flex-shrink-0">
+                  <img
+                    src="/logo_halal_124_ungu.png"
+                    alt="Logo Halal Indonesia"
+                    className="h-9 sm:h-11 w-auto object-contain"
+                  />
+                  <img
+                    src="/logo_halal_224_ungu.png"
+                    alt="Logo Halal MUI"
+                    className="h-9 sm:h-11 w-auto object-contain"
+                  />
+                </div>
+                <div className="h-7 w-px bg-brand-indigo/15 hidden sm:block flex-shrink-0" />
+                <div className="text-center sm:text-left">
+                  <div className="text-xs sm:text-sm font-black text-brand-indigo leading-tight">
+                    100% Terjamin Halal
+                  </div>
+                  <div className="text-[10px] sm:text-[11px] font-semibold text-gray-600 mt-0.5">
+                    Bahan Baku &amp; Produksi Bersertifikat Halal
+                  </div>
+                </div>
+              </div>
+
               {/* CTAs */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-1">
                 <a href="#katalog" className="btn-primary text-sm px-7 py-4 w-full sm:w-auto">
                   <ShoppingBag className="w-4 h-4" /> Belanja Sekarang
                 </a>
@@ -97,7 +122,7 @@ export default function HomePage() {
               </div>
 
               {/* Quick Trust Badges */}
-              <div className="grid grid-cols-3 gap-3 pt-6 border-t border-brand-indigo/15 max-w-lg mx-auto lg:mx-0 text-left">
+              <div className="grid grid-cols-3 gap-3 pt-4 border-t border-brand-indigo/15 max-w-lg mx-auto lg:mx-0 text-left">
                 <div className="bg-white/60 backdrop-blur-sm p-3 rounded-2xl border border-brand-indigo/10">
                   <span className="text-xs font-black text-brand-indigo block">100% Wijsman</span>
                   <span className="text-[11px] text-gray-700">Butter Belanda asli</span>
@@ -166,7 +191,33 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Card 1: 100% Halal & Higienis */}
+          <div className="bg-white p-6 rounded-3xl border border-amber-100 shadow-cookie space-y-3 hover:-translate-y-1 transition duration-300">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 p-1.5 bg-amber-50 rounded-2xl border border-brand-indigo/10">
+                <img
+                  src="/logo_halal_124_ungu.png"
+                  alt="Logo Halal Indonesia"
+                  className="h-10 sm:h-11 w-auto object-contain"
+                />
+                <img
+                  src="/logo_halal_224_ungu.png"
+                  alt="Logo Halal MUI"
+                  className="h-10 sm:h-11 w-auto object-contain"
+                />
+              </div>
+              <span className="text-[11px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
+                100% Terjamin
+              </span>
+            </div>
+            <h3 className="font-heading font-bold text-lg text-brand-indigo">100% Halal &amp; Higienis</h3>
+            <p className="text-xs text-gray-600 leading-relaxed">
+              Seluruh varian kue kering De&apos;nish Cookies diproduksi secara higienis menggunakan bahan baku berkualitas yang 100% terjamin kehalalannya, aman dan tenang dikonsumsi bersama keluarga tercinta.
+            </p>
+          </div>
+
+          {/* Card 2: 100% Wijsman Asli */}
           <div className="bg-white p-6 rounded-3xl border border-amber-100 shadow-cookie space-y-3 hover:-translate-y-1 transition duration-300">
             <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center">
               <Award className="w-6 h-6 text-brand-red" />
@@ -177,16 +228,18 @@ export default function HomePage() {
             </p>
           </div>
 
+          {/* Card 3: Freshly Baked Homemade */}
           <div className="bg-white p-6 rounded-3xl border border-amber-100 shadow-cookie space-y-3 hover:-translate-y-1 transition duration-300">
             <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center">
               <Flame className="w-6 h-6 text-amber-600" />
             </div>
             <h3 className="font-heading font-bold text-lg text-brand-indigo">Freshly Baked Homemade</h3>
             <p className="text-xs text-gray-600 leading-relaxed">
-              Bukan kue pabrikan massal. Setiap batch dipanggang hati-hati secara higienis di dapur kami di Antapani, Kota Bandung.
+              Bukan kue pabrikan massal. Setiap batch dipanggang secara higienis tanpa pengawet di dapur kami di Antapani, Kota Bandung.
             </p>
           </div>
 
+          {/* Card 4: Paxel Safe-Box Luar Kota */}
           <div className="bg-white p-6 rounded-3xl border border-amber-100 shadow-cookie space-y-3 hover:-translate-y-1 transition duration-300">
             <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center">
               <Package className="w-6 h-6 text-blue-600" />
@@ -194,16 +247,6 @@ export default function HomePage() {
             <h3 className="font-heading font-bold text-lg text-brand-indigo">Paxel Safe-Box Luar Kota</h3>
             <p className="text-xs text-gray-600 leading-relaxed">
               Kirim ke Bandung, Surabaya, Medan dll aman tanpa hancur berkat kemasan kardus khusus dan rantai dingin Paxel.
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-3xl border border-amber-100 shadow-cookie space-y-3 hover:-translate-y-1 transition duration-300">
-            <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center">
-              <ShieldCheck className="w-6 h-6 text-emerald-600" />
-            </div>
-            <h3 className="font-heading font-bold text-lg text-brand-indigo">Tanpa Pengawet &amp; Pemanis</h3>
-            <p className="text-xs text-gray-600 leading-relaxed">
-              Selai nanas dimasak manual dari nanas madu segar dan gula tebu murni. Aman untuk balita hingga lansia.
             </p>
           </div>
         </div>
