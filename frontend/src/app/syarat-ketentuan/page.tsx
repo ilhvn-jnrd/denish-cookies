@@ -90,7 +90,7 @@ export default function SyaratKetentuanPage() {
               <strong>Biaya Layanan Pembayaran (QRIS 0.7%):</strong> Transaksi menggunakan metode QRIS dikenakan biaya MDR / layanan sebesar <strong>0.7%</strong> yang dihitung dari total penjumlahan nilai produk dan ongkos kirim (rumus: <code>Math.ceil((subtotal + shippingCost) * 0.007)</code>). Biaya ini transparan dan ditampilkan di rincian sebelum pembayaran dilakukan.
             </li>
             <li>
-              Pesanan akan otomatis dibatalkan oleh sistem jika pembayaran tidak diselesaikan sebelum batas waktu kedaluwarsa Snap token Midtrans berakhir.
+              Pesanan akan otomatis dibatalkan oleh sistem jika pembayaran tidak diselesaikan sebelum batas waktu kedaluwarsa sesi pembayaran online berakhir.
             </li>
           </ul>
         </section>

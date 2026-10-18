@@ -19,6 +19,7 @@ import {
 import { fetchApi } from '@/lib/api';
 import { formatRupiah, formatWeight, formatDate, getOrderStatusBadge } from '@/lib/formatters';
 import PaymentModal from '@/components/PaymentModal';
+import { triggerSnapPayment } from '@/lib/snap';
 
 export default function OrderDetailPage() {
   const params = useParams();
@@ -27,6 +28,42 @@ export default function OrderDetailPage() {
   const [order, setOrder] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [isPaying, setIsPaying] = useState(false);
+
+  const handlePayOrder = async () => {
+    if (!order) return;
+    const snapToken = order.snap_token;
+    const isMockToken = !snapToken || snapToken.startsWith('SNAP-MOCK-') || snapToken.startsWith('SNAP-FALLBACK-');
+
+    if (isMockToken) {
+      setShowPaymentModal(true);
+      return;
+    }
+
+    setIsPaying(true);
+    const result = await triggerSnapPayment({
+      snapToken,
+      onSuccess: () => {
+        setIsPaying(false);
+        loadOrder();
+      },
+      onPending: () => {
+        setIsPaying(false);
+        loadOrder();
+      },
+      onError: () => {
+        setIsPaying(false);
+        alert('Pembayaran belum berhasil atau dibatalkan.');
+      },
+      onClose: () => {
+        setIsPaying(false);
+      },
+    });
+
+    if (result.isMock) {
+      setShowPaymentModal(true);
+    }
+  };
 
   const loadOrder = async () => {
     if (!orderNumber) return;
@@ -135,10 +172,12 @@ export default function OrderDetailPage() {
 
             {order.payment_status === 'pending' && (
               <button
-                onClick={() => setShowPaymentModal(true)}
-                className="px-4 py-1.5 bg-brand-yellow text-brand-indigo hover:bg-brand-yellowHover font-black text-xs rounded-xl shadow-md transition flex items-center gap-1.5"
+                disabled={isPaying}
+                onClick={handlePayOrder}
+                className="px-4 py-2 bg-brand-yellow text-brand-indigo hover:bg-brand-yellowHover font-black text-xs rounded-xl shadow-md transition flex items-center gap-1.5 active:scale-95 disabled:opacity-60"
               >
-                <CreditCard className="w-3.5 h-3.5" /> Bayar Sekarang (Simulasi)
+                <CreditCard className="w-3.5 h-3.5" />
+                {isPaying ? 'Membuka Pembayaran...' : 'Bayar Sekarang'}
               </button>
             )}
           </div>
@@ -272,7 +311,7 @@ export default function OrderDetailPage() {
           orderNumber={order.order_number}
           grossAmount={order.gross_amount}
           snapToken={order.snap_token}
-          isMock={true}
+          isMock={!order.snap_token || order.snap_token.startsWith('SNAP-MOCK-')}
           onPaymentSuccess={() => {
             setShowPaymentModal(false);
             loadOrder();

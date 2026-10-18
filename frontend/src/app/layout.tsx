@@ -31,6 +31,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const midtransClientKey =
+    process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || 'Mid-client-hmMqfEj9LisyqvsS';
+  const isSandbox = midtransClientKey.startsWith('SB-');
+  const snapScriptUrl =
+    process.env.NEXT_PUBLIC_MIDTRANS_SNAP_URL ||
+    (isSandbox
+      ? 'https://app.sandbox.midtrans.com/snap/snap.js'
+      : 'https://app.midtrans.com/snap/snap.js');
+
   return (
     <html lang="id">
       <head>
@@ -41,11 +50,11 @@ export default function RootLayout({
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossOrigin=""
         />
-        {/* Midtrans Snap JS (Sandbox) */}
+        {/* Midtrans Snap JS (Auto-detects Production vs Sandbox) */}
         <script
           type="text/javascript"
-          src={process.env.NEXT_PUBLIC_MIDTRANS_SNAP_URL || 'https://app.sandbox.midtrans.com/snap/snap.js'}
-          data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || 'SB-Mid-client-mock'}
+          src={snapScriptUrl}
+          data-client-key={midtransClientKey}
           async
         />
       </head>

@@ -18,8 +18,15 @@ class MidtransService
     public function __construct()
     {
         $this->serverKey = config('services.midtrans.server_key', env('MIDTRANS_SERVER_KEY', 'sandbox-mock'));
-        $this->clientKey = config('services.midtrans.client_key', env('MIDTRANS_CLIENT_KEY', 'SB-Mid-client-mock'));
-        $this->isProduction = (bool) config('services.midtrans.is_production', env('MIDTRANS_IS_PRODUCTION', false));
+        $this->clientKey = config('services.midtrans.client_key', env('MIDTRANS_CLIENT_KEY', 'Mid-client-hmMqfEj9LisyqvsS'));
+        $explicitIsProduction = config('services.midtrans.is_production', env('MIDTRANS_IS_PRODUCTION'));
+
+        // Smart auto-detection: if serverKey or clientKey starts with Mid- (and not SB-), it is Production
+        if ($explicitIsProduction !== null && $explicitIsProduction !== '') {
+            $this->isProduction = filter_var($explicitIsProduction, FILTER_VALIDATE_BOOLEAN);
+        } else {
+            $this->isProduction = !str_starts_with($this->clientKey, 'SB-') && str_starts_with($this->clientKey, 'Mid-');
+        }
 
         $this->snapApiUrl = $this->isProduction
             ? 'https://app.midtrans.com/snap/v1/transactions'
@@ -29,11 +36,11 @@ class MidtransService
     public function isMockMode(): bool
     {
         // Production environment MUST NEVER run in mock mode
-        if (app()->environment('production')) {
+        if (app()->environment('production') || $this->isProduction) {
             return false;
         }
 
-        return empty($this->serverKey) || $this->serverKey === 'sandbox-mock';
+        return empty($this->serverKey) || $this->serverKey === 'sandbox-mock' || str_contains($this->serverKey, 'mock');
     }
 
     public function getClientKey(): string
@@ -104,7 +111,7 @@ class MidtransService
                     'phone' => $order->recipient_phone,
                     'address' => $order->shipping_address,
                     'city' => $order->shipping_city,
-                    'postal_code' => $order->shipping_postal_code ?? '13430',
+                    'postal_code' => $order->shipping_postal_code ?? '40291',
                     'country_code' => 'IDN',
                 ],
             ],
@@ -132,6 +139,9 @@ class MidtransService
                     'token' => $token,
                     'redirect_url' => $redirectUrl,
                     'is_mock' => false,
+                    'client_key' => $this->clientKey,
+                    'is_production' => $this->isProduction,
+                    'snap_url' => $this->isProduction ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js',
                 ];
             }
 

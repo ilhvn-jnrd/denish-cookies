@@ -23,6 +23,7 @@ import { fetchApi } from '@/lib/api';
 import { formatRupiah, formatWeight } from '@/lib/formatters';
 import LeafletMapPicker from '@/components/LeafletMapPicker';
 import PaymentModal from '@/components/PaymentModal';
+import { triggerSnapPayment } from '@/lib/snap';
 
 interface ShippingOption {
   courier_type: string;
@@ -244,8 +245,10 @@ export default function CheckoutPage() {
     const res = await fetchApi<{
       order: any;
       snap_token: string;
-      is_mock: boolean;
+      is_mock?: boolean;
       message: string;
+      client_key?: string;
+      snap_url?: string;
     }>('/checkout', {
       method: 'POST',
       body: JSON.stringify(payload),
@@ -254,35 +257,44 @@ export default function CheckoutPage() {
     if (res.data?.order) {
       const order = res.data.order;
       const snapToken = res.data.snap_token;
-      const isMock = res.data.is_mock;
+      const isMockToken = !snapToken || snapToken.startsWith('SNAP-MOCK-') || snapToken.startsWith('SNAP-FALLBACK-');
 
       setActiveOrder({
         ...order,
         snap_token: snapToken,
-        is_mock: isMock,
+        is_mock: isMockToken,
       });
 
-      // Check if real window.snap is available and not in mock mode
-      if (typeof window !== 'undefined' && (window as any).snap && !isMock && !snapToken.startsWith('SNAP-MOCK-')) {
-        (window as any).snap.pay(snapToken, {
-          onSuccess: function (result: any) {
+      if (isMockToken) {
+        // Open local mock modal ONLY if snapToken explicitly indicates mock mode
+        setShowPaymentModal(true);
+      } else {
+        // Trigger official Midtrans Snap.js popup
+        const result = await triggerSnapPayment({
+          snapToken,
+          clientKey: res.data.client_key,
+          snapUrl: res.data.snap_url,
+          onSuccess: function () {
             clearCart();
             router.push(`/orders/${order.order_number}`);
           },
-          onPending: function (result: any) {
+          onPending: function () {
             clearCart();
             router.push(`/orders/${order.order_number}`);
           },
-          onError: function (result: any) {
+          onError: function () {
             setCheckoutError('Pembayaran gagal atau dibatalkan.');
           },
           onClose: function () {
-            setShowPaymentModal(true);
+            // Customer closed snap popup: clear cart and redirect to order detail page so they can pay anytime
+            clearCart();
+            router.push(`/orders/${order.order_number}`);
           },
         });
-      } else {
-        // Open the local demo / mock simulation modal
-        setShowPaymentModal(true);
+
+        if (result.isMock) {
+          setShowPaymentModal(true);
+        }
       }
     } else {
       setCheckoutError(res.error || 'Gagal memproses pesanan.');
@@ -701,16 +713,16 @@ export default function CheckoutPage() {
               } disabled:opacity-60`}
             >
               <CreditCard className="w-4 h-4" />
-              {isSubmitting ? 'Memproses Pesanan...' : 'Bayar via Midtrans Snap'}
+              {isSubmitting ? 'Memproses Pesanan...' : 'Bayar Sekarang'}
             </button>
 
             <div className="text-center space-y-1">
-              <p className="text-[11px] text-gray-400 flex items-center justify-center gap-1">
+              <p className="text-[11px] text-gray-500 flex items-center justify-center gap-1 font-medium">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                Midtrans 256-bit Encrypted Security &amp; Mock Ready
+                Pembayaran Instan &amp; Keamanan Terenkripsi 256-bit SSL
               </p>
               <p className="text-[10px] text-gray-400">
-                QRIS • BCA • Mandiri • GoPay • OVO • ShopeePay
+                QRIS • BCA • Mandiri • BRI • GoPay • ShopeePay
               </p>
             </div>
           </div>

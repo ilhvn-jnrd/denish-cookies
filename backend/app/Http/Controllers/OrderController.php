@@ -177,6 +177,9 @@ class OrderController extends Controller
             'snap_token' => $snapResult['token'],
             'redirect_url' => $snapResult['redirect_url'],
             'is_mock' => $snapResult['is_mock'] ?? false,
+            'client_key' => $snapResult['client_key'] ?? null,
+            'is_production' => $snapResult['is_production'] ?? false,
+            'snap_url' => $snapResult['snap_url'] ?? null,
         ], 201);
     }
 

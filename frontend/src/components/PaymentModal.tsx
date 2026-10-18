@@ -61,9 +61,9 @@ export default function PaymentModal({
               dc
             </div>
             <div>
-              <h3 className="font-heading text-base sm:text-lg font-bold">Midtrans Payment</h3>
+              <h3 className="font-heading text-base sm:text-lg font-bold">Pembayaran Online Otomatis</h3>
               <p className="text-[11px] sm:text-xs text-brand-yellow flex items-center gap-1 font-medium">
-                <ShieldCheck className="w-3.5 h-3.5" /> Demo Sandbox Gateway
+                <ShieldCheck className="w-3.5 h-3.5" /> Pembayaran Instan &amp; Aman
               </p>
             </div>
           </div>
@@ -92,9 +92,9 @@ export default function PaymentModal({
           <div className="bg-blue-50 border border-blue-200 rounded-2xl p-3 flex items-start gap-2.5 text-xs text-blue-900">
             <AlertTriangle className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
             <div>
-              <span className="font-bold">Mode Simulasi Pembayaran Lokal</span>
+              <span className="font-bold">Mode Simulasi Pembayaran Otomatis</span>
               <p className="text-blue-800 text-[11px] mt-0.5">
-                Fitur ini mensimulasikan webhook Midtrans dan pemotongan stok otomatis tanpa memerlukan kartu kredit/saldo riil.
+                Fitur ini memproses simulasi konfirmasi pembayaran dan pemotongan stok otomatis untuk verifikasi sistem.
               </p>
             </div>
           </div>
@@ -197,13 +197,13 @@ export default function PaymentModal({
             ) : (
               <>
                 <CheckCircle2 className="w-4 h-4" />
-                Simulasi Bayar Sekarang (Lunas)
+                Konfirmasi Bayar Sekarang (Lunas)
               </>
             )}
           </button>
 
           <p className="text-[10px] text-gray-400 text-center">
-            Snap Token: <span className="font-mono text-[10px] text-gray-600">{snapToken || 'SANDBOX-MOCK-ACTIVE'}</span>
+            ID Transaksi: <span className="font-mono text-[10px] text-gray-600">{snapToken || 'ONLINE-GATEWAY-ACTIVE'}</span>
           </p>
         </div>
       </div>
