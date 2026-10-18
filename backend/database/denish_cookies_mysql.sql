@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `categories` (
 
 -- Dumping data for table `categories`
 INSERT INTO `categories` (`id`, `name`, `slug`, `description`, `created_at`, `updated_at`) VALUES
-  (1, 'Signature Cookies', 'signature-cookies', 'Kue kering resep otentik warisan keluarga dengan wisman butter premium', '2026-10-17 21:42:58', '2026-10-17 21:42:58'),
+  (1, 'Signature Cookies', 'signature-cookies', 'Kue kering resep otentik warisan keluarga dengan pure Anchor butter premium', '2026-10-17 21:42:58', '2026-10-17 21:42:58'),
   (2, 'Classic Festive', 'classic-festive', 'Favorit sepanjang masa untuk momen Idul Fitri, Natal, dan kebersamaan keluarga', '2026-10-17 21:42:58', '2026-10-17 21:42:58'),
   (3, 'Premium Hampers', 'premium-hampers', 'Paket hampers elegan dan hardbox eksklusif dengan kartu ucapan custom', '2026-10-17 21:42:58', '2026-10-17 21:42:58'),
   (4, 'Choco & Savoury', 'choco-savoury', 'Kombinasi cokelat leleh belgian dan gurih keju edam pilihan', '2026-10-17 21:42:58', '2026-10-17 21:42:58');
@@ -92,14 +92,14 @@ CREATE TABLE IF NOT EXISTS `products` (
 
 -- Dumping data for table `products`
 INSERT INTO `products` (`id`, `category_id`, `name`, `slug`, `description`, `price`, `weight_grams`, `stock`, `is_preorder`, `po_lead_days`, `image_url`, `is_featured`, `is_active`, `created_at`, `updated_at`) VALUES
-  (1, 2, 'Nastar Wisman Spesial 500gr', 'nastar-wisman-spesial-500gr', 'Nastar lumer di mulut dibuat dengan 100% Wijsman butter asli dan selai nanas madu homemade legit manis asam segar. Resep turun temurun tanpa pemanis buatan.', 135000, 500, 28, 0, 2, 'https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?auto=format&fit=crop&w=700&q=80', 1, 1, '2026-10-17 21:42:58', '2026-10-17 21:42:58'),
+  (1, 2, 'Nastar Anchor Spesial 500gr', 'nastar-anchor-spesial-500gr', 'Nastar lumer di mulut dibuat dengan 100% pure Anchor butter asli dan selai nanas madu homemade legit manis asam segar. Resep turun temurun tanpa pemanis buatan.', 135000, 500, 28, 0, 2, 'https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?auto=format&fit=crop&w=700&q=80', 1, 1, '2026-10-17 21:42:58', '2026-10-17 21:42:58'),
   (2, 1, 'Kastengel Keju Edam 500gr', 'kastengel-keju-edam-500gr', 'Kastengel super renyah dan gurih mantap bertabur parutan keju Edam tua impor Belanda melimpah. Wangi butter keju semerbak di setiap gigitan.', 145000, 500, 18, 0, 2, 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=700&q=80', 1, 1, '2026-10-17 21:42:58', '2026-10-17 21:42:58'),
   (3, 2, 'Putri Salju Kacang Mede 450gr', 'putri-salju-kacang-mede-450gr', 'Kue putri salju dingin lumer di lidah dengan paduan cincangan kacang mede panggang renyah beraroma wangi, dibalut gula halus dingin berkualitas.', 120000, 450, 22, 0, 2, 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=700&q=80', 1, 1, '2026-10-17 21:42:58', '2026-10-17 21:42:58'),
   (4, 2, 'Sagu Keju Lumer 400gr', 'sagu-keju-lumer-400gr', 'Tekstur ringan langsung lumer seketika di mulut dengan aroma daun pandan wangi dan keju cheddar panggang yang gurih manis pas.', 105000, 400, 15, 0, 2, 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=700&q=80', 0, 1, '2026-10-17 21:42:58', '2026-10-17 21:42:58'),
   (5, 4, 'Double Choco Almond Cookies 450gr', 'double-choco-almond-cookies-450gr', 'Dibuat dari dark chocolate couverture murni dan taburan irisan almond panggang tebal yang crunchy. Rasa cokelat kaya dan tidak terlalu manis.', 125000, 450, 14, 0, 2, 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=700&q=80', 1, 1, '2026-10-17 21:42:58', '2026-10-17 21:42:58'),
   (6, 1, 'Lidah Kucing Rainbow 350gr', 'lidah-kucing-rainbow-350gr', 'Kue lidah kucing tipis, garing, dan buttery dengan warna-warni ceria yang disukai segala usia. Menggunakan pewarna makanan premium bersertifikasi BPOM & Halal.', 95000, 350, 10, 0, 2, 'https://images.unsplash.com/photo-1548848221-0c2e497ed557?auto=format&fit=crop&w=700&q=80', 0, 1, '2026-10-17 21:42:58', '2026-10-17 21:42:58'),
-  (7, 3, 'Hampers De\'nish Royal Box (Isi 4 Toples - 2200gr)', 'hampers-denish-royal-box-4-toples', 'Gift box mewah laminasi gold tebal berisi 4 toples kue favorit (Nastar Wisman, Kastengel Edam, Putri Salju, Choco Almond), dilengkapi greeting card eksklusif & pita satin merah emas.', 495000, 2200, 8, 1, 3, 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=700&q=80', 1, 1, '2026-10-17 21:42:58', '2026-10-17 21:42:58'),
-  (8, 3, 'Hampers Mini Blessing (Isi 2 Toples - 1100gr)', 'hampers-mini-blessing-2-toples', 'Paket hampers ringkas nan elegan berisi 2 toples pilihan (Nastar Wisman & Kastengel Keju Edam), cocok untuk gift hantaran rekan kerja dan sahabat tersayang.', 265000, 1100, 15, 1, 2, 'https://images.unsplash.com/photo-1512485800893-b09ec169739a?auto=format&fit=crop&w=700&q=80', 0, 1, '2026-10-17 21:42:58', '2026-10-17 21:42:58');
+  (7, 3, 'Hampers De\'nish Royal Box (Isi 4 Toples - 2200gr)', 'hampers-denish-royal-box-4-toples', 'Gift box mewah laminasi gold tebal berisi 4 toples kue favorit (Nastar Anchor, Kastengel Edam, Putri Salju, Choco Almond), dilengkapi greeting card eksklusif & pita satin merah emas.', 495000, 2200, 8, 1, 3, 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=700&q=80', 1, 1, '2026-10-17 21:42:58', '2026-10-17 21:42:58'),
+  (8, 3, 'Hampers Mini Blessing (Isi 2 Toples - 1100gr)', 'hampers-mini-blessing-2-toples', 'Paket hampers ringkas nan elegan berisi 2 toples pilihan (Nastar Anchor & Kastengel Keju Edam), cocok untuk gift hantaran rekan kerja dan sahabat tersayang.', 265000, 1100, 15, 1, 2, 'https://images.unsplash.com/photo-1512485800893-b09ec169739a?auto=format&fit=crop&w=700&q=80', 0, 1, '2026-10-17 21:42:58', '2026-10-17 21:42:58');
 
 -- --------------------------------------------------------
 -- Table structure for table `shipping_settings`
@@ -259,7 +259,7 @@ CREATE TABLE IF NOT EXISTS `order_items` (
 
 -- Dumping data for table `order_items`
 INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `product_name`, `product_price`, `product_weight_grams`, `quantity`, `subtotal`, `is_preorder`, `created_at`, `updated_at`) VALUES
-  (1, 1, 1, 'Nastar Wisman Spesial 500gr', 135000, 500, 1, 135000, 0, '2026-10-17 21:42:59', '2026-10-17 21:42:59'),
+  (1, 1, 1, 'Nastar Anchor Spesial 500gr', 135000, 500, 1, 135000, 0, '2026-10-17 21:42:59', '2026-10-17 21:42:59'),
   (2, 1, 2, 'Kastengel Keju Edam 500gr', 145000, 500, 1, 145000, 0, '2026-10-17 21:42:59', '2026-10-17 21:42:59'),
   (3, 2, 7, 'Hampers De\'nish Royal Box (Isi 4 Toples - 2200gr)', 495000, 2200, 1, 495000, 1, '2026-10-17 21:42:59', '2026-10-17 21:42:59');
 

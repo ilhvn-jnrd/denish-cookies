@@ -23,7 +23,7 @@ export default function Navbar() {
         <span className="hidden sm:inline-flex items-center gap-1 text-brand-yellow">
           <Truck className="w-3.5 h-3.5" /> Kirim Se-Indonesia via Paxel Cold-Chain &amp; Gojek Instant
         </span>
-        <span className="text-amber-200">★ 100% Wijsman Butter Homemade Cookies ★</span>
+        <span className="text-amber-200">★ 100% Pure Anchor Butter Cookies ★</span>
         <a
           href="https://wa.me/6288218106303?text=Halo%20Denish%20Cookies,%20saya%20ingin%20tanya%20produk%20kue"
           target="_blank"

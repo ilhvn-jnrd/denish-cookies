@@ -150,7 +150,7 @@ export default function ProductDetailPage() {
               </span>
               <span className="text-xs text-gray-400">•</span>
               <span className="text-xs text-emerald-700 font-semibold flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" /> 100% Wijsman Butter
+                <CheckCircle2 className="w-3.5 h-3.5" /> 100% Pure Anchor Butter
               </span>
             </div>
           </div>

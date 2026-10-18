@@ -25,7 +25,7 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-xs text-indigo-200 leading-relaxed">
-              Pelopor kue kering homemade premium dengan 100% Wijsman Butter asli. Diracik dengan standar higienis tinggi tanpa bahan pemanis buatan.
+              Pelopor kue kering homemade premium dengan 100% Anchor Butter asli. Diracik dengan standar higienis tinggi tanpa bahan pemanis buatan.
             </p>
             <div className="flex items-center gap-2 text-xs text-brand-yellow font-bold">
               <ShieldCheck className="w-4 h-4 text-emerald-400" /> Bahan Pilihan Halal &amp; Higienis

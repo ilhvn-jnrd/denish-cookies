@@ -76,7 +76,7 @@ export default function KebijakanPengirimanPage() {
               <strong>Kemasan Khusus Safe-Box:</strong> Setiap toples dilapisi bubble wrap tebal dan ditempatkan ke dalam box kardus kaku khusus agar toples tidak berbenturan.
             </li>
             <li>
-              <strong>Fasilitas Rantai Dingin (Cold Chain):</strong> Paket disimpan pada suhu terkendali di hub Paxel agar kualitas butter Wijsman dan keju tidak meleleh atau rusak selama transit.
+              <strong>Fasilitas Rantai Dingin (Cold Chain):</strong> Paket disimpan pada suhu terkendali di hub Paxel agar kualitas butter Anchor dan keju tidak meleleh atau rusak selama transit.
             </li>
             <li>
               <strong>Sistem Split Box Otomatis:</strong> Pesanan dengan berat di atas 5 kg otomatis dibagi menjadi beberapa kardus terpisah oleh sistem kami agar kue di bagian bawah tidak tertindih beban berat.

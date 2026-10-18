@@ -575,7 +575,7 @@ export default function AdminProductsPage() {
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Contoh: Nastar Wisman Spesial 500gr"
+                    placeholder="Contoh: Nastar Anchor Spesial 500gr"
                     className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow"
                   />
                 </div>
@@ -606,7 +606,7 @@ export default function AdminProductsPage() {
                   rows={2}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Deskripsi bahan, butter wijsman, nanas madu homemade..."
+                  placeholder="Deskripsi bahan, pure anchor butter, nanas madu homemade..."
                   className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow"
                 />
               </div>

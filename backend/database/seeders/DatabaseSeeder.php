@@ -67,7 +67,7 @@ class DatabaseSeeder extends Seeder
         // 3. Categories
         $catSignature = Category::firstOrCreate(['slug' => 'signature-cookies'], [
             'name' => 'Signature Cookies',
-            'description' => 'Kue kering resep otentik warisan keluarga dengan wisman butter premium',
+            'description' => 'Kue kering resep otentik warisan keluarga dengan pure Anchor butter premium',
         ]);
 
         $catFestive = Category::firstOrCreate(['slug' => 'classic-festive'], [
@@ -89,9 +89,9 @@ class DatabaseSeeder extends Seeder
         $productsData = [
             [
                 'category_id' => $catFestive->id,
-                'name' => 'Nastar Wisman Spesial 500gr',
-                'slug' => 'nastar-wisman-spesial-500gr',
-                'description' => 'Nastar lumer di mulut dibuat dengan 100% Wijsman butter asli dan selai nanas madu homemade legit manis asam segar. Resep turun temurun tanpa pemanis buatan.',
+                'name' => 'Nastar Anchor Spesial 500gr',
+                'slug' => 'nastar-anchor-spesial-500gr',
+                'description' => 'Nastar lumer di mulut dibuat dengan 100% pure Anchor butter asli dan selai nanas madu homemade legit manis asam segar. Resep turun temurun tanpa pemanis buatan.',
                 'price' => 135000,
                 'weight_grams' => 500,
                 'stock' => 28,
@@ -175,7 +175,7 @@ class DatabaseSeeder extends Seeder
                 'category_id' => $catHampers->id,
                 'name' => "Hampers De'nish Royal Box (Isi 4 Toples - 2200gr)",
                 'slug' => 'hampers-denish-royal-box-4-toples',
-                'description' => 'Gift box mewah laminasi gold tebal berisi 4 toples kue favorit (Nastar Wisman, Kastengel Edam, Putri Salju, Choco Almond), dilengkapi greeting card eksklusif & pita satin merah emas.',
+                'description' => 'Gift box mewah laminasi gold tebal berisi 4 toples kue favorit (Nastar Anchor, Kastengel Edam, Putri Salju, Choco Almond), dilengkapi greeting card eksklusif & pita satin merah emas.',
                 'price' => 495000,
                 'weight_grams' => 2200,
                 'stock' => 8,
@@ -189,7 +189,7 @@ class DatabaseSeeder extends Seeder
                 'category_id' => $catHampers->id,
                 'name' => 'Hampers Mini Blessing (Isi 2 Toples - 1100gr)',
                 'slug' => 'hampers-mini-blessing-2-toples',
-                'description' => 'Paket hampers ringkas nan elegan berisi 2 toples pilihan (Nastar Wisman & Kastengel Keju Edam), cocok untuk gift hantaran rekan kerja dan sahabat tersayang.',
+                'description' => 'Paket hampers ringkas nan elegan berisi 2 toples pilihan (Nastar Anchor & Kastengel Keju Edam), cocok untuk gift hantaran rekan kerja dan sahabat tersayang.',
                 'price' => 265000,
                 'weight_grams' => 1100,
                 'stock' => 15,
@@ -262,7 +262,7 @@ class DatabaseSeeder extends Seeder
             'shipped_at' => Carbon::now()->subHours(5),
         ]);
 
-        $nastar = Product::where('slug', 'nastar-wisman-spesial-500gr')->first();
+        $nastar = Product::where('slug', 'like', 'nastar-%-spesial-500gr')->first();
         $kastengel = Product::where('slug', 'kastengel-keju-edam-500gr')->first();
 
         if ($nastar && $kastengel && $sampleOrder->items()->count() === 0) {

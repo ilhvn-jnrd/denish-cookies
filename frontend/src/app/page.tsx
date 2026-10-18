@@ -83,7 +83,7 @@ export default function HomePage() {
               </h1>
 
               <p className="text-base sm:text-lg text-brand-indigo/85 font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                Kelezatan toples kue kering legit dengan aroma semerbak 100% Wijsman butter murni. Dibuat fresh setiap hari dengan resep warisan keluarga yang lumer di lidah.
+                Kelezatan toples kue kering legit dengan aroma semerbak 100% pure Anchor butter murni. Dibuat fresh setiap hari dengan resep warisan keluarga yang lumer di lidah.
               </p>
 
               {/* Halal Trust Badge */}
@@ -124,8 +124,8 @@ export default function HomePage() {
               {/* Quick Trust Badges */}
               <div className="grid grid-cols-3 gap-3 pt-4 border-t border-brand-indigo/15 max-w-lg mx-auto lg:mx-0 text-left">
                 <div className="bg-white/60 backdrop-blur-sm p-3 rounded-2xl border border-brand-indigo/10">
-                  <span className="text-xs font-black text-brand-indigo block">100% Wijsman</span>
-                  <span className="text-[11px] text-gray-700">Butter Belanda asli</span>
+                  <span className="text-xs font-black text-brand-indigo block">100% Pure Anchor</span>
+                  <span className="text-[11px] text-gray-700">Butter New Zealand murni</span>
                 </div>
                 <div className="bg-white/60 backdrop-blur-sm p-3 rounded-2xl border border-brand-indigo/10">
                   <span className="text-xs font-black text-brand-indigo block">Paxel Safe Box</span>
@@ -217,14 +217,14 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Card 2: 100% Wijsman Asli */}
+          {/* Card 2: 100% Pure Anchor Butter */}
           <div className="bg-white p-6 rounded-3xl border border-amber-100 shadow-cookie space-y-3 hover:-translate-y-1 transition duration-300">
             <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center">
               <Award className="w-6 h-6 text-brand-red" />
             </div>
-            <h3 className="font-heading font-bold text-lg text-brand-indigo">100% Wijsman Asli</h3>
+            <h3 className="font-heading font-bold text-lg text-brand-indigo">100% Pure Anchor Butter</h3>
             <p className="text-xs text-gray-600 leading-relaxed">
-              Menggunakan butter Belanda kaleng merah asli tanpa campuran margarin murah. Tekstur lumer dan aroma semerbak.
+              Menggunakan pure New Zealand Anchor butter asli tanpa campuran margarin murah. Menghasilkan rasa gurih legit, tekstur lumer, dan aroma semerbak.
             </p>
           </div>
 
@@ -480,7 +480,7 @@ export default function HomePage() {
               De&apos;nish Cookies: Making Taste Better
             </h2>
             <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
-              Berawal dari komitmen menyajikan kue kering homemade terbaik, De&apos;nish Cookies berfokus pada cita rasa otentik dan kualitas tanpa kompromi. Kami menggunakan 100% Wijsman butter asli dan bahan pilihan bermutu tinggi tanpa tambahan pemanis buatan.
+              Berawal dari komitmen menyajikan kue kering homemade terbaik, De&apos;nish Cookies berfokus pada cita rasa otentik dan kualitas tanpa kompromi. Kami menggunakan 100% pure Anchor butter asli dan bahan pilihan bermutu tinggi tanpa tambahan pemanis buatan.
             </p>
             <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
               Setiap toples dipanggang secara higienis dan fresh untuk memastikan aroma wangi serta tekstur lembut yang lumer di mulut tetap konsisten di setiap sajian istimewa Anda.

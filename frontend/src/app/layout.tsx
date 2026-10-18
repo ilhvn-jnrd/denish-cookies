@@ -11,10 +11,10 @@ import FloatingSocialBalloon from '@/components/FloatingSocialBalloon';
 export const metadata: Metadata = {
   title: "De'nish Cookies — Making Taste Better | Premium Homemade Cookies",
   description:
-    "Toko kue kering homemade premium terpercaya sejak 2018. Menggunakan 100% Wijsman butter asli untuk Nastar, Kastengel Edam, Putri Salju, dan Hampers Eksklusif. Pengiriman aman se-Indonesia via Gojek Instant & Paxel Cold-Chain.",
+    "Toko kue kering homemade premium terpercaya sejak 2018. Menggunakan 100% pure Anchor butter murni untuk Nastar, Kastengel Edam, Putri Salju, dan Hampers Eksklusif. Pengiriman aman se-Indonesia via Gojek Instant & Paxel Cold-Chain.",
   keywords: [
     "De'nish Cookies",
-    "Kue Kering Nastar Wisman",
+    "Kue Kering Nastar Anchor",
     "Kastengel Keju Edam",
     "Hampers Lebaran Bandung",
     "Kue Kering Bandung",
