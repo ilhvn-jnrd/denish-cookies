@@ -184,7 +184,7 @@ class OrderController extends Controller
     }
 
     /**
-     * Get authenticated customer's orders.
+     * Get authenticated customer's orders with Shopee-style tabs and auto-hide cancelled > 3 days.
      */
     public function index(Request $request): JsonResponse
     {
@@ -194,12 +194,95 @@ class OrderController extends Controller
             return response()->json(['data' => []]);
         }
 
-        $orders = Order::with('items')
-            ->where('user_id', $user->id)
-            ->orderBy('id', 'desc')
-            ->paginate(15);
+        $threeDaysAgo = Carbon::now()->subDays(3);
 
-        return response()->json($orders);
+        $query = Order::with('items')
+            ->where('user_id', $user->id);
+
+        // Filter status tab
+        $tab = $request->query('status', 'all');
+
+        if ($tab === 'pending') {
+            // Belum Bayar
+            $query->where('order_status', 'pending');
+        } elseif ($tab === 'processing') {
+            // Dalam Produksi / Diproses Kitchen
+            $query->whereIn('order_status', ['paid', 'processing']);
+        } elseif ($tab === 'shipped') {
+            // Di Jalan / Sedang Dikirim
+            $query->where('order_status', 'shipped');
+        } elseif ($tab === 'completed') {
+            // Selesai
+            $query->where('order_status', 'completed');
+        } elseif ($tab === 'cancelled') {
+            // Dibatalkan (hanya yang belum lewat 3 hari)
+            $query->where('order_status', 'cancelled')
+                  ->where('updated_at', '>=', $threeDaysAgo);
+        } else {
+            // Semua (Sembunyikan order cancelled yang sudah lewat 3 hari)
+            $query->where(function ($q) use ($threeDaysAgo) {
+                $q->where('order_status', '!=', 'cancelled')
+                  ->orWhere(function ($sub) use ($threeDaysAgo) {
+                      $sub->where('order_status', 'cancelled')
+                          ->where('updated_at', '>=', $threeDaysAgo);
+                  });
+            });
+        }
+
+        $orders = $query->orderBy('id', 'desc')->paginate(15);
+
+        // Calculate counts for each Shopee-style tab
+        $counts = [
+            'all' => Order::where('user_id', $user->id)
+                ->where(function ($q) use ($threeDaysAgo) {
+                    $q->where('order_status', '!=', 'cancelled')
+                      ->orWhere(function ($sub) use ($threeDaysAgo) {
+                          $sub->where('order_status', 'cancelled')
+                              ->where('updated_at', '>=', $threeDaysAgo);
+                      });
+                })->count(),
+            'pending' => Order::where('user_id', $user->id)->where('order_status', 'pending')->count(),
+            'processing' => Order::where('user_id', $user->id)->whereIn('order_status', ['paid', 'processing'])->count(),
+            'shipped' => Order::where('user_id', $user->id)->where('order_status', 'shipped')->count(),
+            'completed' => Order::where('user_id', $user->id)->where('order_status', 'completed')->count(),
+            'cancelled' => Order::where('user_id', $user->id)->where('order_status', 'cancelled')->where('updated_at', '>=', $threeDaysAgo)->count(),
+        ];
+
+        $response = $orders->toArray();
+        $response['counts'] = $counts;
+
+        return response()->json($response);
+    }
+
+    /**
+     * Customer cancels an unpaid (pending) order.
+     */
+    public function cancel(Request $request, string $orderNumber): JsonResponse
+    {
+        $user = $request->user('sanctum');
+        if (!$user) {
+            return response()->json(['message' => 'Silakan masuk terlebih dahulu'], 401);
+        }
+
+        $order = Order::where('order_number', $orderNumber)
+            ->where('user_id', $user->id)
+            ->firstOrFail();
+
+        if ($order->order_status !== 'pending') {
+            return response()->json([
+                'message' => 'Hanya pesanan berstatus Belum Bayar yang dapat dibatalkan.',
+            ], 422);
+        }
+
+        $order->update([
+            'order_status' => 'cancelled',
+            'payment_status' => 'cancelled',
+        ]);
+
+        return response()->json([
+            'message' => 'Pesanan berhasil dibatalkan.',
+            'order' => $order->fresh(['items']),
+        ]);
     }
 
     /**

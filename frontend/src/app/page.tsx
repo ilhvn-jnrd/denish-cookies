@@ -14,6 +14,7 @@ import {
   Award,
   Package,
   Layers,
+  Zap,
 } from 'lucide-react';
 import { fetchApi } from '@/lib/api';
 import { Product } from '@/context/CartContext';
@@ -87,18 +88,18 @@ export default function HomePage() {
               </p>
 
               {/* Halal Trust Badge with Explicit Certificate Numbers */}
-              <div className="bg-white/95 backdrop-blur-sm p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl shadow-md border border-brand-indigo/10 max-w-lg mx-auto lg:mx-0 space-y-2.5">
-                <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
-                  <div className="flex items-center gap-2.5 flex-shrink-0 bg-purple-50/80 p-1.5 rounded-xl border border-purple-100">
+              <div className="bg-white/95 backdrop-blur-sm p-3 sm:p-4 rounded-2xl sm:rounded-3xl shadow-md border border-brand-indigo/10 max-w-lg mx-auto lg:mx-0 space-y-2 sm:space-y-2.5">
+                <div className="flex flex-col sm:flex-row items-center gap-2.5 sm:gap-4">
+                  <div className="flex items-center gap-2 sm:gap-2.5 flex-shrink-0 bg-purple-50/90 p-1.5 rounded-xl border border-purple-100">
                     <img
                       src="/logo_halal_124_ungu.png"
                       alt="Logo Halal Indonesia"
-                      className="h-10 sm:h-12 w-auto object-contain"
+                      className="h-9 sm:h-12 w-auto object-contain"
                     />
                     <img
                       src="/logo_halal_224_ungu.png"
                       alt="Logo Halal MUI"
-                      className="h-10 sm:h-12 w-auto object-contain"
+                      className="h-9 sm:h-12 w-auto object-contain"
                     />
                   </div>
                   <div className="text-center sm:text-left flex-1">
@@ -110,27 +111,27 @@ export default function HomePage() {
                         Terverifikasi
                       </span>
                     </div>
-                    <p className="text-[11px] text-gray-600 font-medium mt-0.5">
+                    <p className="text-[10.5px] sm:text-[11px] text-gray-600 font-medium mt-0.5">
                       Bahan Baku &amp; Proses Produksi Bersertifikat Halal
                     </p>
                   </div>
                 </div>
 
                 {/* Explicit Certificate Numbers */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-brand-indigo/10 text-left">
-                  <div className="bg-purple-50/70 border border-purple-200/80 rounded-xl px-2.5 py-1.5 flex items-center justify-between sm:justify-start gap-2 shadow-2xs">
-                    <span className="text-[10px] font-bold text-purple-900 uppercase tracking-wider flex-shrink-0">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 pt-2 border-t border-brand-indigo/10 text-left">
+                  <div className="bg-purple-50/70 border border-purple-200/80 rounded-xl px-2.5 py-1 sm:py-1.5 flex items-center justify-between sm:justify-start gap-2 shadow-2xs">
+                    <span className="text-[9.5px] sm:text-[10px] font-bold text-purple-900 uppercase tracking-wider flex-shrink-0">
                       Sertifikat 1:
                     </span>
-                    <span className="font-mono font-bold text-[11px] sm:text-xs text-purple-950 tracking-wider">
+                    <span className="font-mono font-bold text-[10.5px] sm:text-xs text-purple-950 tracking-wider">
                       ID32110015308660124
                     </span>
                   </div>
-                  <div className="bg-purple-50/70 border border-purple-200/80 rounded-xl px-2.5 py-1.5 flex items-center justify-between sm:justify-start gap-2 shadow-2xs">
-                    <span className="text-[10px] font-bold text-purple-900 uppercase tracking-wider flex-shrink-0">
+                  <div className="bg-purple-50/70 border border-purple-200/80 rounded-xl px-2.5 py-1 sm:py-1.5 flex items-center justify-between sm:justify-start gap-2 shadow-2xs">
+                    <span className="text-[9.5px] sm:text-[10px] font-bold text-purple-900 uppercase tracking-wider flex-shrink-0">
                       Sertifikat 2:
                     </span>
-                    <span className="font-mono font-bold text-[11px] sm:text-xs text-purple-950 tracking-wider">
+                    <span className="font-mono font-bold text-[10.5px] sm:text-xs text-purple-950 tracking-wider">
                       ID32110015422560224
                     </span>
                   </div>
@@ -147,19 +148,36 @@ export default function HomePage() {
                 </a>
               </div>
 
-              {/* Quick Trust Badges */}
-              <div className="grid grid-cols-3 gap-3 pt-4 border-t border-brand-indigo/15 max-w-lg mx-auto lg:mx-0 text-left">
-                <div className="bg-white/60 backdrop-blur-sm p-3 rounded-2xl border border-brand-indigo/10">
-                  <span className="text-xs font-black text-brand-indigo block">100% Pure Anchor</span>
-                  <span className="text-[11px] text-gray-700">Butter New Zealand murni</span>
+              {/* Quick Trust Badges with Micro-Icons */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 pt-3 sm:pt-4 border-t border-brand-indigo/15 max-w-lg mx-auto lg:mx-0 text-left">
+                <div className="bg-white/70 backdrop-blur-sm p-3 rounded-2xl border border-brand-indigo/10 flex items-center sm:items-start gap-2.5 sm:gap-2">
+                  <div className="w-7 h-7 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 text-amber-700">
+                    <Award className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-black text-brand-indigo block">100% Pure Anchor</span>
+                    <span className="text-[11px] text-gray-700 block leading-tight">Butter New Zealand murni</span>
+                  </div>
                 </div>
-                <div className="bg-white/60 backdrop-blur-sm p-3 rounded-2xl border border-brand-indigo/10">
-                  <span className="text-xs font-black text-brand-indigo block">Paxel Safe Box</span>
-                  <span className="text-[11px] text-gray-700">Anti hancur se-Jawa</span>
+
+                <div className="bg-white/70 backdrop-blur-sm p-3 rounded-2xl border border-brand-indigo/10 flex items-center sm:items-start gap-2.5 sm:gap-2">
+                  <div className="w-7 h-7 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0 text-blue-700">
+                    <Package className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-black text-brand-indigo block">Paxel Safe Box</span>
+                    <span className="text-[11px] text-gray-700 block leading-tight">Anti hancur se-Jawa</span>
+                  </div>
                 </div>
-                <div className="bg-white/60 backdrop-blur-sm p-3 rounded-2xl border border-brand-indigo/10">
-                  <span className="text-xs font-black text-brand-indigo block">Gojek Instant</span>
-                  <span className="text-[11px] text-gray-700">Pengiriman Instant Area Bandung</span>
+
+                <div className="bg-white/70 backdrop-blur-sm p-3 rounded-2xl border border-brand-indigo/10 flex items-center sm:items-start gap-2.5 sm:gap-2">
+                  <div className="w-7 h-7 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0 text-emerald-700">
+                    <Zap className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-black text-brand-indigo block">Gojek Instant</span>
+                    <span className="text-[11px] text-gray-700 block leading-tight">Area Bandung 1-3 Jam</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -174,19 +192,19 @@ export default function HomePage() {
               {/* Card Container with Floating Badges */}
               <div className="relative mx-auto w-full max-w-md">
                 {/* Floating Badge 1: Top-Left */}
-                <div className="absolute -top-3 sm:-top-4 -left-2 sm:-left-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full shadow-lg border border-[#2E1A7A]/10 flex items-center gap-1.5 text-xs font-bold text-brand-indigo transition-transform hover:scale-105 select-none">
+                <div className="absolute -top-3 sm:-top-4 -left-2 sm:-left-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full shadow-lg border border-[#2E1A7A]/10 flex items-center gap-1.5 text-xs font-bold text-brand-indigo transition-all duration-300 hover:scale-105 select-none animate-pulse">
                   <span className="text-sm sm:text-base leading-none">🧀</span>
                   <span>Taburan Keju Melimpah</span>
                 </div>
 
                 {/* Floating Badge 2: Bottom-Right */}
-                <div className="absolute -bottom-3 sm:-bottom-4 -right-2 sm:-right-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full shadow-lg border border-[#2E1A7A]/10 flex items-center gap-1.5 text-xs font-bold text-brand-indigo transition-transform hover:scale-105 select-none">
+                <div className="absolute -bottom-3 sm:-bottom-4 -right-2 sm:-right-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full shadow-lg border border-[#2E1A7A]/10 flex items-center gap-1.5 text-xs font-bold text-brand-indigo transition-all duration-300 hover:scale-105 select-none">
                   <span className="text-sm sm:text-base leading-none">🧈</span>
                   <span>100% Pure Anchor Butter</span>
                 </div>
 
                 {/* The Card */}
-                <div className="relative bg-white p-4 rounded-3xl shadow-2xl border-4 border-white rotate-1 hover:rotate-0 transition-transform duration-500">
+                <div className="relative bg-white p-4 rounded-3xl shadow-2xl hover:shadow-amber-500/25 border-4 border-white rotate-1 hover:rotate-0 transition-all duration-500">
                   <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-amber-100">
                     <img
                       src="/nastar_keju.jpg"
@@ -296,9 +314,9 @@ export default function HomePage() {
           </div>
 
           {/* Card 2: 100% Pure Anchor Butter */}
-          <div className="bg-white p-6 rounded-3xl border border-amber-100 shadow-cookie space-y-3 hover:-translate-y-1 transition duration-300">
-            <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center">
-              <Award className="w-6 h-6 text-brand-red" />
+          <div className="bg-white p-6 rounded-3xl border border-amber-200/70 shadow-cookie space-y-3 hover:-translate-y-1 transition duration-300">
+            <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center">
+              <Award className="w-6 h-6 text-amber-600" />
             </div>
             <h3 className="font-heading font-bold text-lg text-brand-indigo">100% Pure Anchor Butter</h3>
             <p className="text-xs text-gray-600 leading-relaxed">
@@ -307,9 +325,9 @@ export default function HomePage() {
           </div>
 
           {/* Card 3: Freshly Baked Homemade */}
-          <div className="bg-white p-6 rounded-3xl border border-amber-100 shadow-cookie space-y-3 hover:-translate-y-1 transition duration-300">
-            <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center">
-              <Flame className="w-6 h-6 text-amber-600" />
+          <div className="bg-white p-6 rounded-3xl border border-orange-200/70 shadow-cookie space-y-3 hover:-translate-y-1 transition duration-300">
+            <div className="w-12 h-12 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center">
+              <Flame className="w-6 h-6 text-orange-600" />
             </div>
             <h3 className="font-heading font-bold text-lg text-brand-indigo">Freshly Baked Homemade</h3>
             <p className="text-xs text-gray-600 leading-relaxed">
@@ -318,8 +336,8 @@ export default function HomePage() {
           </div>
 
           {/* Card 4: Paxel Safe-Box Luar Kota */}
-          <div className="bg-white p-6 rounded-3xl border border-amber-100 shadow-cookie space-y-3 hover:-translate-y-1 transition duration-300">
-            <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-3xl border border-blue-200/70 shadow-cookie space-y-3 hover:-translate-y-1 transition duration-300">
+            <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center">
               <Package className="w-6 h-6 text-blue-600" />
             </div>
             <h3 className="font-heading font-bold text-lg text-brand-indigo">Paxel Safe-Box Luar Kota</h3>
