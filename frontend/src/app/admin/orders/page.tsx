@@ -152,10 +152,11 @@ export default function AdminOrdersPage() {
             onChange={(e) => setCourierFilter(e.target.value)}
             className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold text-brand-indigo focus:outline-none"
           >
-            <option value="">Semua Ekspedisi</option>
+            <option value="">Semua Ekspedisi / Pengambilan</option>
             <option value="gojek_instant">Gojek Instant</option>
             <option value="gojek_sameday">Gojek SameDay</option>
             <option value="paxel">Paxel Antar Kota</option>
+            <option value="pickup">Self-Pickup (Ambil di Toko)</option>
           </select>
         </div>
 

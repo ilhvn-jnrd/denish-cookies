@@ -24,7 +24,7 @@ class ShippingController extends Controller
     public function calculate(Request $request): JsonResponse
     {
         $request->validate([
-            'city_name' => 'required|string',
+            'city_name' => 'nullable|string',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'total_weight_grams' => 'nullable|integer',

@@ -39,17 +39,29 @@ class WebhookController extends Controller
             return response()->json(['message' => 'Invalid webhook payload'], 400);
         }
 
-        // Verify Signature
-        if (!$signatureKey || !$this->midtransService->verifySignature((string) $orderId, (string) $statusCode, (string) $grossAmount, (string) $signatureKey)) {
-            Log::warning("Midtrans Webhook Signature Mismatch for Order: {$orderId}");
-            return response()->json(['message' => 'Invalid or missing signature key'], 403);
-        }
-
         $order = Order::with('items')->where('order_number', $orderId)->first();
 
         if (!$order) {
             Log::warning("Midtrans Webhook Order Not Found: {$orderId}");
             return response()->json(['message' => 'Order not found'], 404);
+        }
+
+        // Verify Signature (supports Split Fee where payload gross_amount includes customer fee)
+        $isSignatureValid = $signatureKey && $this->midtransService->verifySignature(
+            (string) $orderId,
+            (string) $statusCode,
+            (string) $grossAmount,
+            (string) $signatureKey,
+            (string) $order->gross_amount
+        );
+
+        if (!$isSignatureValid) {
+            Log::warning("Midtrans Webhook Signature Mismatch for Order: {$orderId}");
+            return response()->json(['message' => 'Invalid or missing signature key'], 403);
+        }
+
+        if ((float) $grossAmount !== (float) $order->gross_amount) {
+            Log::info("Midtrans Webhook Split Fee notice for {$orderId}: Midtrans Gross={$grossAmount}, Order Gross={$order->gross_amount}");
         }
 
         // Handle Status

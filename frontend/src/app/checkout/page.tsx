@@ -16,6 +16,7 @@ import {
   ArrowLeft,
   X,
   Package,
+  Store,
 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
@@ -36,6 +37,7 @@ interface ShippingOption {
   box_summary?: string;
   description: string;
   warning?: string | null;
+  pickup_address?: string;
 }
 
 export default function CheckoutPage() {
@@ -150,16 +152,18 @@ export default function CheckoutPage() {
   }, [cityName, coords.lat, coords.lng, totalWeightGrams, items.length]);
 
   const activeShippingOption = shippingOptions.find((o) => o.courier_type === selectedCourier);
-  const shippingCost = activeShippingOption?.cost || 0;
-  const adminFee = Math.ceil((subtotal + shippingCost) * 0.007);
-  const grossAmount = subtotal + shippingCost + adminFee;
+  const isPickup = selectedCourier === 'pickup' || selectedCourier === 'self_pickup';
+  const shippingCost = isPickup ? 0 : (activeShippingOption?.cost || 0);
+  const grossAmount = subtotal + shippingCost;
 
-  const isAddressComplete = Boolean(
-    recipientName.trim() &&
-    recipientPhone.trim() &&
-    fullAddress.trim() &&
-    cityName.trim()
-  );
+  const isAddressComplete = isPickup
+    ? Boolean(recipientName.trim() && recipientPhone.trim())
+    : Boolean(
+        recipientName.trim() &&
+        recipientPhone.trim() &&
+        fullAddress.trim() &&
+        cityName.trim()
+      );
   const isCourierSelected = Boolean(activeShippingOption && activeShippingOption.is_available);
 
   // Handle Save New Address Modal
@@ -206,20 +210,24 @@ export default function CheckoutPage() {
     }
 
     if (!isAddressComplete) {
-      setCheckoutError('Mohon isi dan pilih alamat pengiriman terlebih dahulu sebelum melanjutkan pembayaran');
-      if (user && savedAddresses.length > 0) {
-        setShowAddressModal(true);
+      if (isPickup) {
+        setCheckoutError('Mohon isi Nama Pengambil dan No. WhatsApp sebelum melanjutkan pembayaran.');
       } else {
-        const addressEl = document.getElementById('address-section');
-        if (addressEl) {
-          addressEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setCheckoutError('Mohon isi dan pilih alamat pengiriman terlebih dahulu sebelum melanjutkan pembayaran');
+        if (user && savedAddresses.length > 0) {
+          setShowAddressModal(true);
+        } else {
+          const addressEl = document.getElementById('address-section');
+          if (addressEl) {
+            addressEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
         }
       }
       return;
     }
 
     if (!activeShippingOption || !activeShippingOption.is_available) {
-      setCheckoutError('Silakan pilih opsi kurir pengiriman yang tersedia.');
+      setCheckoutError('Silakan pilih opsi pengiriman atau ambil di toko yang tersedia.');
       return;
     }
 
@@ -228,14 +236,16 @@ export default function CheckoutPage() {
     const payload = {
       recipient_name: recipientName,
       recipient_phone: recipientPhone,
-      shipping_address: fullAddress,
-      shipping_city: cityName,
-      shipping_province: province,
-      shipping_postal_code: postalCode,
-      shipping_lat: coords.lat,
-      shipping_lng: coords.lng,
+      shipping_address: isPickup
+        ? (fullAddress.trim() || 'Ambil Sendiri di Toko - Jl. Cibatu Raya No. 55, Antapani Tengah, Kec. Antapani, Kota Bandung')
+        : fullAddress,
+      shipping_city: isPickup ? (cityName.trim() || 'Kota Bandung') : cityName,
+      shipping_province: isPickup ? (province.trim() || 'Jawa Barat') : province,
+      shipping_postal_code: postalCode || '40291',
+      shipping_lat: isPickup ? -6.917547878001074 : coords.lat,
+      shipping_lng: isPickup ? 107.6634056367421 : coords.lng,
       courier_type: selectedCourier,
-      notes,
+      notes: isPickup ? (notes ? `[SELF-PICKUP] ${notes}` : '[SELF-PICKUP]') : notes,
       items: items.map((i) => ({
         product_id: i.product.id,
         quantity: i.quantity,
@@ -410,8 +420,31 @@ export default function CheckoutPage() {
           {/* Recipient Details & Interactive Map */}
           <div id="address-section" className="bg-white p-6 rounded-3xl border border-amber-100 shadow-cookie space-y-5">
             <h2 className="font-heading font-bold text-lg text-brand-indigo flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-brand-red" /> 1. Data Penerima &amp; Pin Titik Lokasi
+              {isPickup ? (
+                <>
+                  <Store className="w-5 h-5 text-brand-red" /> 1. Data Pengambil Pesanan (Self-Pickup)
+                </>
+              ) : (
+                <>
+                  <MapPin className="w-5 h-5 text-brand-red" /> 1. Data Penerima &amp; Pin Titik Lokasi
+                </>
+              )}
             </h2>
+
+            {isPickup && (
+              <div className="p-4 bg-amber-50/90 border border-amber-200 rounded-2xl space-y-2">
+                <div className="flex items-center gap-2 text-brand-indigo font-bold text-xs">
+                  <Store className="w-4 h-4 text-brand-red" />
+                  <span>Ambil Sendiri di Kitchen Store De&apos;nish Cookies (Gratis Ongkir)</span>
+                </div>
+                <p className="text-xs text-gray-800">
+                  📍 <strong>Lokasi Toko:</strong> Jl. Cibatu Raya No. 55, Antapani Tengah, Kec. Antapani, Kota Bandung
+                </p>
+                <p className="text-[11px] text-gray-600">
+                  🕒 <strong>Jam Operasional:</strong> Buka setiap hari jam 08.00 - 20.00 WIB. Tunjukkan No. Pesanan kepada tim kami saat mengambil kue.
+                </p>
+              </div>
+            )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -500,22 +533,24 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Interactive Leaflet Map Picker Component */}
-            <div className="space-y-2 pt-2">
-              <label className="block text-xs font-bold text-brand-indigo">
-                Geser Pin Peta ke Lokasi Pengantaran (Wajib untuk Gojek Instant):
-              </label>
-              <LeafletMapPicker
-                initialLat={coords.lat}
-                initialLng={coords.lng}
-                onLocationSelect={(newCoords) => {
-                  setCoords({ lat: newCoords.lat, lng: newCoords.lng });
-                  if (newCoords.addressText && !fullAddress) {
-                    setFullAddress(newCoords.addressText);
-                  }
-                }}
-              />
-            </div>
+            {/* Interactive Leaflet Map Picker Component (Only needed for courier deliveries) */}
+            {!isPickup && (
+              <div className="space-y-2 pt-2">
+                <label className="block text-xs font-bold text-brand-indigo">
+                  Geser Pin Peta ke Lokasi Pengantaran (Wajib untuk Gojek Instant):
+                </label>
+                <LeafletMapPicker
+                  initialLat={coords.lat}
+                  initialLng={coords.lng}
+                  onLocationSelect={(newCoords) => {
+                    setCoords({ lat: newCoords.lat, lng: newCoords.lng });
+                    if (newCoords.addressText && !fullAddress) {
+                      setFullAddress(newCoords.addressText);
+                    }
+                  }}
+                />
+              </div>
+            )}
 
             <div>
               <label className="block text-xs font-bold text-gray-700 mb-1">
@@ -535,7 +570,7 @@ export default function CheckoutPage() {
           <div className="bg-white p-6 rounded-3xl border border-amber-100 shadow-cookie space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="font-heading font-bold text-lg text-brand-indigo flex items-center gap-2">
-                <Truck className="w-5 h-5 text-brand-red" /> 2. Pilih Kurir Pengiriman
+                <Truck className="w-5 h-5 text-brand-red" /> 2. Pilih Pengiriman / Ambil di Toko
               </h2>
               <span className="text-xs bg-amber-50 text-amber-900 font-bold px-2.5 py-1 rounded-xl border border-amber-200">
                 Berat Paket: {formatWeight(totalWeightGrams)}
@@ -545,7 +580,7 @@ export default function CheckoutPage() {
             {loadingShipping ? (
               <div className="p-6 bg-amber-50/50 rounded-2xl text-center text-xs text-amber-900 space-y-2 animate-pulse">
                 <div className="w-5 h-5 border-2 border-brand-indigo border-t-transparent rounded-full animate-spin mx-auto" />
-                <p>Menghitung jarak &amp; tarif ongkir Gojek &amp; Paxel...</p>
+                <p>Menghitung jarak &amp; tarif pengiriman...</p>
               </div>
             ) : shippingOptions.length === 0 ? (
               <div className="p-4 bg-gray-50 rounded-2xl text-xs text-gray-500 text-center">
@@ -553,64 +588,72 @@ export default function CheckoutPage() {
               </div>
             ) : (
               <div className="space-y-3">
-                {shippingOptions.map((opt) => (
-                  <label
-                    key={opt.courier_type}
-                    className={`p-4 rounded-2xl border flex items-start justify-between cursor-pointer transition ${
-                      selectedCourier === opt.courier_type && opt.is_available
-                        ? 'border-brand-red bg-rose-50/40 ring-2 ring-brand-red/20'
-                        : opt.is_available
-                        ? 'border-gray-200 hover:border-gray-300 bg-white'
-                        : 'border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed'
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <input
-                        type="radio"
-                        name="courier"
-                        disabled={!opt.is_available}
-                        checked={selectedCourier === opt.courier_type}
-                        onChange={() => setSelectedCourier(opt.courier_type)}
-                        className="mt-1 text-brand-red focus:ring-brand-red"
-                      />
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-heading font-bold text-sm text-brand-indigo">
-                            {opt.service_name}
-                          </span>
-                          {opt.distance_km && (
-                            <span className="text-[11px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-md">
-                              {opt.distance_km} km
+                {shippingOptions.map((opt) => {
+                  const isOptPickup = opt.courier_type === 'pickup' || opt.courier_type === 'self_pickup';
+                  return (
+                    <label
+                      key={opt.courier_type}
+                      className={`p-4 rounded-2xl border flex items-start justify-between cursor-pointer transition ${
+                        selectedCourier === opt.courier_type && opt.is_available
+                          ? 'border-brand-red bg-rose-50/40 ring-2 ring-brand-red/20'
+                          : opt.is_available
+                          ? 'border-gray-200 hover:border-gray-300 bg-white'
+                          : 'border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed'
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <input
+                          type="radio"
+                          name="courier"
+                          disabled={!opt.is_available}
+                          checked={selectedCourier === opt.courier_type}
+                          onChange={() => setSelectedCourier(opt.courier_type)}
+                          className="mt-1 text-brand-red focus:ring-brand-red"
+                        />
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-heading font-bold text-sm text-brand-indigo flex items-center gap-1.5">
+                              {isOptPickup && <Store className="w-4 h-4 text-emerald-600" />}
+                              {opt.service_name}
                             </span>
+                            {isOptPickup ? (
+                              <span className="text-[11px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-md">
+                                GRATIS ONGKIR
+                              </span>
+                            ) : opt.distance_km ? (
+                              <span className="text-[11px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-md">
+                                {opt.distance_km} km
+                              </span>
+                            ) : null}
+                          </div>
+
+                          <p className="text-xs text-gray-500 font-medium">
+                            {opt.delivery_time} • {opt.description}
+                          </p>
+
+                          {opt.box_breakdown && (
+                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-purple-50 text-purple-900 border border-purple-200 rounded-lg text-[11px] font-bold">
+                              <Package className="w-3.5 h-3.5 text-purple-700" />
+                              {opt.box_breakdown}
+                            </div>
+                          )}
+
+                          {opt.warning && (
+                            <p className="text-xs text-brand-red font-semibold">
+                              ⚠️ {opt.warning}
+                            </p>
                           )}
                         </div>
-
-                        <p className="text-xs text-gray-500 font-medium">
-                          {opt.delivery_time} • {opt.description}
-                        </p>
-
-                        {opt.box_breakdown && (
-                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-purple-50 text-purple-900 border border-purple-200 rounded-lg text-[11px] font-bold">
-                            <Package className="w-3.5 h-3.5 text-purple-700" />
-                            {opt.box_breakdown}
-                          </div>
-                        )}
-
-                        {opt.warning && (
-                          <p className="text-xs text-brand-red font-semibold">
-                            ⚠️ {opt.warning}
-                          </p>
-                        )}
                       </div>
-                    </div>
 
-                    <div className="text-right">
-                      <span className="font-heading font-extrabold text-base text-brand-red">
-                        {opt.is_available ? formatRupiah(opt.cost) : 'Tidak Tersedia'}
-                      </span>
-                    </div>
-                  </label>
-                ))}
+                      <div className="text-right flex-shrink-0 pl-2">
+                        <span className="font-heading font-extrabold text-base text-brand-red">
+                          {opt.is_available ? (opt.cost === 0 ? 'Gratis (Rp 0)' : formatRupiah(opt.cost)) : 'Tidak Tersedia'}
+                        </span>
+                      </div>
+                    </label>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -660,13 +703,12 @@ export default function CheckoutPage() {
               </div>
 
               <div className="flex items-center justify-between">
-                <span>Ongkos Kirim ({activeShippingOption?.courier_type || 'Kurir'})</span>
-                <span className="font-bold text-brand-indigo">{formatRupiah(shippingCost)}</span>
-              </div>
-
-              <div className="flex items-center justify-between text-brand-red font-medium">
-                <span>Biaya Layanan Pembayaran (QRIS 0.7%)</span>
-                <span className="font-bold">{formatRupiah(adminFee)}</span>
+                <span>
+                  {isPickup ? 'Biaya Pengambilan' : `Ongkos Kirim (${activeShippingOption?.courier_type || 'Kurir'})`}
+                </span>
+                <span className="font-bold text-brand-indigo">
+                  {isPickup ? 'Gratis (Rp 0)' : formatRupiah(shippingCost)}
+                </span>
               </div>
 
               <div className="flex items-center justify-between pt-2 border-t border-gray-100">
@@ -675,6 +717,10 @@ export default function CheckoutPage() {
                   {formatRupiah(grossAmount)}
                 </span>
               </div>
+
+              <p className="text-[11px] text-gray-400 italic text-right pt-0.5 leading-tight">
+                * Biaya layanan metode pembayaran (jika ada) akan disesuaikan otomatis pada layar pembayaran.
+              </p>
             </div>
 
             {/* Strict address warning if not filled */}
@@ -682,7 +728,15 @@ export default function CheckoutPage() {
               <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-[11px] text-amber-900 flex items-start gap-2">
                 <AlertCircle className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
                 <span>
-                  Mohon lengkapi <strong>Nama Penerima, No. WA, Alamat Lengkap &amp; Kota</strong> sebelum melanjutkan pembayaran.
+                  {isPickup ? (
+                    <>
+                      Mohon lengkapi <strong>Nama Pengambil &amp; No. WhatsApp</strong> sebelum melanjutkan pembayaran.
+                    </>
+                  ) : (
+                    <>
+                      Mohon lengkapi <strong>Nama Penerima, No. WA, Alamat Lengkap &amp; Kota</strong> sebelum melanjutkan pembayaran.
+                    </>
+                  )}
                 </span>
               </div>
             )}
@@ -694,18 +748,22 @@ export default function CheckoutPage() {
               onClick={(e) => {
                 if (!isAddressComplete) {
                   e.preventDefault();
-                  setCheckoutError('Mohon isi dan pilih alamat pengiriman terlebih dahulu sebelum melanjutkan pembayaran');
-                  if (user && savedAddresses.length > 0) {
-                    setShowAddressModal(true);
+                  if (isPickup) {
+                    setCheckoutError('Mohon lengkapi Nama Pengambil dan No. WhatsApp sebelum melanjutkan pembayaran.');
                   } else {
-                    const addressEl = document.getElementById('address-section');
-                    if (addressEl) {
-                      addressEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    setCheckoutError('Mohon isi dan pilih alamat pengiriman terlebih dahulu sebelum melanjutkan pembayaran');
+                    if (user && savedAddresses.length > 0) {
+                      setShowAddressModal(true);
+                    } else {
+                      const addressEl = document.getElementById('address-section');
+                      if (addressEl) {
+                        addressEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }
                     }
                   }
                 } else if (!isCourierSelected) {
                   e.preventDefault();
-                  setCheckoutError('Mohon pilih opsi kurir pengiriman yang tersedia terlebih dahulu.');
+                  setCheckoutError('Mohon pilih opsi pengiriman atau ambil di toko yang tersedia terlebih dahulu.');
                 }
               }}
               className={`w-full btn-primary justify-center py-4 text-sm font-black transition ${

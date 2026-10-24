@@ -121,11 +121,26 @@ class ShippingCalculatorService
             'warning' => null,
         ];
 
+        // 3. Option: Ambil Sendiri di Toko (Self-Pickup — Rp 0)
+        $pickupAddress = 'Jl. Cibatu Raya No. 55, Antapani Tengah, Kec. Antapani, Kota Bandung';
+        $options[] = [
+            'courier_type' => 'pickup',
+            'service_name' => 'Self-Pickup (Ambil di Toko)',
+            'delivery_time' => 'Bisa Diambil Langsung di Toko',
+            'distance_km' => ($userLat !== null && $userLng !== null && isset($distanceKm)) ? $distanceKm : null,
+            'is_available' => true,
+            'cost' => 0.0,
+            'description' => "Ambil langsung di Kitchen: {$pickupAddress} (Buka 08.00 - 20.00 WIB)",
+            'pickup_address' => $pickupAddress,
+            'warning' => null,
+        ];
+
         return [
             'store_location' => [
                 'city' => $settings->store_city,
                 'lat' => $settings->store_lat,
                 'lng' => $settings->store_lng,
+                'address' => $pickupAddress,
             ],
             'destination_city' => $cityName,
             'total_weight_grams' => $totalWeightGrams,

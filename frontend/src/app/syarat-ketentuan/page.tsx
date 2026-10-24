@@ -87,7 +87,7 @@ export default function SyaratKetentuanPage() {
               Metode pembayaran yang didukung meliputi QRIS (semua e-wallet dan mobile banking), Virtual Account Bank (BCA, Mandiri, BNI, BRI, Permata), dan GoPay/ShopeePay.
             </li>
             <li>
-              <strong>Biaya Layanan Pembayaran (QRIS 0.7%):</strong> Transaksi menggunakan metode QRIS dikenakan biaya MDR / layanan sebesar <strong>0.7%</strong> yang dihitung dari total penjumlahan nilai produk dan ongkos kirim (rumus: <code>Math.ceil((subtotal + shippingCost) * 0.007)</code>). Biaya ini transparan dan ditampilkan di rincian sebelum pembayaran dilakukan.
+              <strong>Biaya Layanan Pembayaran:</strong> Biaya layanan / MDR transaksi (jika berlaku pada kanal pembayaran tertentu) ditangani dan dihitung secara otomatis oleh sistem Midtrans pada layar pembayaran resmi agar tidak terjadi pembebanan ganda (double charge).
             </li>
             <li>
               Pesanan akan otomatis dibatalkan oleh sistem jika pembayaran tidak diselesaikan sebelum batas waktu kedaluwarsa sesi pembayaran online berakhir.

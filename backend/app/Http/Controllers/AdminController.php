@@ -93,7 +93,7 @@ class AdminController extends Controller
 
         // Strictly whitelist courier_type values
         if ($request->filled('courier')) {
-            $allowedCouriers = ['gojek_instant', 'gojek_sameday', 'paxel'];
+            $allowedCouriers = ['gojek_instant', 'gojek_sameday', 'paxel', 'pickup', 'self_pickup'];
             if (in_array($request->courier, $allowedCouriers, true)) {
                 $query->where('courier_type', $request->courier);
             }

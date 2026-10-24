@@ -60,6 +60,14 @@ export default function KebijakanPengirimanPage() {
                 Pengantaran di hari yang sama dengan tarif flat terjangkau: Rp 18.000 (jarak &le; 15 km) dan Rp 25.000 (jarak 15–40 km), kapasitas maksimal 7 kg.
               </p>
             </div>
+            <div className="p-4 bg-amber-50/70 border border-amber-200 rounded-2xl space-y-1.5 sm:col-span-2">
+              <span className="font-bold text-amber-950 block text-xs uppercase tracking-wide">
+                Self-Pickup (Ambil Sendiri di Toko — Gratis Ongkir Rp 0)
+              </span>
+              <p className="text-xs text-amber-900">
+                Pelanggan dapat mengambil pesanan secara langsung di kitchen kami: <strong>Jl. Cibatu Raya No. 55, Antapani Tengah, Kec. Antapani, Kota Bandung</strong> (Buka setiap hari jam 08.00–20.00 WIB) tanpa dikenakan ongkos kirim.
+              </p>
+            </div>
           </div>
         </section>
 

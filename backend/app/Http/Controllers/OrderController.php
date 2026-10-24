@@ -35,12 +35,12 @@ class OrderController extends Controller
             'recipient_name' => 'required|string|max:255',
             'recipient_phone' => 'required|string|max:30',
             'shipping_address' => 'required|string',
-            'shipping_city' => 'required|string|max:100',
-            'shipping_province' => 'required|string|max:100',
+            'shipping_city' => 'nullable|string|max:100',
+            'shipping_province' => 'nullable|string|max:100',
             'shipping_postal_code' => 'nullable|string|max:20',
             'shipping_lat' => 'nullable|numeric',
             'shipping_lng' => 'nullable|numeric',
-            'courier_type' => 'required|in:gojek_instant,gojek_sameday,paxel',
+            'courier_type' => 'required|in:gojek_instant,gojek_sameday,paxel,pickup,self_pickup',
             'notes' => 'nullable|string',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
@@ -96,39 +96,57 @@ class OrderController extends Controller
                 ];
             }
 
-            // 2. Calculate accurate shipping cost
-            $lat = $validated['shipping_lat'] ?? null;
-            $lng = $validated['shipping_lng'] ?? null;
-            $shippingInfo = $this->shippingService->calculateOptions(
-                $lat ? (float)$lat : null,
-                $lng ? (float)$lng : null,
-                $validated['shipping_city'],
-                $totalWeightGrams
-            );
+            // 2. Calculate accurate shipping cost or Self-Pickup
+            $isPickup = in_array($validated['courier_type'], ['pickup', 'self_pickup'], true);
 
-            $selectedOption = null;
-            foreach ($shippingInfo['options'] as $opt) {
-                if ($opt['courier_type'] === $validated['courier_type'] && $opt['is_available']) {
-                    $selectedOption = $opt;
-                    break;
+            if ($isPickup) {
+                $shippingCost = 0;
+                $courierServiceName = 'Self-Pickup (Ambil di Toko)';
+                $distanceKm = null;
+                $boxBreakdown = null;
+                $lat = $validated['shipping_lat'] ?? null;
+                $lng = $validated['shipping_lng'] ?? null;
+                $shippingAddress = !empty($validated['shipping_address']) ? $validated['shipping_address'] : 'Ambil Sendiri di Toko - Jl. Cibatu Raya No. 55, Antapani Tengah, Kec. Antapani, Kota Bandung';
+                $shippingCity = !empty($validated['shipping_city']) ? $validated['shipping_city'] : 'Kota Bandung';
+                $shippingProvince = !empty($validated['shipping_province']) ? $validated['shipping_province'] : 'Jawa Barat';
+            } else {
+                $lat = $validated['shipping_lat'] ?? null;
+                $lng = $validated['shipping_lng'] ?? null;
+                $shippingCity = !empty($validated['shipping_city']) ? $validated['shipping_city'] : 'Kota Bandung';
+                $shippingProvince = !empty($validated['shipping_province']) ? $validated['shipping_province'] : 'Jawa Barat';
+                $shippingAddress = $validated['shipping_address'];
+
+                $shippingInfo = $this->shippingService->calculateOptions(
+                    $lat ? (float)$lat : null,
+                    $lng ? (float)$lng : null,
+                    $shippingCity,
+                    $totalWeightGrams
+                );
+
+                $selectedOption = null;
+                foreach ($shippingInfo['options'] as $opt) {
+                    if ($opt['courier_type'] === $validated['courier_type'] && $opt['is_available']) {
+                        $selectedOption = $opt;
+                        break;
+                    }
                 }
+
+                if (!$selectedOption) {
+                    // If requested courier is not available (e.g. weight too high or location too far)
+                    throw ValidationException::withMessages([
+                        'courier_type' => ['Layanan kurir yang dipilih tidak tersedia untuk alamat/berat paket Anda.'],
+                    ]);
+                }
+
+                $shippingCost = $selectedOption['cost'];
+                $courierServiceName = $selectedOption['service_name'];
+                $distanceKm = $selectedOption['distance_km'] ?? null;
+                $boxBreakdown = $selectedOption['box_breakdown'] ?? null;
             }
 
-            if (!$selectedOption) {
-                // If requested courier is not available (e.g. weight too high or location too far)
-                throw ValidationException::withMessages([
-                    'courier_type' => ['Layanan kurir yang dipilih tidak tersedia untuk alamat/berat paket Anda.'],
-                ]);
-            }
-
-            $shippingCost = $selectedOption['cost'];
-            $courierServiceName = $selectedOption['service_name'];
-            $distanceKm = $selectedOption['distance_km'] ?? null;
-            $boxBreakdown = $selectedOption['box_breakdown'] ?? null;
-
-            // Biaya Layanan Pembayaran (QRIS 0.7%)
-            $adminFee = (int) ceil(($subtotal + $shippingCost) * 0.007);
-            $grossAmount = $subtotal + $shippingCost + $adminFee;
+            // Murni subtotal + ongkos kirim (biaya layanan/admin dihandle otomatis oleh Midtrans Split Fee)
+            $adminFee = 0;
+            $grossAmount = $subtotal + $shippingCost;
 
             // 3. Generate unique order number
             $today = Carbon::now()->format('Ymd');
@@ -141,9 +159,9 @@ class OrderController extends Controller
                 'user_id' => $user?->id,
                 'recipient_name' => $validated['recipient_name'],
                 'recipient_phone' => $validated['recipient_phone'],
-                'shipping_address' => $validated['shipping_address'],
-                'shipping_city' => $validated['shipping_city'],
-                'shipping_province' => $validated['shipping_province'],
+                'shipping_address' => $shippingAddress,
+                'shipping_city' => $shippingCity,
+                'shipping_province' => $shippingProvince,
                 'shipping_postal_code' => $validated['shipping_postal_code'] ?? null,
                 'shipping_lat' => $lat,
                 'shipping_lng' => $lng,

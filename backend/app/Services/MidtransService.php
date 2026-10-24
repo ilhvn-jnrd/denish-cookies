@@ -118,17 +118,6 @@ class MidtransService
             ];
         }
 
-        // Add Biaya Layanan Pembayaran (QRIS 0.7%) as line item
-        $adminFee = (int) ceil(($order->subtotal + $order->shipping_cost) * 0.007);
-        if ($adminFee > 0) {
-            $itemDetails[] = [
-                'id' => 'ADMIN-FEE',
-                'price' => $adminFee,
-                'quantity' => 1,
-                'name' => 'Biaya Layanan Pembayaran (0.7%)',
-            ];
-        }
-
         $payload = [
             'transaction_details' => [
                 'order_id' => $order->order_number,
@@ -148,6 +137,11 @@ class MidtransService
                 ],
             ],
             'item_details' => $itemDetails,
+            'expiry' => [
+                'start_time' => date('Y-m-d H:i:s O'),
+                'unit' => 'hour',
+                'duration' => 24,
+            ],
         ];
 
         try {
@@ -202,13 +196,33 @@ class MidtransService
     /**
      * Verify signature key for Midtrans Webhook using timing-safe hash_equals.
      * signature = SHA512(order_id + status_code + gross_amount + server_key)
+     * Handles Split Fee where gross_amount may include customer MDR fee.
      */
-    public function verifySignature(string $orderId, string $statusCode, string $grossAmount, string $signatureKey): bool
+    public function verifySignature(string $orderId, string $statusCode, string $grossAmount, string $signatureKey, ?string $orderGrossAmount = null): bool
     {
+        // 1. Primary check: SHA512(order_id + status_code + gross_amount + server_key) using webhook gross_amount
         $expectedSignature = hash('sha512', $orderId . $statusCode . $grossAmount . $this->serverKey);
 
         if (hash_equals($expectedSignature, $signatureKey)) {
             return true;
+        }
+
+        // 2. Format fallback: handle integer string vs decimal (.00)
+        $altGross = str_contains($grossAmount, '.')
+            ? rtrim(rtrim($grossAmount, '0'), '.')
+            : number_format((float) $grossAmount, 2, '.', '');
+        if (hash_equals(hash('sha512', $orderId . $statusCode . $altGross . $this->serverKey), $signatureKey)) {
+            return true;
+        }
+
+        // 3. Fallback: check if Midtrans signed using order's base gross amount
+        if ($orderGrossAmount !== null && $orderGrossAmount !== '') {
+            $baseGrossInt = (string) (int) round((float) $orderGrossAmount);
+            $baseGrossDec = number_format((float) $orderGrossAmount, 2, '.', '');
+            if (hash_equals(hash('sha512', $orderId . $statusCode . $baseGrossInt . $this->serverKey), $signatureKey) ||
+                hash_equals(hash('sha512', $orderId . $statusCode . $baseGrossDec . $this->serverKey), $signatureKey)) {
+                return true;
+            }
         }
 
         // Allow mock bypass only in non-production when explicitly using sandbox mock token

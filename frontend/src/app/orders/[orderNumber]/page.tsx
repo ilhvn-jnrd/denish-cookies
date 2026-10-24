@@ -15,6 +15,7 @@ import {
   Package,
   AlertCircle,
   CreditCard,
+  Store,
 } from 'lucide-react';
 import { fetchApi } from '@/lib/api';
 import { formatRupiah, formatWeight, formatDate, getOrderStatusBadge } from '@/lib/formatters';
@@ -234,19 +235,45 @@ export default function OrderDetailPage() {
         <div className="p-6 space-y-6">
           {/* Shipping and Recipient */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-6 border-b border-gray-100 text-xs">
-            <div className="space-y-1.5">
-              <span className="font-bold text-gray-400 uppercase tracking-wider block">Penerima &amp; Alamat:</span>
-              <p className="font-bold text-brand-indigo text-sm">{order.recipient_name}</p>
-              <p className="text-gray-600 leading-relaxed">{order.shipping_address}</p>
-              <p className="text-gray-600 font-medium">
-                {order.shipping_city}, {order.shipping_province} {order.shipping_postal_code}
-              </p>
-              <p className="font-mono text-gray-800 font-bold">Telp/WA: {order.recipient_phone}</p>
-            </div>
+            {order.courier_type === 'pickup' || order.courier_type === 'self_pickup' ? (
+              <div className="space-y-1.5 p-4 bg-amber-50/80 border border-amber-200 rounded-2xl">
+                <span className="font-bold text-amber-900 uppercase tracking-wider flex items-center gap-1.5 text-xs">
+                  <Store className="w-4 h-4 text-brand-red" /> Lokasi Pengambilan (Self-Pickup):
+                </span>
+                <p className="font-bold text-brand-indigo text-sm">De&apos;nish Cookies Kitchen Bandung</p>
+                <p className="text-gray-700 leading-relaxed">
+                  Jl. Cibatu Raya No. 55, Kel. Antapani Tengah, Kec. Antapani, Kota Bandung, Jawa Barat
+                </p>
+                <p className="text-[11px] text-gray-500">
+                  🕒 Buka setiap hari jam 08.00 - 20.00 WIB • Tunjukkan No. Pesanan ini saat mengambil kue.
+                </p>
+                <div className="pt-2 border-t border-amber-200/70">
+                  <p className="text-gray-700 font-medium">
+                    Nama Pengambil: <strong className="text-brand-indigo">{order.recipient_name}</strong>
+                  </p>
+                  <p className="font-mono text-gray-800 font-bold">Telp/WA: {order.recipient_phone}</p>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-1.5">
+                <span className="font-bold text-gray-400 uppercase tracking-wider block">Penerima &amp; Alamat:</span>
+                <p className="font-bold text-brand-indigo text-sm">{order.recipient_name}</p>
+                <p className="text-gray-600 leading-relaxed">{order.shipping_address}</p>
+                <p className="text-gray-600 font-medium">
+                  {order.shipping_city}, {order.shipping_province} {order.shipping_postal_code}
+                </p>
+                <p className="font-mono text-gray-800 font-bold">Telp/WA: {order.recipient_phone}</p>
+              </div>
+            )}
 
             <div className="space-y-1.5">
-              <span className="font-bold text-gray-400 uppercase tracking-wider block">Layanan Ekspedisi:</span>
-              <p className="font-bold text-brand-indigo text-sm">{order.courier_service_name}</p>
+              <span className="font-bold text-gray-400 uppercase tracking-wider block">Layanan Ekspedisi / Pengambilan:</span>
+              <p className="font-bold text-brand-indigo text-sm flex items-center gap-1.5">
+                {(order.courier_type === 'pickup' || order.courier_type === 'self_pickup') && (
+                  <Store className="w-4 h-4 text-emerald-600" />
+                )}
+                {order.courier_service_name}
+              </p>
               <p className="text-gray-600">
                 Total Berat Paket: <strong>{formatWeight(order.total_weight_grams)}</strong>
               </p>
@@ -287,12 +314,14 @@ export default function OrderDetailPage() {
               <span className="font-bold text-brand-indigo">{formatRupiah(order.subtotal)}</span>
             </div>
             <div className="flex justify-between">
-              <span>Ongkos Kirim:</span>
-              <span className="font-bold text-brand-indigo">{formatRupiah(order.shipping_cost)}</span>
+              <span>{order.courier_type === 'pickup' || order.courier_type === 'self_pickup' ? 'Biaya Pengambilan:' : 'Ongkos Kirim:'}</span>
+              <span className="font-bold text-brand-indigo">
+                {order.shipping_cost === 0 ? 'Gratis (Rp 0)' : formatRupiah(order.shipping_cost)}
+              </span>
             </div>
             {order.admin_fee > 0 && (
               <div className="flex justify-between text-brand-red font-medium">
-                <span>Biaya Layanan (QRIS 0.7%):</span>
+                <span>Biaya Layanan:</span>
                 <span className="font-bold">{formatRupiah(order.admin_fee)}</span>
               </div>
             )}
