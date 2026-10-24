@@ -13,9 +13,11 @@ export function getSnapConfig(overrideClientKey?: string, overrideSnapUrl?: stri
   const clientKey =
     overrideClientKey ||
     process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY ||
-    'Mid-client-hmMqfEj9LisyqvsS';
+    'Mid-client-t-YHIi4kIXebf6cF';
 
-  const isProduction = !clientKey.startsWith('SB-');
+  const isProduction =
+    process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === 'true' ||
+    !clientKey.startsWith('SB-');
 
   let snapUrl = overrideSnapUrl || process.env.NEXT_PUBLIC_MIDTRANS_SNAP_URL;
   if (!snapUrl) {

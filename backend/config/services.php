@@ -32,9 +32,10 @@ return [
     ],
 
     'midtrans' => [
-        'server_key' => env('MIDTRANS_SERVER_KEY', 'sandbox-mock'),
-        'client_key' => env('MIDTRANS_CLIENT_KEY', 'SB-Mid-client-mock'),
-        'is_production' => (bool) env('MIDTRANS_IS_PRODUCTION', false),
+        'merchant_id' => env('MIDTRANS_MERCHANT_ID', 'M004762091'),
+        'server_key' => env('MIDTRANS_SERVER_KEY', ''),
+        'client_key' => env('MIDTRANS_CLIENT_KEY', 'Mid-client-t-YHIi4kIXebf6cF'),
+        'is_production' => (bool) env('MIDTRANS_IS_PRODUCTION', true),
     ],
 
     'google' => [

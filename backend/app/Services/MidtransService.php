@@ -10,18 +10,21 @@ use Illuminate\Support\Str;
 
 class MidtransService
 {
+    protected string $merchantId;
     protected string $serverKey;
     protected string $clientKey;
     protected bool $isProduction;
     protected string $snapApiUrl;
+    protected string $coreApiUrl;
 
     public function __construct()
     {
-        $this->serverKey = config('services.midtrans.server_key', env('MIDTRANS_SERVER_KEY', 'sandbox-mock'));
-        $this->clientKey = config('services.midtrans.client_key', env('MIDTRANS_CLIENT_KEY', 'Mid-client-hmMqfEj9LisyqvsS'));
-        $explicitIsProduction = config('services.midtrans.is_production', env('MIDTRANS_IS_PRODUCTION'));
+        $this->merchantId = config('midtrans.merchant_id', config('services.midtrans.merchant_id', env('MIDTRANS_MERCHANT_ID', 'M004762091')));
+        $this->serverKey = config('midtrans.server_key', config('services.midtrans.server_key', env('MIDTRANS_SERVER_KEY', '')));
+        $this->clientKey = config('midtrans.client_key', config('services.midtrans.client_key', env('MIDTRANS_CLIENT_KEY', 'Mid-client-t-YHIi4kIXebf6cF')));
+        $explicitIsProduction = config('midtrans.is_production', config('services.midtrans.is_production', env('MIDTRANS_IS_PRODUCTION', true)));
 
-        // Smart auto-detection: if serverKey or clientKey starts with Mid- (and not SB-), it is Production
+        // Smart auto-detection: if explicit, or if serverKey/clientKey starts with Mid- (and not SB-), it is Production
         if ($explicitIsProduction !== null && $explicitIsProduction !== '') {
             $this->isProduction = filter_var($explicitIsProduction, FILTER_VALIDATE_BOOLEAN);
         } else {
@@ -31,6 +34,10 @@ class MidtransService
         $this->snapApiUrl = $this->isProduction
             ? 'https://app.midtrans.com/snap/v1/transactions'
             : 'https://app.sandbox.midtrans.com/snap/v1/transactions';
+
+        $this->coreApiUrl = $this->isProduction
+            ? 'https://api.midtrans.com/v2'
+            : 'https://api.sandbox.midtrans.com/v2';
     }
 
     public function isMockMode(): bool
@@ -43,9 +50,34 @@ class MidtransService
         return empty($this->serverKey) || $this->serverKey === 'sandbox-mock' || str_contains($this->serverKey, 'mock');
     }
 
+    public function getMerchantId(): string
+    {
+        return $this->merchantId;
+    }
+
     public function getClientKey(): string
     {
         return $this->clientKey;
+    }
+
+    public function getServerKey(): string
+    {
+        return $this->serverKey;
+    }
+
+    public function isProduction(): bool
+    {
+        return $this->isProduction;
+    }
+
+    public function getSnapApiUrl(): string
+    {
+        return $this->snapApiUrl;
+    }
+
+    public function getCoreApiUrl(): string
+    {
+        return $this->coreApiUrl;
     }
 
     /**
@@ -185,5 +217,37 @@ class MidtransService
         }
 
         return false;
+    }
+
+    /**
+     * Get transaction status from Midtrans Core API (v2).
+     * Production: https://api.midtrans.com/v2/{order_id}/status
+     * Sandbox:    https://api.sandbox.midtrans.com/v2/{order_id}/status
+     */
+    public function getTransactionStatus(string $orderId): array
+    {
+        if ($this->isMockMode()) {
+            return [
+                'status_code' => '200',
+                'transaction_status' => 'settlement',
+                'order_id' => $orderId,
+            ];
+        }
+
+        $url = "{$this->coreApiUrl}/{$orderId}/status";
+
+        try {
+            $response = Http::withBasicAuth($this->serverKey, '')
+                ->withHeaders([
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                ])
+                ->get($url);
+
+            return $response->json() ?? [];
+        } catch (Exception $e) {
+            Log::error("Failed to query Midtrans transaction status for {$orderId}: " . $e->getMessage());
+            return [];
+        }
     }
 }

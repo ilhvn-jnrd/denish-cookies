@@ -32,13 +32,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const midtransClientKey =
-    process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || 'Mid-client-hmMqfEj9LisyqvsS';
-  const isSandbox = midtransClientKey.startsWith('SB-');
+    process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || 'Mid-client-t-YHIi4kIXebf6cF';
+  const isProduction =
+    process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === 'true' ||
+    !midtransClientKey.startsWith('SB-');
   const snapScriptUrl =
     process.env.NEXT_PUBLIC_MIDTRANS_SNAP_URL ||
-    (isSandbox
-      ? 'https://app.sandbox.midtrans.com/snap/snap.js'
-      : 'https://app.midtrans.com/snap/snap.js');
+    (isProduction
+      ? 'https://app.midtrans.com/snap/snap.js'
+      : 'https://app.sandbox.midtrans.com/snap/snap.js');
 
   return (
     <html lang="id">
