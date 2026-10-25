@@ -102,7 +102,7 @@ export default function ShippingLabelModal({ isOpen, onClose, order }: ShippingL
               <ul className="list-disc pl-4 text-[11px] text-gray-800 space-y-0.5">
                 {order.items?.map((item: any, idx: number) => (
                   <li key={idx} className="font-medium">
-                    {item.product_name} x {item.quantity} toples ({formatWeight(item.product_weight_grams * item.quantity)})
+                    {item.product_name} - {item.quantity}x (Ukuran Toples {item.product_weight_grams} gr)
                   </li>
                 ))}
               </ul>

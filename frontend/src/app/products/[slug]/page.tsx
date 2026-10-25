@@ -159,21 +159,29 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
-          {/* Pricing & Weight */}
-          <div className="p-4 bg-brand-creamWarm rounded-2xl border border-brand-yellow/40 flex items-center justify-between">
-            <div>
-              <span className="text-[11px] text-gray-500 font-semibold block uppercase">Harga per Toples</span>
-              <span className="font-heading font-black text-3xl text-brand-red">
-                {formatRupiah(product.price)}
-              </span>
+          {/* Pricing & Kemasan */}
+          <div className="p-4 bg-brand-creamWarm rounded-2xl border border-brand-yellow/40 space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-[11px] text-gray-500 font-semibold block uppercase">Harga per Toples</span>
+                <span className="font-heading font-black text-3xl text-brand-red">
+                  {formatRupiah(product.price)}
+                </span>
+              </div>
+
+              <div className="text-right">
+                <span className="text-[11px] text-gray-500 font-semibold block uppercase">Kemasan</span>
+                <span className="font-bold text-xs sm:text-sm text-brand-indigo bg-white px-3 py-1.5 rounded-xl shadow-sm border border-amber-200 inline-flex items-center gap-1.5">
+                  <Scale className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                  Ukuran Toples {product.weight_grams} gr
+                </span>
+              </div>
             </div>
 
-            <div className="text-right">
-              <span className="text-[11px] text-gray-500 font-semibold block uppercase">Berat Bersih</span>
-              <span className="font-bold text-sm text-brand-indigo bg-white px-3 py-1 rounded-xl shadow-sm border border-amber-200 inline-flex items-center gap-1">
-                <Scale className="w-4 h-4 text-amber-600" />
-                {product.weight_grams} gram
-              </span>
+            {/* Keterangan Spesifikasi Ukuran Toples */}
+            <div className="pt-2.5 border-t border-amber-200/60 flex items-start gap-2 text-xs text-amber-900/90 leading-relaxed bg-amber-50/70 p-2.5 rounded-xl">
+              <span className="font-bold text-amber-800 flex-shrink-0">Keterangan:</span>
+              <span>Kemasan menggunakan ukuran toples {product.weight_grams} gr (berat bersih/gramasi isi menyesuaikan jenis dan tekstur masing-masing kue).</span>
             </div>
           </div>
 
@@ -212,7 +220,7 @@ export default function ProductDetailPage() {
               </div>
 
               <span className="text-xs text-gray-500">
-                Total Berat: <strong>{formatWeight(product.weight_grams * quantity)}</strong>
+                Estimasi Berat Pengiriman: <strong>{formatWeight(product.weight_grams * quantity)}</strong>
               </span>
             </div>
 

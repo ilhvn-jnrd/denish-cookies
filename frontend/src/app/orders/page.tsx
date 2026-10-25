@@ -344,7 +344,7 @@ export default function CustomerOrdersPage() {
                         {order.courier_service_name} • {order.shipping_city}
                       </span>
                       <span>•</span>
-                      <span>Total Berat: {order.total_weight_grams} gr</span>
+                      <span>Estimasi Berat: {order.total_weight_grams} gr</span>
                     </div>
                   </div>
 

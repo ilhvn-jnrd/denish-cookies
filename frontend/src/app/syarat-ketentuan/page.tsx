@@ -70,7 +70,7 @@ export default function SyaratKetentuanPage() {
               <strong>Produk Pre-Order (PO):</strong> Untuk menjaga kesegaran dan kerenyahan, beberapa varian dipanggang berdasarkan pesanan (made by order). Estimasi pengerjaan 1–3 hari kerja atau sesuai tanggal kesepakatan hampers hari raya.
             </li>
             <li>
-              <strong>Spesifikasi &amp; Berat:</strong> Seluruh toples diisi sesuai bobot netto yang tertera pada detail produk dengan toleransi alami pemanggangan &plusmn;5%.
+              <strong>Spesifikasi &amp; Kemasan:</strong> Seluruh produk menggunakan kemasan toples standar ukuran 500 gr dengan toleransi alami pemanggangan. Berat bersih (gramasi isi) menyesuaikan karakteristik dan tekstur masing-masing jenis kue.
             </li>
           </ul>
         </section>

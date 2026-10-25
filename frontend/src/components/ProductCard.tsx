@@ -50,10 +50,10 @@ export default function ProductCard({ product }: ProductCardProps) {
             )}
           </div>
 
-          {/* Weight Badge on bottom right */}
-          <div className="absolute bottom-2 right-2 bg-brand-indigo/90 backdrop-blur-sm text-brand-yellow text-[10px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-lg sm:rounded-xl flex items-center gap-1 shadow-sm">
-            <Scale className="w-3 h-3" />
-            {product.weight_grams} gr
+          {/* Toples Size Badge on bottom right */}
+          <div className="absolute bottom-2 right-2 bg-brand-indigo/90 backdrop-blur-sm text-brand-yellow text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-lg sm:rounded-xl flex items-center gap-1 shadow-sm">
+            <Scale className="w-3 h-3 flex-shrink-0" />
+            <span>Ukuran Toples {product.weight_grams} gr</span>
           </div>
         </div>
 

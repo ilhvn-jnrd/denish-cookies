@@ -216,7 +216,7 @@ export default function AdminProductsPage() {
             Manajemen Produk &amp; Stok Kue Kering
           </h1>
           <p className="text-xs text-gray-500 mt-1">
-            Atur bobot gramasi (krusial untuk kurir), status Ready vs Pre-Order, dan foto toples.
+            Atur ukuran toples / estimasi berat kirim (krusial untuk kurir), status Ready vs Pre-Order, dan foto toples.
           </p>
         </div>
 
@@ -294,7 +294,7 @@ export default function AdminProductsPage() {
               <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-gray-100 text-[11px]">
                 <span className="px-2 py-0.5 bg-amber-100/70 text-brand-indigo font-bold rounded-lg inline-flex items-center gap-1">
                   <Scale className="w-3 h-3 text-amber-700" />
-                  {p.weight_grams} gr
+                  Toples {p.weight_grams} gr
                 </span>
 
                 <span
@@ -351,7 +351,7 @@ export default function AdminProductsPage() {
                 <th className="p-4">Foto &amp; Nama Kue</th>
                 <th className="p-4">Kategori</th>
                 <th className="p-4">Harga Toples</th>
-                <th className="p-4">Berat (Gram)</th>
+                <th className="p-4">Ukuran Toples / Estimasi Berat Kirim</th>
                 <th className="p-4">Stok Ready</th>
                 <th className="p-4">Mode Pesanan</th>
                 <th className="p-4 text-right">Aksi</th>
@@ -402,7 +402,7 @@ export default function AdminProductsPage() {
                     <td className="p-4">
                       <span className="px-2 py-1 bg-amber-100/70 text-brand-indigo font-bold rounded-lg text-xs inline-flex items-center gap-1">
                         <Scale className="w-3 h-3 text-amber-700" />
-                        {p.weight_grams} gr
+                        Toples {p.weight_grams} gr
                       </span>
                     </td>
 
@@ -628,7 +628,7 @@ export default function AdminProductsPage() {
 
                 <div>
                   <label className="block text-xs font-bold text-gray-700 mb-1">
-                    Berat (Gram) *
+                    Ukuran Toples / Estimasi Berat Kirim (gram) *
                   </label>
                   <input
                     type="number"

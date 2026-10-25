@@ -109,7 +109,7 @@ export default function CartDrawer() {
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className="text-[11px] text-gray-500 flex items-center gap-1">
                         <Scale className="w-3 h-3 text-amber-600" />
-                        {item.product.weight_grams} gr/toples
+                        Ukuran Toples {item.product.weight_grams} gr
                       </span>
                       {item.product.is_preorder && (
                         <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-1.5 py-0.2 rounded">
@@ -158,7 +158,7 @@ export default function CartDrawer() {
               {/* Weight indicator */}
               <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200/80 flex items-center justify-between text-xs">
                 <span className="font-medium text-amber-900 flex items-center gap-1.5">
-                  <Scale className="w-4 h-4 text-brand-indigo" /> Total Berat Paket:
+                  <Scale className="w-4 h-4 text-brand-indigo" /> Estimasi Berat Pengiriman:
                 </span>
                 <span className="font-bold text-brand-indigo bg-white px-2.5 py-1 rounded-xl shadow-sm border border-amber-200">
                   {formatWeight(totalWeightGrams)}

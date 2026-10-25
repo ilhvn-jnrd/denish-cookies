@@ -267,7 +267,7 @@ export default function AdminOrdersPage() {
                       <Truck className="w-3.5 h-3.5 text-brand-red flex-shrink-0" /> {ord.courier_service_name}
                     </p>
                     <p className="text-gray-500">
-                      Total Berat: <strong>{formatWeight(ord.total_weight_grams)}</strong>
+                      Estimasi Berat Pengiriman: <strong>{formatWeight(ord.total_weight_grams)}</strong>
                     </p>
                     {ord.box_breakdown && (
                       <p className="text-purple-800 font-bold bg-purple-50 px-2 py-0.5 rounded-lg border border-purple-200 text-[11px] inline-block">

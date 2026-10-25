@@ -573,7 +573,7 @@ export default function CheckoutPage() {
                 <Truck className="w-5 h-5 text-brand-red" /> 2. Pilih Pengiriman / Ambil di Toko
               </h2>
               <span className="text-xs bg-amber-50 text-amber-900 font-bold px-2.5 py-1 rounded-xl border border-amber-200">
-                Berat Paket: {formatWeight(totalWeightGrams)}
+                Estimasi Berat Pengiriman: {formatWeight(totalWeightGrams)}
               </span>
             </div>
 
@@ -679,7 +679,7 @@ export default function CheckoutPage() {
                     <div className="truncate">
                       <p className="font-bold text-brand-indigo truncate">{item.product.name}</p>
                       <span className="text-[11px] text-gray-500">
-                        {item.quantity} toples ({formatWeight(item.product.weight_grams * item.quantity)})
+                        {item.quantity}x (Ukuran Toples {item.product.weight_grams} gr)
                       </span>
                     </div>
                   </div>
@@ -698,7 +698,7 @@ export default function CheckoutPage() {
               </div>
 
               <div className="flex items-center justify-between">
-                <span>Total Berat Paket</span>
+                <span>Estimasi Berat Pengiriman</span>
                 <span className="font-bold text-brand-indigo">{formatWeight(totalWeightGrams)}</span>
               </div>
 

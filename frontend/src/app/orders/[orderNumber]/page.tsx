@@ -275,7 +275,7 @@ export default function OrderDetailPage() {
                 {order.courier_service_name}
               </p>
               <p className="text-gray-600">
-                Total Berat Paket: <strong>{formatWeight(order.total_weight_grams)}</strong>
+                Estimasi Berat Pengiriman: <strong>{formatWeight(order.total_weight_grams)}</strong>
               </p>
               {order.box_breakdown && (
                 <p className="text-purple-700 font-bold">Kemasan: {order.box_breakdown}</p>
@@ -298,7 +298,7 @@ export default function OrderDetailPage() {
                   <div>
                     <h4 className="font-bold text-brand-indigo">{item.product_name}</h4>
                     <span className="text-gray-500 text-[11px]">
-                      {item.quantity} toples x {formatRupiah(item.product_price)} ({formatWeight(item.product_weight_grams * item.quantity)})
+                      {item.quantity}x (Ukuran Toples {item.product_weight_grams} gr) • {formatRupiah(item.product_price)}
                     </span>
                   </div>
                   <span className="font-bold text-brand-indigo">{formatRupiah(item.subtotal)}</span>
