@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\StockMovement;
 use App\Services\MidtransService;
 use App\Services\ShippingCalculatorService;
 use Exception;
@@ -12,6 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -334,10 +336,15 @@ class OrderController extends Controller
      */
     public function simulatePayment(Request $request, string $orderNumber): JsonResponse
     {
-        // Strictly disable mock simulator in production
-        if (app()->environment('production')) {
+        // Strictly disable mock simulator in production or when Midtrans is in production mode
+        if (
+            app()->environment('production') ||
+            config('app.env') === 'production' ||
+            config('midtrans.is_production') === true ||
+            $this->midtransService->isProduction()
+        ) {
             return response()->json([
-                'message' => 'Simulasi pembayaran dinonaktifkan di lingkungan production.',
+                'message' => 'Simulasi pembayaran dinonaktifkan secara permanen di lingkungan Production.',
             ], 403);
         }
 
@@ -355,6 +362,11 @@ class OrderController extends Controller
                 ->lockForUpdate()
                 ->firstOrFail();
 
+            // Strictly verify snap_token starts with 'SNAP-MOCK-'
+            if (!$lockedOrder->snap_token || !str_starts_with($lockedOrder->snap_token, 'SNAP-MOCK-')) {
+                abort(403, 'Akses ditolak. Pesanan ini bukan transaksi simulasi mock.');
+            }
+
             // IDOR protection on payment simulation
             if ($lockedOrder->user_id !== null) {
                 if (!$currentUser || ($currentUser->id !== $lockedOrder->user_id && $currentUser->role !== 'admin')) {
@@ -362,7 +374,8 @@ class OrderController extends Controller
                 }
             }
 
-            if ($lockedOrder->payment_status === 'paid') {
+            if (in_array($lockedOrder->payment_status, ['paid', 'processing', 'completed'], true) ||
+                in_array($lockedOrder->order_status, ['paid', 'processing', 'shipped', 'completed'], true)) {
                 return $lockedOrder;
             }
 
@@ -372,11 +385,31 @@ class OrderController extends Controller
                 'paid_at' => Carbon::now(),
             ]);
 
+            $hasStockMovementsTable = Schema::hasTable('stock_movements');
+
             // Deduct stock idempotently with row locks
             foreach ($lockedOrder->items as $item) {
                 $product = Product::lockForUpdate()->find($item->product_id);
                 if ($product && !$item->is_preorder) {
-                    $product->decrement('stock', min($product->stock, $item->quantity));
+                    $stockBefore = (int) $product->stock;
+                    $deductQty = min($stockBefore, (int) $item->quantity);
+                    if ($deductQty > 0) {
+                        $product->decrement('stock', $deductQty);
+                        $stockAfter = max(0, $stockBefore - $deductQty);
+
+                        if ($hasStockMovementsTable) {
+                            StockMovement::create([
+                                'product_id' => $product->id,
+                                'type' => 'out_online',
+                                'stock_before' => $stockBefore,
+                                'quantity_change' => -$deductQty,
+                                'stock_after' => $stockAfter,
+                                'offline_revenue' => 0,
+                                'notes' => "Pesanan Web #{$lockedOrder->order_number} (Simulasi)",
+                                'created_by' => $currentUser?->id,
+                            ]);
+                        }
+                    }
                 }
             }
 

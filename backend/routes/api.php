@@ -34,7 +34,7 @@ Route::get('/shipping/store-info', [ShippingController::class, 'storeInfo']);
 // Orders & Checkout (Rate limited: 20 checkouts per minute per IP)
 Route::post('/checkout', [OrderController::class, 'checkout'])->middleware('throttle:20,1');
 Route::get('/orders/detail/{orderNumber}', [OrderController::class, 'show']);
-Route::post('/orders/{orderNumber}/simulate-payment', [OrderController::class, 'simulatePayment']);
+Route::post('/orders/{orderNumber}/simulate-payment', [OrderController::class, 'simulatePayment'])->middleware('throttle:10,1');
 
 // Midtrans Webhook
 Route::post('/webhooks/midtrans', [WebhookController::class, 'midtrans']);
@@ -80,6 +80,11 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::post('/products/upload-image', [AdminController::class, 'uploadProductImage']);
     Route::put('/products/{id}', [AdminController::class, 'updateProduct']);
     Route::delete('/products/{id}', [AdminController::class, 'deleteProduct']);
+
+    // Stock Opname & Offline Stock Movements
+    Route::get('/stock-movements', [AdminController::class, 'stockMovements']);
+    Route::post('/stock-movements', [AdminController::class, 'storeStockMovement']);
+    Route::post('/stock-opname/bulk', [AdminController::class, 'bulkStockOpname']);
 
     // Shipping & Paxel Rate Matrix (Flexible support for /shipping-settings and /shipping)
     Route::match(['get'], '/shipping-settings', [AdminController::class, 'getShippingSettings']);

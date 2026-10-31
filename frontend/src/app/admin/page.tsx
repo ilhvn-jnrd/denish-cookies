@@ -213,9 +213,15 @@ export default function AdminDashboardPage() {
             <h2 className="font-heading font-bold text-base text-brand-indigo flex items-center gap-1.5">
               <AlertTriangle className="w-4 h-4 text-amber-500" /> Peringatan Stok Menipis
             </h2>
-            <Link href="/admin/products" className="text-[11px] font-bold text-brand-red hover:underline">
-              Kelola Stok
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link href="/admin/stock-opname" className="text-[11px] font-bold text-brand-indigo hover:underline">
+                Stock Opname
+              </Link>
+              <span className="text-gray-300">•</span>
+              <Link href="/admin/products" className="text-[11px] font-bold text-brand-red hover:underline">
+                Kelola Produk
+              </Link>
+            </div>
           </div>
 
           {lowStock.length === 0 ? (

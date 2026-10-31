@@ -267,7 +267,7 @@ export default function CheckoutPage() {
     if (res.data?.order) {
       const order = res.data.order;
       const snapToken = res.data.snap_token;
-      const isMockToken = !snapToken || snapToken.startsWith('SNAP-MOCK-') || snapToken.startsWith('SNAP-FALLBACK-');
+      const isMockToken = Boolean(snapToken && snapToken.startsWith('SNAP-MOCK-'));
 
       setActiveOrder({
         ...order,
@@ -573,7 +573,7 @@ export default function CheckoutPage() {
                 <Truck className="w-5 h-5 text-brand-red" /> 2. Pilih Pengiriman / Ambil di Toko
               </h2>
               <span className="text-xs bg-amber-50 text-amber-900 font-bold px-2.5 py-1 rounded-xl border border-amber-200">
-                Estimasi Berat Pengiriman: {formatWeight(totalWeightGrams)}
+                Estimasi Berat Kirim: {formatWeight(totalWeightGrams)}
               </span>
             </div>
 
@@ -698,7 +698,7 @@ export default function CheckoutPage() {
               </div>
 
               <div className="flex items-center justify-between">
-                <span>Estimasi Berat Pengiriman</span>
+                <span>Estimasi Berat Kirim</span>
                 <span className="font-bold text-brand-indigo">{formatWeight(totalWeightGrams)}</span>
               </div>
 

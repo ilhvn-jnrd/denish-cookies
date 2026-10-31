@@ -220,7 +220,7 @@ export default function ProductDetailPage() {
               </div>
 
               <span className="text-xs text-gray-500">
-                Estimasi Berat Pengiriman: <strong>{formatWeight(product.weight_grams * quantity)}</strong>
+                Estimasi Berat Kirim: <strong>{formatWeight(product.weight_grams * quantity)}</strong>
               </span>
             </div>
 

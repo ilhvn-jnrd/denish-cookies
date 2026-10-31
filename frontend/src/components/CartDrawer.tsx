@@ -158,7 +158,7 @@ export default function CartDrawer() {
               {/* Weight indicator */}
               <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200/80 flex items-center justify-between text-xs">
                 <span className="font-medium text-amber-900 flex items-center gap-1.5">
-                  <Scale className="w-4 h-4 text-brand-indigo" /> Estimasi Berat Pengiriman:
+                  <Scale className="w-4 h-4 text-brand-indigo" /> Estimasi Berat Kirim:
                 </span>
                 <span className="font-bold text-brand-indigo bg-white px-2.5 py-1 rounded-xl shadow-sm border border-amber-200">
                   {formatWeight(totalWeightGrams)}

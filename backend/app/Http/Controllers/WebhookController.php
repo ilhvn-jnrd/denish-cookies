@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\StockMovement;
 use App\Services\MidtransService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
 class WebhookController extends Controller
 {
@@ -72,14 +74,18 @@ class WebhookController extends Controller
         } elseif ($transactionStatus === 'settlement') {
             $this->markOrderAsPaid($order);
         } elseif (in_array($transactionStatus, ['cancel', 'deny', 'expire'])) {
-            $order->update([
-                'payment_status' => $transactionStatus === 'expire' ? 'expired' : 'cancelled',
-                'order_status' => 'cancelled',
-            ]);
+            if ($order->payment_status !== 'paid' && !in_array($order->order_status, ['paid', 'processing', 'shipped', 'completed'], true)) {
+                $order->update([
+                    'payment_status' => $transactionStatus === 'expire' ? 'expired' : 'cancelled',
+                    'order_status' => 'cancelled',
+                ]);
+            }
         } elseif ($transactionStatus === 'pending') {
-            $order->update([
-                'payment_status' => 'pending',
-            ]);
+            if ($order->payment_status !== 'paid' && !in_array($order->order_status, ['paid', 'processing', 'shipped', 'completed'], true)) {
+                $order->update([
+                    'payment_status' => 'pending',
+                ]);
+            }
         }
 
         return response()->json(['status' => 'success']);
@@ -96,7 +102,12 @@ class WebhookController extends Controller
                 ->lockForUpdate()
                 ->first();
 
-            if (!$lockedOrder || $lockedOrder->payment_status === 'paid') {
+            // Strict idempotency guard: do not deduct stock twice if already paid/processing/shipped/completed
+            if (
+                !$lockedOrder ||
+                $lockedOrder->payment_status === 'paid' ||
+                in_array($lockedOrder->order_status, ['paid', 'processing', 'shipped', 'completed'], true)
+            ) {
                 return;
             }
 
@@ -106,11 +117,31 @@ class WebhookController extends Controller
                 'paid_at' => Carbon::now(),
             ]);
 
+            $hasStockMovementsTable = Schema::hasTable('stock_movements');
+
             // Deduct stock idempotently for ready stock items with row lock
             foreach ($lockedOrder->items as $item) {
                 $product = Product::lockForUpdate()->find($item->product_id);
                 if ($product && !$item->is_preorder) {
-                    $product->decrement('stock', min($product->stock, $item->quantity));
+                    $stockBefore = (int) $product->stock;
+                    $deductQty = min($stockBefore, (int) $item->quantity);
+                    if ($deductQty > 0) {
+                        $product->decrement('stock', $deductQty);
+                        $stockAfter = max(0, $stockBefore - $deductQty);
+
+                        if ($hasStockMovementsTable) {
+                            StockMovement::create([
+                                'product_id' => $product->id,
+                                'type' => 'out_online',
+                                'stock_before' => $stockBefore,
+                                'quantity_change' => -$deductQty,
+                                'stock_after' => $stockAfter,
+                                'offline_revenue' => 0,
+                                'notes' => "Pesanan Web #{$lockedOrder->order_number} ({$lockedOrder->recipient_name})",
+                                'created_by' => $lockedOrder->user_id,
+                            ]);
+                        }
+                    }
                 }
             }
 

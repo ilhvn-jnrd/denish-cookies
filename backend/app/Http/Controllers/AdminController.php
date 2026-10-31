@@ -7,12 +7,15 @@ use App\Models\Order;
 use App\Models\PaxelRate;
 use App\Models\Product;
 use App\Models\ShippingSetting;
+use App\Models\StockMovement;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class AdminController extends Controller
 {
@@ -161,7 +164,12 @@ class AdminController extends Controller
             $query->where('name', 'LIKE', "%{$search}%");
         }
 
-        $products = $query->orderBy('id', 'desc')->paginate(20);
+        if ($request->boolean('all')) {
+            $allProducts = $query->orderBy('id', 'asc')->get();
+            return response()->json(['data' => $allProducts]);
+        }
+
+        $products = $query->orderBy('id', 'desc')->paginate(50);
 
         return response()->json($products);
     }
@@ -455,6 +463,218 @@ class AdminController extends Controller
 
         return response()->json([
             'message' => 'Tarif Paxel berhasil dihapus',
+        ]);
+    }
+
+    /**
+     * List Stock Movements & Offline Sales / Opname History with summary KPIs.
+     */
+    public function stockMovements(Request $request): JsonResponse
+    {
+        $query = StockMovement::with([
+            'product:id,name,price,stock,weight_grams,image_url',
+            'creator:id,name',
+        ]);
+
+        // Filter by movement type
+        if ($request->filled('type') && $request->type !== 'all') {
+            $allowedTypes = ['in_production', 'out_offline', 'out_online', 'opname_adjustment', 'damaged'];
+            if (in_array($request->type, $allowedTypes, true)) {
+                $query->where('type', $request->type);
+            }
+        }
+
+        // Filter by product_id
+        if ($request->filled('product_id') && $request->product_id !== 'all') {
+            $query->where('product_id', (int) $request->product_id);
+        }
+
+        // Filter by date or date range
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', $request->date);
+        } else {
+            if ($request->filled('start_date')) {
+                $query->whereDate('created_at', '>=', $request->start_date);
+            }
+            if ($request->filled('end_date')) {
+                $query->whereDate('created_at', '<=', $request->end_date);
+            }
+        }
+
+        // Summary calculations based on matching date/product scope
+        $summaryScope = StockMovement::query();
+        if ($request->filled('product_id') && $request->product_id !== 'all') {
+            $summaryScope->where('product_id', (int) $request->product_id);
+        }
+        if ($request->filled('date')) {
+            $summaryScope->whereDate('created_at', $request->date);
+        } else {
+            if ($request->filled('start_date')) {
+                $summaryScope->whereDate('created_at', '>=', $request->start_date);
+            }
+            if ($request->filled('end_date')) {
+                $summaryScope->whereDate('created_at', '<=', $request->end_date);
+            }
+        }
+
+        $totalOfflineJars = (int) abs((int) (clone $summaryScope)->where('type', 'out_offline')->sum('quantity_change'));
+        $totalOfflineRevenue = (float) (clone $summaryScope)->where('type', 'out_offline')->sum('offline_revenue');
+        $totalProductionInJars = (int) (clone $summaryScope)->where('type', 'in_production')->sum('quantity_change');
+        $totalDamagedJars = (int) abs((int) (clone $summaryScope)->where('type', 'damaged')->sum('quantity_change'));
+        $totalOnlineJars = (int) abs((int) (clone $summaryScope)->where('type', 'out_online')->sum('quantity_change'));
+
+        $movements = $query->orderBy('id', 'desc')->paginate(25);
+
+        $response = $movements->toArray();
+        $response['summary'] = [
+            'total_offline_jars' => $totalOfflineJars,
+            'total_offline_revenue' => $totalOfflineRevenue,
+            'total_production_in_jars' => $totalProductionInJars,
+            'total_damaged_jars' => $totalDamagedJars,
+            'total_online_jars' => $totalOnlineJars,
+        ];
+
+        return response()->json($response);
+    }
+
+    /**
+     * Record a quick single-product stock movement (in_production, out_offline, damaged).
+     * Uses DB::transaction and lockForUpdate() for atomic stock consistency.
+     */
+    public function storeStockMovement(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'type' => 'required|in:in_production,out_offline,damaged,opname_adjustment',
+            'quantity' => 'required|integer|min:1',
+            'offline_revenue' => 'nullable|numeric|min:0',
+            'notes' => 'nullable|string|max:500',
+        ]);
+
+        $admin = $request->user('sanctum');
+
+        $result = DB::transaction(function () use ($validated, $admin) {
+            $product = Product::lockForUpdate()->findOrFail($validated['product_id']);
+            $stockBefore = (int) $product->stock;
+            $qty = abs((int) $validated['quantity']);
+            $type = $validated['type'];
+
+            if ($type === 'in_production') {
+                $quantityChange = $qty;
+            } else {
+                // out_offline or damaged deducts stock
+                if ($stockBefore < $qty) {
+                    throw ValidationException::withMessages([
+                        'quantity' => ["Stok {$product->name} saat ini ({$stockBefore} toples) tidak mencukupi untuk dikurangi {$qty} toples."],
+                    ]);
+                }
+                $quantityChange = -$qty;
+            }
+
+            $stockAfter = max(0, $stockBefore + $quantityChange);
+
+            // Offline revenue calculation
+            $offlineRevenue = 0;
+            if ($type === 'out_offline') {
+                if (array_key_exists('offline_revenue', $validated) && $validated['offline_revenue'] !== null && $validated['offline_revenue'] !== '') {
+                    $offlineRevenue = (float) $validated['offline_revenue'];
+                } else {
+                    $offlineRevenue = (float) ($qty * $product->price);
+                }
+            }
+
+            $product->update([
+                'stock' => $stockAfter,
+            ]);
+
+            $movement = StockMovement::create([
+                'product_id' => $product->id,
+                'type' => $type,
+                'stock_before' => $stockBefore,
+                'quantity_change' => $quantityChange,
+                'stock_after' => $stockAfter,
+                'offline_revenue' => $offlineRevenue,
+                'notes' => $validated['notes'] ?? null,
+                'created_by' => $admin?->id,
+            ]);
+
+            return [
+                'movement' => $movement->load(['product:id,name,price,stock,weight_grams,image_url', 'creator:id,name']),
+                'product' => $product->fresh(),
+            ];
+        });
+
+        return response()->json([
+            'message' => 'Mutasi stok berhasil dicatat dan stok produk telah diperbarui.',
+            'data' => $result['movement'],
+            'product' => $result['product'],
+        ], 201);
+    }
+
+    /**
+     * Bulk Stock Opname (Physical Rack Count Synchronization).
+     * Receives array of [{ product_id, actual_stock, notes }] and updates all changed products atomically.
+     */
+    public function bulkStockOpname(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'items' => 'required|array|min:1',
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.actual_stock' => 'required|integer|min:0',
+            'items.*.notes' => 'nullable|string|max:500',
+            'global_notes' => 'nullable|string|max:500',
+        ]);
+
+        $admin = $request->user('sanctum');
+
+        $result = DB::transaction(function () use ($validated, $admin) {
+            $updatedMovements = [];
+            $globalNotes = trim((string) ($validated['global_notes'] ?? ''));
+
+            foreach ($validated['items'] as $item) {
+                $product = Product::lockForUpdate()->find($item['product_id']);
+                if (!$product) {
+                    continue;
+                }
+
+                $stockBefore = (int) $product->stock;
+                $actualStock = (int) $item['actual_stock'];
+
+                if ($actualStock !== $stockBefore) {
+                    $quantityChange = $actualStock - $stockBefore;
+                    $itemNote = trim((string) ($item['notes'] ?? ''));
+                    $finalNote = $itemNote ?: ($globalNotes ?: 'Penyesuaian Stock Opname Fisik');
+
+                    $product->update([
+                        'stock' => $actualStock,
+                    ]);
+
+                    $movement = StockMovement::create([
+                        'product_id' => $product->id,
+                        'type' => 'opname_adjustment',
+                        'stock_before' => $stockBefore,
+                        'quantity_change' => $quantityChange,
+                        'stock_after' => $actualStock,
+                        'offline_revenue' => 0,
+                        'notes' => $finalNote,
+                        'created_by' => $admin?->id,
+                    ]);
+
+                    $updatedMovements[] = $movement->load(['product:id,name,price,stock,weight_grams,image_url', 'creator:id,name']);
+                }
+            }
+
+            return $updatedMovements;
+        });
+
+        $count = count($result);
+
+        return response()->json([
+            'message' => $count > 0
+                ? "Stock Opname selesai! {$count} produk berhasil disesuaikan dengan stok fisik rak."
+                : 'Tidak ada selisih stok. Seluruh stok sistem sudah sesuai dengan stok fisik rak.',
+            'adjusted_count' => $count,
+            'movements' => $result,
         ]);
     }
 }

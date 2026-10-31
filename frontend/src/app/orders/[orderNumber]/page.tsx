@@ -34,7 +34,7 @@ export default function OrderDetailPage() {
   const handlePayOrder = async () => {
     if (!order) return;
     const snapToken = order.snap_token;
-    const isMockToken = !snapToken || snapToken.startsWith('SNAP-MOCK-') || snapToken.startsWith('SNAP-FALLBACK-');
+    const isMockToken = Boolean(snapToken && snapToken.startsWith('SNAP-MOCK-'));
 
     if (isMockToken) {
       setShowPaymentModal(true);
@@ -275,7 +275,7 @@ export default function OrderDetailPage() {
                 {order.courier_service_name}
               </p>
               <p className="text-gray-600">
-                Estimasi Berat Pengiriman: <strong>{formatWeight(order.total_weight_grams)}</strong>
+                Estimasi Berat Kirim: <strong>{formatWeight(order.total_weight_grams)}</strong>
               </p>
               {order.box_breakdown && (
                 <p className="text-purple-700 font-bold">Kemasan: {order.box_breakdown}</p>

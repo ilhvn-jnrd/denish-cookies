@@ -86,7 +86,7 @@ export async function triggerSnapPayment(params: {
   const { snapToken, clientKey, snapUrl, onSuccess, onPending, onError, onClose } = params;
 
   // Strict check: ONLY mock if token explicitly starts with SNAP-MOCK-
-  if (!snapToken || snapToken.startsWith('SNAP-MOCK-') || snapToken.startsWith('SNAP-FALLBACK-')) {
+  if (!snapToken || snapToken.startsWith('SNAP-MOCK-')) {
     return { isMock: true };
   }
 
@@ -105,6 +105,11 @@ export async function triggerSnapPayment(params: {
     console.warn('Failed to invoke window.snap.pay:', err);
   }
 
-  // If loading failed completely, allow mock fallback
+  const config = getSnapConfig(clientKey, snapUrl);
+  if (config.isProduction) {
+    return { isMock: false };
+  }
+
+  // If loading failed completely in non-production, allow mock fallback
   return { isMock: true };
 }

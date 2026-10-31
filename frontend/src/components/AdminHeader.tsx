@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Cookie, Package, Settings, ArrowLeft, Shield, Menu, X, PlusCircle } from 'lucide-react';
+import { LayoutDashboard, Cookie, Package, Settings, ArrowLeft, Shield, Menu, X, ClipboardCheck } from 'lucide-react';
 
 export default function AdminHeader() {
   const pathname = usePathname();
@@ -12,6 +12,7 @@ export default function AdminHeader() {
   const navItems = [
     { href: '/admin', label: 'Ringkasan', fullLabel: 'Ringkasan KPI', icon: LayoutDashboard },
     { href: '/admin/products', label: 'Produk (+Upload)', fullLabel: 'Produk & Stok Kue', icon: Cookie },
+    { href: '/admin/stock-opname', label: 'Stok & Opname', fullLabel: 'Stok & Opname Offline', icon: ClipboardCheck },
     { href: '/admin/orders', label: 'Pesanan', fullLabel: 'Manajemen Pesanan & Resi', icon: Package },
     { href: '/admin/shipping', label: 'Ongkir', fullLabel: 'Tarif Gojek & Paxel', icon: Settings },
   ];
