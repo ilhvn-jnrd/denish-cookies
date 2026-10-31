@@ -15,6 +15,8 @@ import {
   ExternalLink,
   MessageCircle,
   Phone,
+  Lock,
+  X,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { fetchApi } from '@/lib/api';
@@ -38,6 +40,8 @@ export default function AdminOrdersPage() {
   // Tracking number edit inputs state: { [orderId]: trackingNumber }
   const [trackingInputs, setTrackingInputs] = useState<Record<number, string>>({});
   const [updatingId, setUpdatingId] = useState<number | null>(null);
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const loadOrders = async () => {
     setLoading(true);
@@ -71,9 +75,11 @@ export default function AdminOrdersPage() {
 
   const handleUpdateStatus = async (orderId: number, newStatus: string) => {
     setUpdatingId(orderId);
-    const tracking = trackingInputs[orderId] || '';
+    setActionError(null);
+    setActionMessage(null);
+    const tracking = (trackingInputs[orderId] || '').trim();
 
-    await fetchApi(`/admin/orders/${orderId}/status`, {
+    const res = await fetchApi<{ message: string; order: any }>(`/admin/orders/${orderId}/status`, {
       method: 'PUT',
       body: JSON.stringify({
         order_status: newStatus,
@@ -81,21 +87,41 @@ export default function AdminOrdersPage() {
       }),
     });
 
+    if (res.error) {
+      setActionError(res.error);
+    } else if (res.data?.message) {
+      setActionMessage(res.data.message);
+    }
+
     setUpdatingId(null);
     loadOrders();
   };
 
   const handleSaveTracking = async (orderId: number, currentStatus: string) => {
     setUpdatingId(orderId);
-    const tracking = trackingInputs[orderId] || '';
+    setActionError(null);
+    setActionMessage(null);
+    const tracking = (trackingInputs[orderId] || '').trim();
 
-    await fetchApi(`/admin/orders/${orderId}/status`, {
+    // Auto-advance to 'shipped' when admin saves a non-empty tracking number on 'paid' or 'processing' order
+    const nextStatus =
+      tracking !== '' && (currentStatus === 'paid' || currentStatus === 'processing')
+        ? 'shipped'
+        : currentStatus;
+
+    const res = await fetchApi<{ message: string; order: any }>(`/admin/orders/${orderId}/status`, {
       method: 'PUT',
       body: JSON.stringify({
-        order_status: currentStatus,
+        order_status: nextStatus,
         tracking_number: tracking,
       }),
     });
+
+    if (res.error) {
+      setActionError(res.error);
+    } else if (res.data?.message) {
+      setActionMessage(res.data.message);
+    }
 
     setUpdatingId(null);
     loadOrders();
@@ -115,6 +141,30 @@ export default function AdminOrdersPage() {
           </p>
         </div>
       </div>
+
+      {actionMessage && (
+        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-900 font-bold flex items-center justify-between gap-2 animate-fade-in">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+            <span>{actionMessage}</span>
+          </div>
+          <button onClick={() => setActionMessage(null)} className="text-emerald-700 hover:text-emerald-950">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {actionError && (
+        <div className="p-3.5 bg-red-50 border border-red-200 rounded-2xl text-xs text-red-800 font-bold flex items-center justify-between gap-2 animate-fade-in">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-brand-red flex-shrink-0" />
+            <span>{actionError}</span>
+          </div>
+          <button onClick={() => setActionError(null)} className="text-red-700 hover:text-red-950">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       {/* Filters Bar */}
       <div className="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
@@ -288,25 +338,48 @@ export default function AdminOrdersPage() {
                   <div className="space-y-3 bg-amber-50/60 p-3.5 sm:p-4 rounded-2xl border border-amber-200/70 flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-bold text-gray-700">Ubah Status Pesanan:</span>
+                        <span className="font-bold text-gray-700">Status Pesanan:</span>
                         <span className="font-heading font-black text-brand-red text-sm sm:text-base">
                           {formatRupiah(ord.gross_amount)}
                         </span>
                       </div>
 
-                      <select
-                        value={ord.order_status}
-                        disabled={updatingId === ord.id}
-                        onChange={(e) => handleUpdateStatus(ord.id, e.target.value)}
-                        className="w-full min-h-[44px] px-3 py-2 bg-white border border-gray-300 rounded-xl text-xs sm:text-sm font-bold text-brand-indigo focus:ring-2 focus:ring-brand-yellow"
-                      >
-                        <option value="pending">Menunggu Pembayaran</option>
-                        <option value="paid">Lunas (Siap Diproses)</option>
-                        <option value="processing">Diproses / Baking di Kitchen</option>
-                        <option value="shipped">Sedang Dikirim (Driver/Paxel)</option>
-                        <option value="completed">Pesanan Selesai</option>
-                        <option value="cancelled">Batalkan Pesanan</option>
-                      </select>
+                      {ord.order_status === 'completed' || ord.order_status === 'cancelled' ? (
+                        <div className="w-full min-h-[44px] px-3.5 py-2.5 bg-white/90 border border-gray-200 rounded-xl flex items-center justify-between">
+                          <span className={`text-xs font-black px-2.5 py-1 rounded-full ${statusInfo.bg} ${statusInfo.text}`}>
+                            {statusInfo.label}
+                          </span>
+                          <span className="text-[11px] font-bold text-gray-400 flex items-center gap-1">
+                            <Lock className="w-3.5 h-3.5" /> Status Final
+                          </span>
+                        </div>
+                      ) : ord.payment_status === 'paid' ? (
+                        <select
+                          value={ord.order_status}
+                          disabled={updatingId === ord.id}
+                          onChange={(e) => handleUpdateStatus(ord.id, e.target.value)}
+                          className="w-full min-h-[44px] px-3 py-2 bg-white border border-gray-300 rounded-xl text-xs sm:text-sm font-bold text-brand-indigo focus:ring-2 focus:ring-brand-yellow"
+                        >
+                          <option value="paid">Lunas (Siap Diproses)</option>
+                          <option value="processing">Diproses / Baking di Kitchen</option>
+                          <option value="shipped">Sedang Dikirim (Driver/Paxel)</option>
+                          <option value="completed">Pesanan Selesai</option>
+                        </select>
+                      ) : (
+                        <select
+                          value={ord.order_status}
+                          disabled={updatingId === ord.id}
+                          onChange={(e) => handleUpdateStatus(ord.id, e.target.value)}
+                          className="w-full min-h-[44px] px-3 py-2 bg-white border border-gray-300 rounded-xl text-xs sm:text-sm font-bold text-brand-indigo focus:ring-2 focus:ring-brand-yellow"
+                        >
+                          <option value="pending">Menunggu Pembayaran</option>
+                          <option value="paid">Lunas (Siap Diproses)</option>
+                          <option value="processing">Diproses / Baking di Kitchen</option>
+                          <option value="shipped">Sedang Dikirim (Driver/Paxel)</option>
+                          <option value="completed">Pesanan Selesai</option>
+                          <option value="cancelled">Batalkan Pesanan</option>
+                        </select>
+                      )}
                     </div>
 
                     {/* Tracking Number Input */}
@@ -317,6 +390,7 @@ export default function AdminOrdersPage() {
                       <div className="flex gap-2">
                         <input
                           type="text"
+                          disabled={ord.order_status === 'completed' || ord.order_status === 'cancelled'}
                           value={trackingInputs[ord.id] ?? ''}
                           onChange={(e) =>
                             setTrackingInputs((prev) => ({
@@ -325,19 +399,26 @@ export default function AdminOrdersPage() {
                             }))
                           }
                           placeholder="PXL-123456 / GK-DRV-99"
-                          className="flex-1 min-h-[44px] px-3 py-2 bg-white border border-gray-300 rounded-xl text-xs sm:text-sm font-mono"
+                          className="flex-1 min-h-[44px] px-3 py-2 bg-white border border-gray-300 rounded-xl text-xs sm:text-sm font-mono disabled:bg-gray-100 disabled:text-gray-500"
                         />
-                        <button
-                          type="button"
-                          disabled={updatingId === ord.id}
-                          onClick={() => handleSaveTracking(ord.id, ord.order_status)}
-                          className="min-h-[44px] px-4 py-2 bg-brand-indigo text-white hover:bg-brand-indigoLight rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 active:scale-[0.98]"
-                          title="Simpan Resi"
-                        >
-                          <Save className="w-4 h-4" />
-                          <span className="hidden sm:inline">Simpan</span>
-                        </button>
+                        {ord.order_status !== 'completed' && ord.order_status !== 'cancelled' && (
+                          <button
+                            type="button"
+                            disabled={updatingId === ord.id}
+                            onClick={() => handleSaveTracking(ord.id, ord.order_status)}
+                            className="min-h-[44px] px-4 py-2 bg-brand-indigo text-white hover:bg-brand-indigoLight rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 active:scale-[0.98]"
+                            title="Simpan Resi & Kirim"
+                          >
+                            <Save className="w-4 h-4" />
+                            <span className="hidden sm:inline">Simpan</span>
+                          </button>
+                        )}
                       </div>
+                      {(ord.order_status === 'paid' || ord.order_status === 'processing') && (
+                        <span className="text-[10px] text-amber-800 font-medium block pt-0.5">
+                          * Mengisi resi &amp; klik Simpan otomatis mengubah status ke <strong>Sedang Dikirim</strong>.
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>

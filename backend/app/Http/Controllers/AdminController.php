@@ -119,7 +119,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Update Order status.
+     * Update Order status with Strict Order State Machine & Auto-Ship on Tracking Number.
      */
     public function updateOrderStatus(Request $request, int $id): JsonResponse
     {
@@ -130,24 +130,50 @@ class AdminController extends Controller
             'tracking_number' => 'nullable|string|max:100',
         ]);
 
-        $updateData = ['order_status' => $validated['order_status']];
-
-        if (array_key_exists('tracking_number', $validated)) {
-            $updateData['tracking_number'] = $validated['tracking_number'];
+        // 1. Lock final states: completed or cancelled cannot be modified further
+        if (in_array($order->order_status, ['completed', 'cancelled'], true)) {
+            return response()->json([
+                'message' => "Status pesanan sudah final ({$order->order_status}) dan tidak dapat diubah lagi.",
+            ], 422);
         }
 
-        if ($validated['order_status'] === 'shipped' && !$order->shipped_at) {
+        $targetStatus = $validated['order_status'];
+        $trackingNumber = array_key_exists('tracking_number', $validated)
+            ? trim((string) ($validated['tracking_number'] ?? ''))
+            : trim((string) ($order->tracking_number ?? ''));
+
+        // 2. Paid orders cannot be reverted to pending or cancelled
+        if ($order->payment_status === 'paid' && in_array($targetStatus, ['pending', 'cancelled'], true)) {
+            return response()->json([
+                'message' => 'Pesanan yang sudah lunas tidak dapat dibatalkan atau dikembalikan ke status menunggu pembayaran.',
+            ], 422);
+        }
+
+        // 3. Auto-Ship when tracking_number is filled while order is still 'paid' or 'processing'
+        if ($trackingNumber !== '' && in_array($targetStatus, ['paid', 'processing'], true)) {
+            $targetStatus = 'shipped';
+        }
+
+        $updateData = ['order_status' => $targetStatus];
+
+        if (array_key_exists('tracking_number', $validated)) {
+            $updateData['tracking_number'] = $trackingNumber !== '' ? $trackingNumber : null;
+        }
+
+        if ($targetStatus === 'shipped' && !$order->shipped_at) {
             $updateData['shipped_at'] = Carbon::now();
         }
 
-        if ($validated['order_status'] === 'completed' && !$order->completed_at) {
+        if ($targetStatus === 'completed' && !$order->completed_at) {
             $updateData['completed_at'] = Carbon::now();
         }
 
         $order->update($updateData);
 
         return response()->json([
-            'message' => 'Status pesanan berhasil diperbarui',
+            'message' => $targetStatus === 'shipped' && $trackingNumber !== ''
+                ? 'Nomor resi berhasil disimpan & status pesanan otomatis diubah menjadi Sedang Dikirim!'
+                : 'Status pesanan berhasil diperbarui',
             'order' => $order->fresh(['items']),
         ]);
     }
@@ -467,16 +493,50 @@ class AdminController extends Controller
     }
 
     /**
-     * List Stock Movements & Offline Sales / Opname History with summary KPIs.
+     * List Stock Movements & Offline Sales / Opname History with summary KPIs, search, and pagination.
      */
     public function stockMovements(Request $request): JsonResponse
     {
+        $applyFilters = function ($q) use ($request) {
+            // Filter by product_id
+            if ($request->filled('product_id') && $request->product_id !== 'all') {
+                $q->where('product_id', (int) $request->product_id);
+            }
+
+            // Filter by date or date range
+            if ($request->filled('date')) {
+                $q->whereDate('created_at', $request->date);
+            } else {
+                if ($request->filled('start_date')) {
+                    $q->whereDate('created_at', '>=', $request->start_date);
+                }
+                if ($request->filled('end_date')) {
+                    $q->whereDate('created_at', '<=', $request->end_date);
+                }
+            }
+
+            // Search by notes (e.g. #DC-...) or product name
+            if ($request->filled('search')) {
+                $search = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], trim((string) $request->search));
+                if ($search !== '') {
+                    $q->where(function ($sub) use ($search) {
+                        $sub->where('notes', 'LIKE', "%{$search}%")
+                            ->orWhereHas('product', function ($prodQuery) use ($search) {
+                                $prodQuery->where('name', 'LIKE', "%{$search}%");
+                            });
+                    });
+                }
+            }
+        };
+
         $query = StockMovement::with([
             'product:id,name,price,stock,weight_grams,image_url',
             'creator:id,name',
         ]);
 
-        // Filter by movement type
+        $applyFilters($query);
+
+        // Filter by movement type on main table query
         if ($request->filled('type') && $request->type !== 'all') {
             $allowedTypes = ['in_production', 'out_offline', 'out_online', 'opname_adjustment', 'damaged'];
             if (in_array($request->type, $allowedTypes, true)) {
@@ -484,38 +544,9 @@ class AdminController extends Controller
             }
         }
 
-        // Filter by product_id
-        if ($request->filled('product_id') && $request->product_id !== 'all') {
-            $query->where('product_id', (int) $request->product_id);
-        }
-
-        // Filter by date or date range
-        if ($request->filled('date')) {
-            $query->whereDate('created_at', $request->date);
-        } else {
-            if ($request->filled('start_date')) {
-                $query->whereDate('created_at', '>=', $request->start_date);
-            }
-            if ($request->filled('end_date')) {
-                $query->whereDate('created_at', '<=', $request->end_date);
-            }
-        }
-
-        // Summary calculations based on matching date/product scope
+        // Summary calculations based on matching date/product/search scope
         $summaryScope = StockMovement::query();
-        if ($request->filled('product_id') && $request->product_id !== 'all') {
-            $summaryScope->where('product_id', (int) $request->product_id);
-        }
-        if ($request->filled('date')) {
-            $summaryScope->whereDate('created_at', $request->date);
-        } else {
-            if ($request->filled('start_date')) {
-                $summaryScope->whereDate('created_at', '>=', $request->start_date);
-            }
-            if ($request->filled('end_date')) {
-                $summaryScope->whereDate('created_at', '<=', $request->end_date);
-            }
-        }
+        $applyFilters($summaryScope);
 
         $totalOfflineJars = (int) abs((int) (clone $summaryScope)->where('type', 'out_offline')->sum('quantity_change'));
         $totalOfflineRevenue = (float) (clone $summaryScope)->where('type', 'out_offline')->sum('offline_revenue');
@@ -523,7 +554,12 @@ class AdminController extends Controller
         $totalDamagedJars = (int) abs((int) (clone $summaryScope)->where('type', 'damaged')->sum('quantity_change'));
         $totalOnlineJars = (int) abs((int) (clone $summaryScope)->where('type', 'out_online')->sum('quantity_change'));
 
-        $movements = $query->orderBy('id', 'desc')->paginate(25);
+        $perPage = (int) $request->input('per_page', 15);
+        if (!in_array($perPage, [10, 15, 25, 50, 100], true)) {
+            $perPage = 15;
+        }
+
+        $movements = $query->orderBy('id', 'desc')->paginate($perPage);
 
         $response = $movements->toArray();
         $response['summary'] = [

@@ -22,6 +22,8 @@ import {
   Globe,
   Search,
   Filter,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { fetchApi } from '@/lib/api';
@@ -82,7 +84,7 @@ export default function AdminStockOpnamePage() {
   const [searchProduct, setSearchProduct] = useState('');
   const [savingOpname, setSavingOpname] = useState(false);
 
-  // Movements History & Summary state
+  // Movements History, Pagination & Summary state
   const [movements, setMovements] = useState<StockMovementItem[]>([]);
   const [summary, setSummary] = useState<MovementSummary>({
     total_offline_jars: 0,
@@ -94,13 +96,18 @@ export default function AdminStockOpnamePage() {
   const [filterType, setFilterType] = useState<string>('all');
   const [filterProductId, setFilterProductId] = useState<string>('all');
   const [filterDate, setFilterDate] = useState<string>('');
+  const [searchHistory, setSearchHistory] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [perPage, setPerPage] = useState<number>(15);
+  const [lastPage, setLastPage] = useState<number>(1);
+  const [totalMovements, setTotalMovements] = useState<number>(0);
   const [loadingData, setLoadingData] = useState(true);
 
   // Feedback banners
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Quick Mutation Modal State (Fitur B)
+  // Quick Mutation Modal State
   const [showQuickModal, setShowQuickModal] = useState(false);
   const [quickProductId, setQuickProductId] = useState<number>(0);
   const [quickType, setQuickType] = useState<'out_offline' | 'in_production' | 'damaged'>('out_offline');
@@ -116,12 +123,20 @@ export default function AdminStockOpnamePage() {
     if (filterType !== 'all') params.append('type', filterType);
     if (filterProductId !== 'all') params.append('product_id', filterProductId);
     if (filterDate) params.append('date', filterDate);
+    if (searchHistory.trim()) params.append('search', searchHistory.trim());
+    params.append('page', String(currentPage));
+    params.append('per_page', String(perPage));
 
     const [prodRes, movRes] = await Promise.all([
       fetchApi<{ data: ProductItem[] }>('/admin/products?all=1'),
-      fetchApi<{ data: StockMovementItem[]; summary: MovementSummary }>(
-        `/admin/stock-movements?${params.toString()}`
-      ),
+      fetchApi<{
+        data: StockMovementItem[];
+        summary: MovementSummary;
+        current_page?: number;
+        last_page?: number;
+        total?: number;
+        per_page?: number;
+      }>(`/admin/stock-movements?${params.toString()}`),
     ]);
 
     if (prodRes.data?.data) {
@@ -157,6 +172,8 @@ export default function AdminStockOpnamePage() {
 
     if (movRes.data) {
       setMovements(movRes.data.data || []);
+      setLastPage(Math.max(1, movRes.data.last_page || 1));
+      setTotalMovements(movRes.data.total ?? (movRes.data.data?.length || 0));
       if (movRes.data.summary) {
         setSummary(movRes.data.summary);
       }
@@ -171,9 +188,12 @@ export default function AdminStockOpnamePage() {
       return;
     }
     if (isAdmin) {
-      loadAllData(false);
+      const timer = setTimeout(() => {
+        loadAllData(false);
+      }, 200);
+      return () => clearTimeout(timer);
     }
-  }, [isAdmin, isLoading, filterType, filterProductId, filterDate]);
+  }, [isAdmin, isLoading, filterType, filterProductId, filterDate, searchHistory, currentPage, perPage]);
 
   // Filtered products for Opname table
   const filteredProducts = useMemo(() => {
@@ -560,23 +580,20 @@ export default function AdminStockOpnamePage() {
         </div>
       </div>
 
-      {/* FITUR A: TABEL STOCK OPNAME CEPAT (HITUNG FISIK RAK) */}
+      {/* TABEL STOCK OPNAME CEPAT (HITUNG FISIK RAK) */}
       <div className="bg-white rounded-3xl border border-amber-100 shadow-cookie overflow-hidden">
         <div className="p-5 sm:p-6 bg-brand-creamWarm border-b border-amber-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-brand-indigo text-brand-yellow text-[10px] font-black uppercase">
-                Fitur A • Hitung Fisik Rak
-              </span>
+              <h2 className="font-heading font-black text-lg text-brand-indigo">
+                Tabel Stock Opname Sekaligus (Bulk Physical Count)
+              </h2>
               {changedOpnameItems.length > 0 && (
                 <span className="px-2.5 py-0.5 rounded-full bg-brand-red text-white text-[10px] font-black animate-pulse">
                   {changedOpnameItems.length} Kue Berubah
                 </span>
               )}
             </div>
-            <h2 className="font-heading font-black text-lg text-brand-indigo">
-              Tabel Stock Opname Sekaligus (Bulk Physical Count)
-            </h2>
             <p className="text-xs text-gray-600">
               Ketik jumlah toples fisik riil yang ada di rak dapur saat ini. Sistem otomatis menghitung selisih (+/-) dan menyamakan stok website dalam 1 klik.
             </p>
@@ -788,26 +805,43 @@ export default function AdminStockOpnamePage() {
         </div>
       </div>
 
-      {/* FITUR C: TABEL RIWAYAT MUTASI & RINGKASAN OFFLINE */}
+      {/* TABEL RIWAYAT MUTASI & RINGKASAN OFFLINE */}
       <div className="bg-white rounded-3xl border border-amber-100 shadow-cookie overflow-hidden">
         <div className="p-5 sm:p-6 border-b border-gray-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
-            <span className="text-[10px] font-black uppercase tracking-wider text-brand-red block">
-              Fitur C • Audit Log Stok
-            </span>
             <h2 className="font-heading font-black text-lg text-brand-indigo flex items-center gap-2">
               <History className="w-5 h-5 text-brand-indigo" />
               Riwayat Mutasi Stok &amp; Penjualan Offline
             </h2>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Catatan lengkap seluruh keluar-masuk toples kue baik dari Website, Offline/WA, Produksi, maupun Stock Opname.
+            </p>
           </div>
 
-          {/* Filters */}
+          {/* Filters & Search */}
           <div className="flex flex-wrap items-center gap-2 text-xs">
+            <div className="relative w-full sm:w-52">
+              <input
+                type="text"
+                value={searchHistory}
+                onChange={(e) => {
+                  setSearchHistory(e.target.value);
+                  setCurrentPage(1);
+                }}
+                placeholder="Cari catatan / No. Order..."
+                className="w-full pl-8 pr-3 py-1.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow"
+              />
+              <Search className="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-2" />
+            </div>
+
             <div className="flex items-center gap-1.5 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-200">
               <Filter className="w-3.5 h-3.5 text-gray-400" />
               <select
                 value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
+                onChange={(e) => {
+                  setFilterType(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className="bg-transparent font-bold text-brand-indigo focus:outline-none"
               >
                 <option value="all">Semua Jenis Mutasi</option>
@@ -821,8 +855,11 @@ export default function AdminStockOpnamePage() {
 
             <select
               value={filterProductId}
-              onChange={(e) => setFilterProductId(e.target.value)}
-              className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl font-bold text-brand-indigo focus:outline-none"
+              onChange={(e) => {
+                setFilterProductId(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-xl font-bold text-brand-indigo focus:outline-none"
             >
               <option value="all">Semua Produk Kue</option>
               {products.map((p) => (
@@ -835,17 +872,25 @@ export default function AdminStockOpnamePage() {
             <input
               type="date"
               value={filterDate}
-              onChange={(e) => setFilterDate(e.target.value)}
+              onChange={(e) => {
+                setFilterDate(e.target.value);
+                setCurrentPage(1);
+              }}
               className="px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-xl font-medium text-gray-700 focus:outline-none"
             />
 
-            {(filterType !== 'all' || filterProductId !== 'all' || filterDate !== '') && (
+            {(filterType !== 'all' ||
+              filterProductId !== 'all' ||
+              filterDate !== '' ||
+              searchHistory.trim() !== '') && (
               <button
                 type="button"
                 onClick={() => {
                   setFilterType('all');
                   setFilterProductId('all');
                   setFilterDate('');
+                  setSearchHistory('');
+                  setCurrentPage(1);
                 }}
                 className="px-2.5 py-1.5 text-brand-red font-bold hover:underline"
               >
@@ -950,9 +995,57 @@ export default function AdminStockOpnamePage() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Bar */}
+        <div className="px-5 py-4 bg-gray-50/70 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="flex flex-wrap items-center gap-3 text-gray-600">
+            <span>
+              Halaman <strong className="text-brand-indigo">{currentPage}</strong> dari{' '}
+              <strong className="text-brand-indigo">{lastPage}</strong> (Total{' '}
+              <strong className="text-brand-indigo">{totalMovements}</strong> data)
+            </span>
+
+            <div className="flex items-center gap-1.5">
+              <span className="text-gray-400">•</span>
+              <label className="text-gray-500">Tampilkan:</label>
+              <select
+                value={perPage}
+                onChange={(e) => {
+                  setPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="px-2.5 py-1 bg-white border border-gray-200 rounded-lg font-bold text-brand-indigo focus:outline-none"
+              >
+                <option value={10}>10 / halaman</option>
+                <option value={15}>15 / halaman</option>
+                <option value={25}>25 / halaman</option>
+                <option value={50}>50 / halaman</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 self-end sm:self-auto">
+            <button
+              type="button"
+              disabled={currentPage <= 1 || loadingData}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              className="px-3.5 py-1.5 bg-white hover:bg-gray-100 text-brand-indigo border border-gray-200 rounded-xl font-bold flex items-center gap-1 transition disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft className="w-3.5 h-3.5" /> Sebelumnya
+            </button>
+            <button
+              type="button"
+              disabled={currentPage >= lastPage || loadingData}
+              onClick={() => setCurrentPage((p) => Math.min(lastPage, p + 1))}
+              className="px-3.5 py-1.5 bg-white hover:bg-gray-100 text-brand-indigo border border-gray-200 rounded-xl font-bold flex items-center gap-1 transition disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Berikutnya <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* FITUR B: MODAL CATAT STOK MASUK / TERJUAL OFFLINE CEPAT */}
+      {/* MODAL CATAT STOK MASUK / TERJUAL OFFLINE CEPAT */}
       {showQuickModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm">
           <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200 animate-in fade-in zoom-in-95 duration-200">
