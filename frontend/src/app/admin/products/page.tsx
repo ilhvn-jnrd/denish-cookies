@@ -41,11 +41,11 @@ export default function AdminProductsPage() {
   const [categoryId, setCategoryId] = useState<number>(1);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [price, setPrice] = useState<number>(135000);
-  const [weightGrams, setWeightGrams] = useState<number>(500);
-  const [stock, setStock] = useState<number>(20);
+  const [price, setPrice] = useState<number | string>(135000);
+  const [weightGrams, setWeightGrams] = useState<number | string>(500);
+  const [stock, setStock] = useState<number | string>(20);
   const [isPreorder, setIsPreorder] = useState(false);
-  const [poLeadDays, setPoLeadDays] = useState<number>(2);
+  const [poLeadDays, setPoLeadDays] = useState<number | string>(2);
   const [imageUrl, setImageUrl] = useState('');
   const [isFeatured, setIsFeatured] = useState(false);
   const [isActive, setIsActive] = useState(true);
@@ -167,11 +167,11 @@ export default function AdminProductsPage() {
       category_id: categoryId,
       name,
       description,
-      price,
-      weight_grams: weightGrams,
-      stock,
+      price: Math.max(0, Number(price) || 0),
+      weight_grams: Math.max(1, parseInt(String(weightGrams), 10) || 500),
+      stock: Math.max(0, parseInt(String(stock), 10) || 0),
       is_preorder: isPreorder,
-      po_lead_days: poLeadDays,
+      po_lead_days: Math.max(1, parseInt(String(poLeadDays), 10) || 2),
       image_url: imageUrl,
       is_featured: isFeatured,
       is_active: isActive,
@@ -619,9 +619,22 @@ export default function AdminProductsPage() {
                   </label>
                   <input
                     type="number"
+                    min={0}
                     required
                     value={price}
-                    onChange={(e) => setPrice(Number(e.target.value))}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setPrice(val === '' ? '' : Number(val));
+                    }}
+                    onBlur={() => {
+                      const parsed = Number(price);
+                      if (price === '' || isNaN(parsed) || parsed < 0) {
+                        setPrice(0);
+                      } else {
+                        setPrice(Math.floor(parsed));
+                      }
+                    }}
                     className="w-full px-2.5 sm:px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold text-brand-red"
                   />
                 </div>
@@ -632,9 +645,22 @@ export default function AdminProductsPage() {
                   </label>
                   <input
                     type="number"
+                    min={1}
                     required
                     value={weightGrams}
-                    onChange={(e) => setWeightGrams(Number(e.target.value))}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setWeightGrams(val === '' ? '' : Number(val));
+                    }}
+                    onBlur={() => {
+                      const parsed = parseInt(String(weightGrams), 10);
+                      if (weightGrams === '' || isNaN(parsed) || parsed < 1) {
+                        setWeightGrams(500);
+                      } else {
+                        setWeightGrams(parsed);
+                      }
+                    }}
                     placeholder="500"
                     className="w-full px-2.5 sm:px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold text-brand-indigo"
                   />
@@ -646,9 +672,22 @@ export default function AdminProductsPage() {
                   </label>
                   <input
                     type="number"
+                    min={0}
                     required
                     value={stock}
-                    onChange={(e) => setStock(Number(e.target.value))}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setStock(val === '' ? '' : Number(val));
+                    }}
+                    onBlur={() => {
+                      const parsed = parseInt(String(stock), 10);
+                      if (stock === '' || isNaN(parsed) || parsed < 0) {
+                        setStock(0);
+                      } else {
+                        setStock(parsed);
+                      }
+                    }}
                     className="w-full px-2.5 sm:px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold"
                   />
                 </div>
@@ -676,7 +715,19 @@ export default function AdminProductsPage() {
                         type="number"
                         min={1}
                         value={poLeadDays}
-                        onChange={(e) => setPoLeadDays(Number(e.target.value))}
+                        onFocus={(e) => e.target.select()}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setPoLeadDays(val === '' ? '' : Number(val));
+                        }}
+                        onBlur={() => {
+                          const parsed = parseInt(String(poLeadDays), 10);
+                          if (poLeadDays === '' || isNaN(parsed) || parsed < 1) {
+                            setPoLeadDays(1);
+                          } else {
+                            setPoLeadDays(parsed);
+                          }
+                        }}
                         className="w-20 px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs"
                       />
                       <span className="text-[11px] text-gray-500">hari</span>

@@ -40,21 +40,21 @@ export default function AdminShippingPage() {
   const [storeLng, setStoreLng] = useState(107.6634056367421);
 
   // Gojek Parameters
-  const [instantRatePerKm, setInstantRatePerKm] = useState(4000);
-  const [instantMinFare, setInstantMinFare] = useState(15000);
-  const [samedayUnder15, setSamedayUnder15] = useState(18000);
-  const [samedayOver15, setSamedayOver15] = useState(25000);
-  const [maxDistanceGojek, setMaxDistanceGojek] = useState(40);
-  const [roadFactor, setRoadFactor] = useState(1.3);
+  const [instantRatePerKm, setInstantRatePerKm] = useState<number | string>(4000);
+  const [instantMinFare, setInstantMinFare] = useState<number | string>(15000);
+  const [samedayUnder15, setSamedayUnder15] = useState<number | string>(18000);
+  const [samedayOver15, setSamedayOver15] = useState<number | string>(25000);
+  const [maxDistanceGojek, setMaxDistanceGojek] = useState<number | string>(40);
+  const [roadFactor, setRoadFactor] = useState<number | string>(1.3);
 
   // Paxel Matrix Modal state
   const [showPaxelModal, setShowPaxelModal] = useState(false);
   const [editingPaxel, setEditingPaxel] = useState<any | null>(null);
   const [paxelCity, setPaxelCity] = useState('');
   const [paxelProvince, setPaxelProvince] = useState('');
-  const [paxelSmall, setPaxelSmall] = useState(22000);
-  const [paxelMedium, setPaxelMedium] = useState(30000);
-  const [paxelLarge, setPaxelLarge] = useState(40000);
+  const [paxelSmall, setPaxelSmall] = useState<number | string>(22000);
+  const [paxelMedium, setPaxelMedium] = useState<number | string>(30000);
+  const [paxelLarge, setPaxelLarge] = useState<number | string>(40000);
   const [paxelEst, setPaxelEst] = useState('Pengiriman Reguler / Luar Kota');
 
   const applySettings = (s: any) => {
@@ -140,12 +140,12 @@ export default function AdminShippingPage() {
       store_city: storeCity,
       store_lat: storeLat,
       store_lng: storeLng,
-      gojek_instant_rate_per_km: instantRatePerKm,
-      gojek_instant_min_fare: instantMinFare,
-      gojek_sameday_flat_under_15km: samedayUnder15,
-      gojek_sameday_flat_over_15km: samedayOver15,
-      max_distance_gojek_km: maxDistanceGojek,
-      road_distance_factor: roadFactor,
+      gojek_instant_rate_per_km: Math.max(0, Number(instantRatePerKm) || 0),
+      gojek_instant_min_fare: Math.max(0, Number(instantMinFare) || 0),
+      gojek_sameday_flat_under_15km: Math.max(0, Number(samedayUnder15) || 0),
+      gojek_sameday_flat_over_15km: Math.max(0, Number(samedayOver15) || 0),
+      max_distance_gojek_km: Math.max(1, Number(maxDistanceGojek) || 40),
+      road_distance_factor: Math.max(1, Number(roadFactor) || 1.3),
     };
 
     // Save to localStorage immediately so UI stays synced
@@ -196,9 +196,9 @@ export default function AdminShippingPage() {
     const payload = {
       city_name: paxelCity,
       province: paxelProvince,
-      small_rate: paxelSmall,
-      medium_rate: paxelMedium,
-      large_rate: paxelLarge,
+      small_rate: Math.max(0, Number(paxelSmall) || 0),
+      medium_rate: Math.max(0, Number(paxelMedium) || 0),
+      large_rate: Math.max(0, Number(paxelLarge) || 0),
       estimated_days: paxelEst,
     };
 
@@ -383,8 +383,14 @@ export default function AdminShippingPage() {
                 </label>
                 <input
                   type="number"
+                  min={0}
                   value={instantRatePerKm}
-                  onChange={(e) => setInstantRatePerKm(Number(e.target.value))}
+                  onFocus={(e) => e.target.select()}
+                  onChange={(e) => setInstantRatePerKm(e.target.value === '' ? '' : Number(e.target.value))}
+                  onBlur={() => {
+                    const parsed = Number(instantRatePerKm);
+                    setInstantRatePerKm(instantRatePerKm === '' || isNaN(parsed) || parsed < 0 ? 4000 : parsed);
+                  }}
                   className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-brand-indigo"
                 />
                 <span className="text-[10px] text-gray-400">Default: Rp 4.000 / km</span>
@@ -396,8 +402,14 @@ export default function AdminShippingPage() {
                 </label>
                 <input
                   type="number"
+                  min={0}
                   value={instantMinFare}
-                  onChange={(e) => setInstantMinFare(Number(e.target.value))}
+                  onFocus={(e) => e.target.select()}
+                  onChange={(e) => setInstantMinFare(e.target.value === '' ? '' : Number(e.target.value))}
+                  onBlur={() => {
+                    const parsed = Number(instantMinFare);
+                    setInstantMinFare(instantMinFare === '' || isNaN(parsed) || parsed < 0 ? 15000 : parsed);
+                  }}
                   className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-brand-indigo"
                 />
                 <span className="text-[10px] text-gray-400">Default: Rp 15.000</span>
@@ -409,8 +421,14 @@ export default function AdminShippingPage() {
                 </label>
                 <input
                   type="number"
+                  min={0}
                   value={samedayUnder15}
-                  onChange={(e) => setSamedayUnder15(Number(e.target.value))}
+                  onFocus={(e) => e.target.select()}
+                  onChange={(e) => setSamedayUnder15(e.target.value === '' ? '' : Number(e.target.value))}
+                  onBlur={() => {
+                    const parsed = Number(samedayUnder15);
+                    setSamedayUnder15(samedayUnder15 === '' || isNaN(parsed) || parsed < 0 ? 18000 : parsed);
+                  }}
                   className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-brand-indigo"
                 />
                 <span className="text-[10px] text-gray-400">Default: Rp 18.000</span>
@@ -422,8 +440,14 @@ export default function AdminShippingPage() {
                 </label>
                 <input
                   type="number"
+                  min={0}
                   value={samedayOver15}
-                  onChange={(e) => setSamedayOver15(Number(e.target.value))}
+                  onFocus={(e) => e.target.select()}
+                  onChange={(e) => setSamedayOver15(e.target.value === '' ? '' : Number(e.target.value))}
+                  onBlur={() => {
+                    const parsed = Number(samedayOver15);
+                    setSamedayOver15(samedayOver15 === '' || isNaN(parsed) || parsed < 0 ? 25000 : parsed);
+                  }}
                   className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-brand-indigo"
                 />
                 <span className="text-[10px] text-gray-400">Default: Rp 25.000</span>
@@ -436,8 +460,14 @@ export default function AdminShippingPage() {
                   </label>
                   <input
                     type="number"
+                    min={1}
                     value={maxDistanceGojek}
-                    onChange={(e) => setMaxDistanceGojek(Number(e.target.value))}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => setMaxDistanceGojek(e.target.value === '' ? '' : Number(e.target.value))}
+                    onBlur={() => {
+                      const parsed = Number(maxDistanceGojek);
+                      setMaxDistanceGojek(maxDistanceGojek === '' || isNaN(parsed) || parsed < 1 ? 40 : parsed);
+                    }}
                     className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs"
                   />
                 </div>
@@ -449,8 +479,14 @@ export default function AdminShippingPage() {
                   <input
                     type="number"
                     step="0.05"
+                    min={1}
                     value={roadFactor}
-                    onChange={(e) => setRoadFactor(parseFloat(e.target.value))}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => setRoadFactor(e.target.value === '' ? '' : parseFloat(e.target.value))}
+                    onBlur={() => {
+                      const parsed = parseFloat(String(roadFactor));
+                      setRoadFactor(roadFactor === '' || isNaN(parsed) || parsed < 1 ? 1.3 : parsed);
+                    }}
                     className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs"
                   />
                 </div>
@@ -585,9 +621,15 @@ export default function AdminShippingPage() {
                   <label className="block font-bold text-gray-700 mb-1">Small (&le;1.5kg)</label>
                   <input
                     type="number"
+                    min={0}
                     required
                     value={paxelSmall}
-                    onChange={(e) => setPaxelSmall(Number(e.target.value))}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => setPaxelSmall(e.target.value === '' ? '' : Number(e.target.value))}
+                    onBlur={() => {
+                      const parsed = Number(paxelSmall);
+                      setPaxelSmall(paxelSmall === '' || isNaN(parsed) || parsed < 0 ? 0 : parsed);
+                    }}
                     className="w-full px-2.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold"
                   />
                 </div>
@@ -595,9 +637,15 @@ export default function AdminShippingPage() {
                   <label className="block font-bold text-gray-700 mb-1">Medium (&le;3kg)</label>
                   <input
                     type="number"
+                    min={0}
                     required
                     value={paxelMedium}
-                    onChange={(e) => setPaxelMedium(Number(e.target.value))}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => setPaxelMedium(e.target.value === '' ? '' : Number(e.target.value))}
+                    onBlur={() => {
+                      const parsed = Number(paxelMedium);
+                      setPaxelMedium(paxelMedium === '' || isNaN(parsed) || parsed < 0 ? 0 : parsed);
+                    }}
                     className="w-full px-2.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold"
                   />
                 </div>
@@ -605,9 +653,15 @@ export default function AdminShippingPage() {
                   <label className="block font-bold text-gray-700 mb-1">Large (&le;5kg)</label>
                   <input
                     type="number"
+                    min={0}
                     required
                     value={paxelLarge}
-                    onChange={(e) => setPaxelLarge(Number(e.target.value))}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => setPaxelLarge(e.target.value === '' ? '' : Number(e.target.value))}
+                    onBlur={() => {
+                      const parsed = Number(paxelLarge);
+                      setPaxelLarge(paxelLarge === '' || isNaN(parsed) || parsed < 0 ? 0 : parsed);
+                    }}
                     className="w-full px-2.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold text-brand-red"
                   />
                 </div>

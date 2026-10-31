@@ -77,7 +77,7 @@ export default function AdminStockOpnamePage() {
 
   // Products & Opname state
   const [products, setProducts] = useState<ProductItem[]>([]);
-  const [opnameDraft, setOpnameDraft] = useState<Record<number, { actual_stock: number; notes: string }>>({});
+  const [opnameDraft, setOpnameDraft] = useState<Record<number, { actual_stock: number | string; notes: string }>>({});
   const [globalOpnameNote, setGlobalOpnameNote] = useState('');
   const [searchProduct, setSearchProduct] = useState('');
   const [savingOpname, setSavingOpname] = useState(false);
@@ -104,7 +104,7 @@ export default function AdminStockOpnamePage() {
   const [showQuickModal, setShowQuickModal] = useState(false);
   const [quickProductId, setQuickProductId] = useState<number>(0);
   const [quickType, setQuickType] = useState<'out_offline' | 'in_production' | 'damaged'>('out_offline');
-  const [quickQty, setQuickQty] = useState<number>(1);
+  const [quickQty, setQuickQty] = useState<number | string>(1);
   const [quickCustomRevenue, setQuickCustomRevenue] = useState<string>('');
   const [quickNotes, setQuickNotes] = useState<string>('');
   const [submittingQuick, setSubmittingQuick] = useState(false);
@@ -132,7 +132,7 @@ export default function AdminStockOpnamePage() {
       }
 
       if (resetDraft || Object.keys(opnameDraft).length === 0) {
-        const initialDraft: Record<number, { actual_stock: number; notes: string }> = {};
+        const initialDraft: Record<number, { actual_stock: number | string; notes: string }> = {};
         prodList.forEach((p) => {
           initialDraft[p.id] = {
             actual_stock: p.stock,
@@ -182,16 +182,65 @@ export default function AdminStockOpnamePage() {
     return products.filter((p) => p.name.toLowerCase().includes(q));
   }, [products, searchProduct]);
 
+  // Helper to resolve effective integer stock from draft (even when temporarily empty string)
+  const getEffectiveActualStock = (product: ProductItem): number => {
+    const raw = opnameDraft[product.id]?.actual_stock;
+    if (raw === undefined || raw === '') return 0;
+    const parsed = parseInt(String(raw), 10);
+    return isNaN(parsed) || parsed < 0 ? 0 : parsed;
+  };
+
   // Count how many products have differences in the Opname table
   const changedOpnameItems = useMemo(() => {
     return products.filter((p) => {
       const draft = opnameDraft[p.id];
-      return draft !== undefined && draft.actual_stock !== p.stock;
+      if (draft === undefined) return false;
+      const actualNum = draft.actual_stock === '' ? 0 : Math.max(0, parseInt(String(draft.actual_stock), 10) || 0);
+      return actualNum !== p.stock;
     });
   }, [products, opnameDraft]);
 
-  const handleOpnameStockChange = (productId: number, value: number) => {
-    const cleanVal = Math.max(0, Math.floor(Number(value) || 0));
+  const handleOpnameStockInputChange = (productId: number, rawValue: string) => {
+    if (rawValue === '') {
+      setOpnameDraft((prev) => ({
+        ...prev,
+        [productId]: {
+          actual_stock: '',
+          notes: prev[productId]?.notes || '',
+        },
+      }));
+      return;
+    }
+
+    const parsed = parseInt(rawValue, 10);
+    if (!isNaN(parsed)) {
+      setOpnameDraft((prev) => ({
+        ...prev,
+        [productId]: {
+          actual_stock: Math.max(0, parsed),
+          notes: prev[productId]?.notes || '',
+        },
+      }));
+    }
+  };
+
+  const handleOpnameStockBlur = (productId: number) => {
+    setOpnameDraft((prev) => {
+      const raw = prev[productId]?.actual_stock;
+      const parsed = parseInt(String(raw), 10);
+      const cleanVal = raw === '' || isNaN(parsed) || parsed < 0 ? 0 : parsed;
+      return {
+        ...prev,
+        [productId]: {
+          actual_stock: cleanVal,
+          notes: prev[productId]?.notes || '',
+        },
+      };
+    });
+  };
+
+  const handleOpnameStockStep = (productId: number, nextNumber: number) => {
+    const cleanVal = Math.max(0, Math.floor(Number(nextNumber) || 0));
     setOpnameDraft((prev) => ({
       ...prev,
       [productId]: {
@@ -213,7 +262,7 @@ export default function AdminStockOpnamePage() {
   };
 
   const handleResetOpnameDraft = () => {
-    const resetMap: Record<number, { actual_stock: number; notes: string }> = {};
+    const resetMap: Record<number, { actual_stock: number | string; notes: string }> = {};
     products.forEach((p) => {
       resetMap[p.id] = { actual_stock: p.stock, notes: '' };
     });
@@ -228,7 +277,7 @@ export default function AdminStockOpnamePage() {
 
     const payloadItems = products.map((p) => ({
       product_id: p.id,
-      actual_stock: opnameDraft[p.id]?.actual_stock ?? p.stock,
+      actual_stock: getEffectiveActualStock(p),
       notes: opnameDraft[p.id]?.notes || '',
     }));
 
@@ -280,13 +329,18 @@ export default function AdminStockOpnamePage() {
     [products, quickProductId]
   );
 
+  const numericQuickQty = useMemo(() => {
+    const parsed = parseInt(String(quickQty), 10);
+    return isNaN(parsed) || parsed < 1 ? 1 : parsed;
+  }, [quickQty]);
+
   const calculatedOfflineRevenue = useMemo(() => {
     if (quickType !== 'out_offline' || !selectedQuickProduct) return 0;
     if (quickCustomRevenue.trim() !== '') {
       return Math.max(0, Number(quickCustomRevenue) || 0);
     }
-    return selectedQuickProduct.price * Math.max(1, quickQty);
-  }, [quickType, selectedQuickProduct, quickQty, quickCustomRevenue]);
+    return selectedQuickProduct.price * numericQuickQty;
+  }, [quickType, selectedQuickProduct, numericQuickQty, quickCustomRevenue]);
 
   const handleSubmitQuickMovement = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -298,7 +352,7 @@ export default function AdminStockOpnamePage() {
     const payload: any = {
       product_id: Number(quickProductId),
       type: quickType,
-      quantity: Math.max(1, Number(quickQty)),
+      quantity: numericQuickQty,
       notes:
         quickNotes.trim() ||
         (quickType === 'out_offline'
@@ -609,8 +663,9 @@ export default function AdminStockOpnamePage() {
                 </tr>
               ) : (
                 filteredProducts.map((p) => {
-                  const actualStock = opnameDraft[p.id]?.actual_stock ?? p.stock;
-                  const diff = actualStock - p.stock;
+                  const rawDraftStock = opnameDraft[p.id]?.actual_stock ?? p.stock;
+                  const actualStockNum = getEffectiveActualStock(p);
+                  const diff = actualStockNum - p.stock;
                   const itemNote = opnameDraft[p.id]?.notes ?? '';
 
                   return (
@@ -658,7 +713,7 @@ export default function AdminStockOpnamePage() {
                         <div className="inline-flex items-center gap-1 bg-white border border-gray-300 rounded-xl p-1 shadow-2xs">
                           <button
                             type="button"
-                            onClick={() => handleOpnameStockChange(p.id, actualStock - 1)}
+                            onClick={() => handleOpnameStockStep(p.id, actualStockNum - 1)}
                             className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-700 font-bold"
                           >
                             -
@@ -666,13 +721,15 @@ export default function AdminStockOpnamePage() {
                           <input
                             type="number"
                             min={0}
-                            value={actualStock}
-                            onChange={(e) => handleOpnameStockChange(p.id, Number(e.target.value))}
-                            className="w-16 text-center font-heading font-black text-sm text-brand-indigo focus:outline-none"
+                            value={rawDraftStock}
+                            onFocus={(e) => e.target.select()}
+                            onChange={(e) => handleOpnameStockInputChange(p.id, e.target.value)}
+                            onBlur={() => handleOpnameStockBlur(p.id)}
+                            className="w-16 text-center font-heading font-black text-sm text-brand-indigo focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           />
                           <button
                             type="button"
-                            onClick={() => handleOpnameStockChange(p.id, actualStock + 1)}
+                            onClick={() => handleOpnameStockStep(p.id, actualStockNum + 1)}
                             className="w-7 h-7 rounded-lg bg-brand-yellow hover:bg-amber-400 flex items-center justify-center text-brand-indigo font-bold"
                           >
                             +
@@ -998,7 +1055,26 @@ export default function AdminStockOpnamePage() {
                     min={1}
                     required
                     value={quickQty}
-                    onChange={(e) => setQuickQty(Math.max(1, Number(e.target.value) || 1))}
+                    onFocus={(e) => e.target.select()}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '') {
+                        setQuickQty('');
+                      } else {
+                        const parsed = parseInt(val, 10);
+                        if (!isNaN(parsed)) {
+                          setQuickQty(parsed);
+                        }
+                      }
+                    }}
+                    onBlur={() => {
+                      const parsed = parseInt(String(quickQty), 10);
+                      if (quickQty === '' || isNaN(parsed) || parsed < 1) {
+                        setQuickQty(1);
+                      } else {
+                        setQuickQty(parsed);
+                      }
+                    }}
                     className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-black text-brand-indigo focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow"
                   />
                 </div>
@@ -1014,8 +1090,8 @@ export default function AdminStockOpnamePage() {
                         }
                       >
                         {quickType === 'in_production'
-                          ? selectedQuickProduct.stock + quickQty
-                          : Math.max(0, selectedQuickProduct.stock - quickQty)}{' '}
+                          ? selectedQuickProduct.stock + numericQuickQty
+                          : Math.max(0, selectedQuickProduct.stock - numericQuickQty)}{' '}
                         toples
                       </span>
                     </p>
@@ -1036,9 +1112,20 @@ export default function AdminStockOpnamePage() {
                     type="number"
                     min={0}
                     value={quickCustomRevenue}
+                    onFocus={(e) => e.target.select()}
                     onChange={(e) => setQuickCustomRevenue(e.target.value)}
+                    onBlur={() => {
+                      if (quickCustomRevenue !== '') {
+                        const parsed = parseFloat(quickCustomRevenue);
+                        if (isNaN(parsed) || parsed < 0) {
+                          setQuickCustomRevenue('0');
+                        } else {
+                          setQuickCustomRevenue(String(Math.floor(parsed)));
+                        }
+                      }
+                    }}
                     placeholder={`Otomatis: Rp ${
-                      selectedQuickProduct ? selectedQuickProduct.price * quickQty : 0
+                      selectedQuickProduct ? selectedQuickProduct.price * numericQuickQty : 0
                     } (Isi jika ada diskon khusus)`}
                     className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-yellow"
                   />

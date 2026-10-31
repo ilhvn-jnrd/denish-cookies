@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, Scale } from 'lucide-react';
@@ -19,6 +19,17 @@ export default function CartDrawer() {
     totalWeightGrams,
     totalWeightKg,
   } = useCart();
+
+  // Local draft state so user can backspace to "" before typing new quantity
+  const [qtyDraft, setQtyDraft] = useState<Record<number, string | number>>({});
+
+  useEffect(() => {
+    const sync: Record<number, string | number> = {};
+    items.forEach((item) => {
+      sync[item.product.id] = item.quantity;
+    });
+    setQtyDraft(sync);
+  }, [items]);
 
   if (!isCartOpen) return null;
 
@@ -126,15 +137,41 @@ export default function CartDrawer() {
                     <div className="flex items-center justify-between mt-2">
                       <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-xl p-1 shadow-sm">
                         <button
+                          type="button"
                           onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
                           className="w-6 h-6 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-700 transition"
                         >
                           <Minus className="w-3 h-3" />
                         </button>
-                        <span className="w-7 text-center font-bold text-xs text-brand-indigo">
-                          {item.quantity}
-                        </span>
+                        <input
+                          type="number"
+                          min={1}
+                          value={qtyDraft[item.product.id] ?? item.quantity}
+                          onFocus={(e) => e.target.select()}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setQtyDraft((prev) => ({ ...prev, [item.product.id]: val }));
+                            const parsed = parseInt(val, 10);
+                            if (!isNaN(parsed) && parsed >= 1) {
+                              updateQuantity(item.product.id, parsed);
+                            }
+                          }}
+                          onBlur={() => {
+                            const raw = qtyDraft[item.product.id];
+                            const parsed = parseInt(String(raw), 10);
+                            if (raw === '' || isNaN(parsed) || parsed < 1) {
+                              setQtyDraft((prev) => ({ ...prev, [item.product.id]: 1 }));
+                              updateQuantity(item.product.id, 1);
+                            } else {
+                              setQtyDraft((prev) => ({ ...prev, [item.product.id]: parsed }));
+                              updateQuantity(item.product.id, parsed);
+                            }
+                          }}
+                          aria-label={`Jumlah ${item.product.name}`}
+                          className="w-10 text-center font-bold text-xs text-brand-indigo focus:outline-none bg-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
                         <button
+                          type="button"
                           onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
                           className="w-6 h-6 rounded-lg bg-brand-yellow hover:bg-brand-yellowHover flex items-center justify-center text-brand-indigo font-bold transition"
                         >

@@ -29,10 +29,12 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [related, setRelated] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState<number | string>(1);
   const [addedNotice, setAddedNotice] = useState(false);
 
   const { addToCart, setIsCartOpen } = useCart();
+
+  const numericQuantity = Math.max(1, parseInt(String(quantity), 10) || 1);
 
   useEffect(() => {
     async function loadProduct() {
@@ -79,13 +81,15 @@ export default function ProductDetailPage() {
   }
 
   const handleAddToCart = () => {
-    addToCart(product, quantity);
+    setQuantity(numericQuantity);
+    addToCart(product, numericQuantity);
     setAddedNotice(true);
     setTimeout(() => setAddedNotice(false), 2500);
   };
 
   const handleBuyNow = () => {
-    addToCart(product, quantity);
+    setQuantity(numericQuantity);
+    addToCart(product, numericQuantity);
     setIsCartOpen(false);
     router.push('/checkout');
   };
@@ -202,17 +206,40 @@ export default function ProductDetailPage() {
               <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-2xl p-1 shadow-sm">
                 <button
                   type="button"
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  onClick={() => setQuantity(Math.max(1, numericQuantity - 1))}
                   className="w-8 h-8 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-700 transition"
                 >
                   <Minus className="w-4 h-4" />
                 </button>
-                <span className="w-10 text-center font-heading font-bold text-base text-brand-indigo">
-                  {quantity}
-                </span>
+                <input
+                  type="number"
+                  min={1}
+                  value={quantity}
+                  onFocus={(e) => e.target.select()}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === '') {
+                      setQuantity('');
+                    } else {
+                      const parsed = parseInt(val, 10);
+                      if (!isNaN(parsed)) {
+                        setQuantity(parsed);
+                      }
+                    }
+                  }}
+                  onBlur={() => {
+                    if (quantity === '' || Number(quantity) < 1 || isNaN(Number(quantity))) {
+                      setQuantity(1);
+                    } else {
+                      setQuantity(Math.floor(Number(quantity)));
+                    }
+                  }}
+                  aria-label="Jumlah Toples"
+                  className="w-14 text-center font-heading font-bold text-base text-brand-indigo focus:outline-none bg-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
                 <button
                   type="button"
-                  onClick={() => setQuantity((q) => q + 1)}
+                  onClick={() => setQuantity(numericQuantity + 1)}
                   className="w-8 h-8 rounded-xl bg-brand-yellow hover:bg-brand-yellowHover flex items-center justify-center text-brand-indigo font-bold transition"
                 >
                   <Plus className="w-4 h-4" />
@@ -220,7 +247,7 @@ export default function ProductDetailPage() {
               </div>
 
               <span className="text-xs text-gray-500">
-                Estimasi Berat Kirim: <strong>{formatWeight(product.weight_grams * quantity)}</strong>
+                Estimasi Berat Kirim: <strong>{formatWeight(product.weight_grams * numericQuantity)}</strong>
               </span>
             </div>
 
@@ -245,7 +272,7 @@ export default function ProductDetailPage() {
             {addedNotice && (
               <div className="p-3 bg-emerald-50 text-emerald-800 text-xs rounded-xl border border-emerald-200 flex items-center gap-2 animate-fade-in font-medium">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                Berhasil menambahkan {quantity} toples ke keranjang belanja!
+                Berhasil menambahkan {numericQuantity} toples ke keranjang belanja!
               </div>
             )}
           </div>
